@@ -5,39 +5,40 @@
   <title>Игра "Три в ряд"</title>
   <style>
     /* Основные стили для всей страницы */
-   body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0)), url('https://i.imgur.com/9fvhK3f.gif');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  text-align: center;
-  flex-direction: column;
-  transform: translateY(-10%); /* Поднимает элементы вверх */
-}
-
-
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://i.imgur.com/9fvhK3f.gif');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      text-align: center;
+      flex-direction: column;
+    }
 
     /* Контейнер для ячеек с цифрами и кнопок */
     #game-container {
       text-align: center;
       max-width: 400px;
       width: 100%;
-      margin-bottom: 10px; /* Уменьшенный отступ */
+      margin-top: -50px; /* Поднимает блок вверх */
+      margin-bottom: 20px;
+      background-color: rgba(255, 255, 255, 0.8); /* Фон для читаемости */
+      padding: 20px;
+      border-radius: 10px;
     }
 
     /* Контейнер для ячеек */
     #cells-container {
       display: flex;
       justify-content: center;
-      margin: 15px 0; /* Уменьшенный отступ */
+      margin: 20px 0;
     }
 
     /* Стили ячеек с цифрами */
@@ -68,7 +69,7 @@
       padding: 10px 20px;
       font-size: 1em;
       color: white;
-      background-color: green;
+      background-color: #28a745;
       border: none;
       border-radius: 10px;
       cursor: pointer;
@@ -81,14 +82,14 @@
 
     /* Контейнер для счетчиков, заголовка и правил */
     #info-container {
-      margin-top: 10px; /* Уменьшенный отступ сверху */
+      margin-top: 20px;
       width: 100%;
     }
 
     /* Стили для текста очков и результатов */
     #score, #clicks-count {
       font-size: 1.5em;
-      margin-top: 5px; /* Уменьшенный отступ */
+      margin-top: 10px;
     }
 
     #score {
@@ -102,7 +103,7 @@
 
     #result {
       font-size: 1.2em;
-      margin-top: 5px; /* Уменьшенный отступ */
+      margin-top: 10px;
       min-height: 1.2em;
     }
 
@@ -110,9 +111,9 @@
     #rules {
       font-size: 1em;
       color: #333;
-      margin: 5px 0; /* Уменьшенные отступы сверху и снизу */
-      line-height: 1; /* Увеличенный межстрочный отступ */
-      white-space: pre-line; /* Убедитесь, что текст перенесется при необходимости */
+      margin: 10px 0;
+      line-height: 1.5;
+      white-space: pre-line;
     }
 
     .green {
@@ -131,13 +132,20 @@
     #game-over, #game-won {
       font-size: 1em;
       color: red;
-      margin-top: 15px;
-      display: none; /* Скрыто по умолчанию */
+      margin-top: 20px;
+      display: none;
     }
 
     #game-won {
-      font-size: 1em; /* Изменен размер текста */
+      font-size: 1.5em;
       color: orange;
+    }
+
+    /* Стили для заголовков */
+    h1 {
+      font-size: 2em;
+      margin: 0;
+      padding: 0;
     }
   </style>
 </head>
@@ -147,8 +155,10 @@
 <div id="info-container">
   <h1>Три в ряд</h1>
   <div id="rules">
-    Победа: 30 очков либо 40 кликов.
-    +6 за три одинаковых в ряд
+    Игра заканчивается на счете 0 — вашим поражением, или на счете 30 — вашей победой. 
+    +6 очков за 3 одинаковые цифры в ряд
+    +3 очка за 2 одинаковые цифры в ряд
+    Вы также победите, продержавшись в игре 40 кликов
   </div>
 
   <div id="wins-losses">Победы: 0 | Поражения: 0</div>
@@ -168,11 +178,11 @@
 
   <div id="game-over">
     <p>Вы проиграли!</p>
-    <button id="restart-button" class="restart-button" onclick="restartGame()">Начать заново</button>
+    <button class="restart-button" onclick="restartGame()">Начать заново</button>
   </div>
   <div id="game-won">
     <p>Вы выиграли!</p>
-    <button id="restart-button" class="restart-button" onclick="restartGame()">Начать заново</button>
+    <button class="restart-button" onclick="restartGame()">Начать заново</button>
   </div>
 </div>
 
@@ -230,42 +240,18 @@
     const [num1, num2, num3] = numbers;
     const result = document.getElementById("result");
 
-    document.getElementById("cell1").style.color = "#000";
-    document.getElementById("cell2").style.color = "#000";
-    document.getElementById("cell3").style.color = "#000";
-
     if (num1 === num2 && num2 === num3) {
-        score += 6;
-        result.innerText = "Три одинаковые! +6 очков";
-        result.className = "green";
-
-        document.getElementById("cell1").style.color = "#FFD700";
-        document.getElementById("cell2").style.color = "#FFD700";
-        document.getElementById("cell3").style.color = "#FFD700";
-        document.getElementById("cell1").style.border = "4px solid #BCAF4D";
-        document.getElementById("cell2").style.border = "4px solid #BCAF4D";
-        document.getElementById("cell3").style.border = "4px solid #BCAF4D";
+      score += 6;
+      result.innerText = "Три одинаковые! +6 очков";
+      result.className = "green";
     } else if (num1 === num2 || num2 === num3 || num1 === num3) {
-        score += 3;
-        result.innerText = "Два одинаковых! +3 очка";
-        result.className = "orange";
-
-        if (num1 === num2) {
-          document.getElementById("cell1").style.color = "orange";
-          document.getElementById("cell2").style.color = "orange";
-        }
-        if (num2 === num3) {
-          document.getElementById("cell2").style.color = "orange";
-          document.getElementById("cell3").style.color = "orange";
-        }
-        if (num1 === num3) {
-          document.getElementById("cell1").style.color = "orange";
-          document.getElementById("cell3").style.color = "orange";
-        }
+      score += 3;
+      result.innerText = "Два одинаковых! +3 очка";
+      result.className = "orange";
     } else {
-        score -= 3;
-        result.innerText = "Ни одного совпадения. -3 очка";
-        result.className = "red";
+      score = Math.max(0, score - 3);
+      result.innerText = "Все разные. -3 очка";
+      result.className = "red";
     }
 
     document.getElementById("score").innerText = "Счет: " + score;
@@ -278,34 +264,27 @@
       wins++;
       document.getElementById("wins-losses").innerText = "Победы: " + wins + " | Поражения: " + losses;
       document.getElementById("game-won").style.display = "block";
-      document.getElementById("play-button").disabled = true;
     } else if (score <= 0) {
       losses++;
       document.getElementById("wins-losses").innerText = "Победы: " + wins + " | Поражения: " + losses;
       document.getElementById("game-over").style.display = "block";
-      document.getElementById("play-button").disabled = true;
     } else if (clicks >= 40) {
       wins++;
       document.getElementById("wins-losses").innerText = "Победы: " + wins + " | Поражения: " + losses;
       document.getElementById("game-won").style.display = "block";
-      document.getElementById("play-button").disabled = true;
     }
   }
 
   function restartGame() {
     score = 15;
     clicks = 0;
-    document.getElementById("clicks-count").innerText = "Клики: 0";
+    document.getElementById("clicks-count").innerText = "Клики: " + clicks;
     document.getElementById("score").innerText = "Счет: " + score;
-    document.getElementById("result").innerText = "";
-    document.getElementById("game-won").style.display = "none";
     document.getElementById("game-over").style.display = "none";
+    document.getElementById("game-won").style.display = "none";
+    document.getElementById("result").innerText = "";
+    document.querySelectorAll(".cell").forEach(cell => cell.innerText = "0");
     document.getElementById("play-button").disabled = false;
-    document.querySelectorAll('.cell').forEach(cell => {
-      cell.innerText = "0";
-      cell.style.color = "#000";
-      cell.style.border = "4px solid yellow";
-    });
   }
 </script>
 
