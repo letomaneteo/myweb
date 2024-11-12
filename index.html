@@ -22,11 +22,12 @@
       flex-direction: column;
     }
 
-    /* Контейнер для игры */
-    #game {
+    /* Контейнер для ячеек с цифрами и кнопок */
+    #game-container {
       text-align: center;
       max-width: 400px;
       width: 100%;
+      margin-bottom: 20px; /* Отступ снизу для блока с ячейками и кнопкой */
     }
 
     /* Контейнер для ячеек */
@@ -75,6 +76,12 @@
       background-color: gray;
     }
 
+    /* Контейнер для счетчиков, заголовка и правил */
+    #info-container {
+      margin-top: 20px; /* Отступ сверху для этого блока */
+      width: 100%;
+    }
+
     /* Стили для текста очков и результатов */
     #score, #clicks-count {
       font-size: 1.5em;
@@ -101,7 +108,7 @@
       font-size: 1em;
       color: #333;
       margin: 5px 0; /* Уменьшен отступ сверху и снизу */
-      line-height: 0.1; /* Минимальное расстояние между строками */
+      line-height: 1.2; /* Минимальное расстояние между строками */
     }
 
     .green {
@@ -132,15 +139,19 @@
 </head>
 <body>
 
-<h1 style="margin-top: -100px;">Три в ряд</h1>
-<div id="rules">Игра заканчивается на счете 0 — вашим поражением, или на счете 30 — вашей победой. <p>+6 очков за 3 одинаковые цифры в ряд</p><p>+3 очка за 2 одинаковые цифры в ряд</p><p>Вы также победите, продержавшись в игре 40 кликов</p></div>
+<!-- Заголовок и блок с правилами и счетчиками -->
+<div id="info-container">
+  <h1 style="margin-top: -100px;">Три в ряд</h1>
+  <div id="rules">Игра заканчивается на счете 0 — вашим поражением, или на счете 30 — вашей победой. <p>+6 очков за 3 одинаковые цифры в ряд</p><p>+3 очка за 2 одинаковые цифры в ряд</p><p>Вы также победите, продержавшись в игре 40 кликов</p></div>
 
-<div id="wins-losses">Победы: 0 | Поражения: 0</div>
-<div id="clicks-count">Клики: 0</div>
-<div id="score">Счет: 15</div>
-<div id="result"></div>
+  <div id="wins-losses">Победы: 0 | Поражения: 0</div>
+  <div id="clicks-count">Клики: 0</div>
+  <div id="score">Счет: 15</div>
+  <div id="result"></div>
+</div>
 
-<div id="game">
+<!-- Контейнер для игры с ячейками и кнопкой -->
+<div id="game-container">
   <div id="cells-container">
     <div class="cell" id="cell1">0</div>
     <div class="cell" id="cell2">0</div>
@@ -234,17 +245,6 @@
         result.innerText = "Две одинаковые! +3 очка";
         result.className = "orange";
 
-        if (num1 === num2) {
-          document.getElementById("cell1").style.color = "#FFD700";
-          document.getElementById("cell2").style.color = "#FFD700";
-        } else if (num1 === num3) {
-          document.getElementById("cell1").style.color = "#FFD700";
-          document.getElementById("cell3").style.color = "#FFD700";
-        } else {
-          document.getElementById("cell2").style.color = "#FFD700";
-          document.getElementById("cell3").style.color = "#FFD700";
-        }
-
         document.getElementById("cell1").style.border = "4px solid orange";
         document.getElementById("cell2").style.border = "4px solid orange";
         document.getElementById("cell3").style.border = "4px solid orange";
@@ -302,3 +302,4 @@
 
 </body>
 </html>
+
