@@ -129,10 +129,11 @@
       font-size: 1em;
       color: red;
       margin-top: 20px;
+      display: none; /* Скрыто по умолчанию */
     }
 
     #game-won {
-      font-size: 3em; /* Увеличенный размер шрифта */
+      font-size: 1.5em; /* Уменьшенный размер текста */
       color: orange;
     }
 
@@ -143,6 +144,17 @@
       padding: 0;
     }
 
+    /* Для кнопки "Начать заново" */
+    .restart-button {
+      font-size: 1em;
+      padding: 8px 16px;
+      border-radius: 5px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -172,13 +184,13 @@
   </div>
   <button id="play-button" class="button" onclick="playGame()">Играть</button>
 
-  <div id="game-over" style="display: none;">
+  <div id="game-over">
     <p>Вы проиграли!</p>
-    <button id="restart-button" class="button" onclick="restartGame()">Начать заново</button>
+    <button id="restart-button" class="restart-button" onclick="restartGame()">Начать заново</button>
   </div>
-  <div id="game-won" style="display: none;">
+  <div id="game-won">
     <p>Вы выиграли!</p>
-    <button id="restart-button" class="button" onclick="restartGame()">Начать заново</button>
+    <button id="restart-button" class="restart-button" onclick="restartGame()">Начать заново</button>
   </div>
 </div>
 
