@@ -6,10 +6,12 @@
   <style>
     /* Основные стили для всей страницы */
    body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Изменено с center на flex-start */
-  height: 100%;
+  align-items: center;
   font-family: Arial, sans-serif;
   background: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0)), url('https://i.imgur.com/9fvhK3f.gif');
   background-size: cover;
@@ -18,8 +20,9 @@
   background-attachment: fixed;
   text-align: center;
   flex-direction: column;
-  padding-top: 30px; /* Добавлено отступ сверху */
+  transform: translateY(-10%); /* Поднимает элементы вверх */
 }
+
 
 
     /* Контейнер для ячеек с цифрами и кнопок */
