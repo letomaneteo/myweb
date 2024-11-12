@@ -78,7 +78,7 @@
 
     /* Контейнер для счетчиков, заголовка и правил */
     #info-container {
-      margin-top: 5px; /* Отступ сверху для этого блока */
+      margin-top: 20px; /* Отступ сверху для этого блока */
       width: 100%;
     }
 
@@ -89,7 +89,7 @@
     }
 
     #score {
-      font-size: 2.0em;
+      font-size: 2.5em;
       color: #00457E;
     }
 
@@ -107,8 +107,9 @@
     #rules {
       font-size: 1em;
       color: #333;
-      margin: 5px 0; /* Уменьшен отступ сверху и снизу */
-      line-height: 0.2; /* Увеличенный межстрочный отступ */
+      margin: 10px 0; /* Уменьшены отступы сверху и снизу */
+      line-height: 1.5; /* Увеличенный межстрочный отступ */
+      white-space: pre-line; /* Убедитесь, что текст перенесется при необходимости */
     }
 
     .green {
@@ -135,14 +136,26 @@
       color: orange;
     }
 
+    /* Стили для заголовков */
+    h1 {
+      font-size: 2em;
+      margin: 0;
+      padding: 0;
+    }
+
   </style>
 </head>
 <body>
 
 <!-- Заголовок и блок с правилами и счетчиками -->
 <div id="info-container">
-  <h1 style="margin-top: -100px;">Три в ряд</h1>
-  <div id="rules">Игра заканчивается на счете 0 — вашим поражением, или на счете 30 — вашей победой. <p>+6 очков за 3 одинаковые цифры в ряд</p><p>+3 очка за 2 одинаковые цифры в ряд</p><p>Вы также победите, продержавшись в игре 40 кликов</p></div>
+  <h1>Три в ряд</h1>
+  <div id="rules">
+    Игра заканчивается на счете 0 — вашим поражением, или на счете 30 — вашей победой. 
+    +6 очков за 3 одинаковые цифры в ряд
+    +3 очка за 2 одинаковые цифры в ряд
+    Вы также победите, продержавшись в игре 40 кликов
+  </div>
 
   <div id="wins-losses">Победы: 0 | Поражения: 0</div>
   <div id="clicks-count">Клики: 0</div>
@@ -235,7 +248,6 @@
         document.getElementById("cell1").style.color = "#FFD700";
         document.getElementById("cell2").style.color = "#FFD700";
         document.getElementById("cell3").style.color = "#FFD700";
-
         document.getElementById("cell1").style.border = "4px solid #BCAF4D";
         document.getElementById("cell2").style.border = "4px solid #BCAF4D";
         document.getElementById("cell3").style.border = "4px solid #BCAF4D";
