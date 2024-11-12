@@ -9,6 +9,9 @@
       margin: 0;
       padding: 0;
       height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       font-family: Arial, sans-serif;
       background: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0)), url('https://i.imgur.com/9fvhK3f.gif');
       background-size: cover;
@@ -16,8 +19,6 @@
       background-position: center;
       background-attachment: fixed;
       text-align: center;
-      display: flex;
-      justify-content: center;
       flex-direction: column;
     }
 
@@ -26,14 +27,14 @@
       text-align: center;
       max-width: 400px;
       width: 100%;
-      margin-bottom: 5px; /* Уменьшенный отступ */
+      margin-bottom: 10px; /* Уменьшенный отступ */
     }
 
     /* Контейнер для ячеек */
     #cells-container {
       display: flex;
       justify-content: center;
-      margin: 10px 0; /* Уменьшенный отступ */
+      margin: 15px 0; /* Уменьшенный отступ */
     }
 
     /* Стили ячеек с цифрами */
@@ -68,7 +69,7 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      margin-top: 5px;
+      margin-top: 10px;
     }
 
     .button:disabled {
@@ -77,7 +78,7 @@
 
     /* Контейнер для счетчиков, заголовка и правил */
     #info-container {
-      margin-top: 5px; /* Уменьшенный отступ сверху */
+      margin-top: 10px; /* Уменьшенный отступ сверху */
       width: 100%;
     }
 
@@ -108,7 +109,7 @@
       color: #333;
       margin: 5px 0; /* Минимальные отступы сверху и снизу */
       line-height: 1.5; /* Увеличенный межстрочный отступ */
-      white-space: pre-line;
+      white-space: pre-line; /* Убедитесь, что текст перенесется при необходимости */
     }
 
     /* Уменьшаем отступы между заголовком и правилами */
@@ -137,7 +138,7 @@
     }
 
     #game-won {
-      font-size: 1em;
+      font-size: 1em; /* Изменен размер текста */
       color: orange;
     }
   </style>
@@ -148,10 +149,8 @@
 <div id="info-container">
   <h1>Три в ряд</h1>
   <div id="rules">
-    Игра заканчивается на счете 0 — вашим поражением, или на счете 30 — вашей победой. 
+    Победа: 30 очков либо 40 коиков. 
     +6 очков за 3 одинаковые цифры в ряд
-    +3 очка за 2 одинаковые цифры в ряд
-    Вы также победите, продержавшись в игре 40 кликов
   </div>
 
   <div id="wins-losses">Победы: 0 | Поражения: 0</div>
