@@ -91,27 +91,6 @@
       color: red;
       margin-top: 20px;
     }
-
-    /* Адаптация для мобильных устройств */
-    @media (max-width: 600px) {
-      .cell {
-        font-size: 2em;
-        width: 60px;
-        height: 60px;
-        line-height: 60px;
-        margin: 3px;
-      }
-      #score, #clicks-count {
-        font-size: 1.2em;
-      }
-      #score {
-        font-size: 2em;
-      }
-      .button {
-        padding: 8px 16px;
-        font-size: 0.9em;
-      }
-    }
   </style>
 </head>
 <body>
@@ -198,6 +177,7 @@
       document.getElementById("cell2").style.color = "#000";
       document.getElementById("cell3").style.color = "#000";
 
+      // Проверяем количество кликов до проверки очков
       if (clicks >= 40) {
         wins++;
         winGame();
@@ -205,6 +185,7 @@
         return;
       }
 
+      // Логика начисления очков
       if (num1 === num2 && num2 === num3) {
         score += 6;
         result.innerText = "Три одинаковые! +6 очков";
