@@ -22,19 +22,18 @@
       flex-direction: column;
     }
 
-    /* Контейнер для ячеек с цифрами и кнопок */
-    #game-container {
+    /* Контейнер для игры */
+    #game {
       text-align: center;
       max-width: 400px;
       width: 100%;
-      margin-bottom: 10px; /* Уменьшенный отступ */
     }
 
     /* Контейнер для ячеек */
     #cells-container {
       display: flex;
       justify-content: center;
-      margin: 15px 0; /* Уменьшенный отступ */
+      margin: 20px 0;
     }
 
     /* Стили ячеек с цифрами */
@@ -45,6 +44,7 @@
       height: 100px;
       background-color: green;
       border: 4px solid yellow;
+      border-radius: 15px; /* Добавленное округление */
       margin: 5px;
       line-height: 100px;
       transition: color 0.5s ease, border 0.5s ease;
@@ -61,7 +61,7 @@
     }
 
     /* Стили кнопок */
-    .button, .restart-button {
+    .button {
       padding: 10px 20px;
       font-size: 1em;
       color: white;
@@ -76,16 +76,10 @@
       background-color: gray;
     }
 
-    /* Контейнер для счетчиков, заголовка и правил */
-    #info-container {
-      margin-top: 10px; /* Уменьшенный отступ сверху */
-      width: 100%;
-    }
-
     /* Стили для текста очков и результатов */
     #score, #clicks-count {
       font-size: 1.5em;
-      margin-top: 5px; /* Уменьшенный отступ */
+      margin-top: 10px;
     }
 
     #score {
@@ -99,7 +93,7 @@
 
     #result {
       font-size: 1.2em;
-      margin-top: 5px; /* Уменьшенный отступ */
+      margin-top: 10px;
       min-height: 1.2em;
     }
 
@@ -107,14 +101,7 @@
     #rules {
       font-size: 1em;
       color: #333;
-      margin: 5px 0; /* Минимальные отступы сверху и снизу */
-      line-height: 1; /* Увеличенный межстрочный отступ */
-      white-space: pre-line; /* Убедитесь, что текст перенесется при необходимости */
-    }
-
-    /* Уменьшаем отступы между заголовком и правилами */
-    #info-container h1 {
-      margin-bottom: 5px;
+      margin: 15px 0;
     }
 
     .green {
@@ -133,34 +120,27 @@
     #game-over, #game-won {
       font-size: 1em;
       color: red;
-      margin-top: 15px;
-      display: none; /* Скрыто по умолчанию */
+      margin-top: 20px;
     }
 
     #game-won {
-      font-size: 1em; /* Изменен размер текста */
-      color: orange;
-    }
+  font-size: 1em; /* Увеличенный размер шрифта */
+  color: orange;
+}
+
   </style>
 </head>
 <body>
 
-<!-- Заголовок и блок с правилами и счетчиками -->
-<div id="info-container">
-  <h1>Три в ряд</h1>
-  <div id="rules">
-    Наберите 30 очков либо 40 продержиитес 40 кликов чтобы победить. 
-    +6 очков за 3 одинаковые цифры в ряд
-  </div>
+<h1 style="margin-top: -100px;">Три в ряд</h1>
+<div id="rules">Наберите 30 очков или продержитесь 40 кликов чтобы победить! <p>+6 очков за 3 одинаковые цифры в ряд<p></div>
 
-  <div id="wins-losses">Победы: 0 | Поражения: 0</div>
-  <div id="clicks-count">Клики: 0</div>
-  <div id="score">Счет: 15</div>
-  <div id="result"></div>
-</div>
+<div id="wins-losses">Победы: 0 | Поражения: 0</div>
+<div id="clicks-count">Клики: 0</div>
+<div id="score">Счет: 15</div>
+<div id="result"></div>
 
-<!-- Контейнер для игры с ячейками и кнопкой -->
-<div id="game-container">
+<div id="game">
   <div id="cells-container">
     <div class="cell" id="cell1">0</div>
     <div class="cell" id="cell2">0</div>
@@ -168,13 +148,13 @@
   </div>
   <button id="play-button" class="button" onclick="playGame()">Играть</button>
 
-  <div id="game-over">
+  <div id="game-over" style="display: none;">
     <p>Вы проиграли!</p>
-    <button id="restart-button" class="restart-button" onclick="restartGame()">Начать заново</button>
+    <button id="restart-button" class="button" onclick="restartGame()">Начать заново</button>
   </div>
-  <div id="game-won">
+  <div id="game-won" style="display: none;">
     <p>Вы выиграли!</p>
-    <button id="restart-button" class="restart-button" onclick="restartGame()">Начать заново</button>
+    <button id="restart-button" class="button" onclick="restartGame()">Начать заново</button>
   </div>
 </div>
 
@@ -244,61 +224,79 @@
         document.getElementById("cell1").style.color = "#FFD700";
         document.getElementById("cell2").style.color = "#FFD700";
         document.getElementById("cell3").style.color = "#FFD700";
+
         document.getElementById("cell1").style.border = "4px solid #BCAF4D";
         document.getElementById("cell2").style.border = "4px solid #BCAF4D";
         document.getElementById("cell3").style.border = "4px solid #BCAF4D";
-    } else if (num1 === num2 || num2 === num3 || num1 === num3) {
+
+    } else if (num1 === num2 || num1 === num3 || num2 === num3) {
         score += 3;
-        result.innerText = "Два одинаковые! +3 очка";
+        result.innerText = "Две одинаковые! +3 очка";
         result.className = "orange";
 
         if (num1 === num2) {
-            document.getElementById("cell1").style.color = "orange";
-            document.getElementById("cell2").style.color = "orange";
+          document.getElementById("cell1").style.color = "#FFD700";
+          document.getElementById("cell2").style.color = "#FFD700";
+        } else if (num1 === num3) {
+          document.getElementById("cell1").style.color = "#FFD700";
+          document.getElementById("cell3").style.color = "#FFD700";
+        } else {
+          document.getElementById("cell2").style.color = "#FFD700";
+          document.getElementById("cell3").style.color = "#FFD700";
         }
-        if (num2 === num3) {
-            document.getElementById("cell2").style.color = "orange";
-            document.getElementById("cell3").style.color = "orange";
-        }
-        if (num1 === num3) {
-            document.getElementById("cell1").style.color = "orange";
-            document.getElementById("cell3").style.color = "orange";
-        }
+
+        document.getElementById("cell1").style.border = "4px solid orange";
+        document.getElementById("cell2").style.border = "4px solid orange";
+        document.getElementById("cell3").style.border = "4px solid orange";
+
     } else {
-        result.innerText = "Нет совпадений(-2 очка.";
+        score = Math.max(0, score - 2);
+        result.innerText = "Нет совпадений:(-2 очка";
         result.className = "red";
-        score -= 2;
+
+        document.getElementById("cell1").style.border = "4px solid red";
+        document.getElementById("cell2").style.border = "4px solid red";
+        document.getElementById("cell3").style.border = "4px solid red";
     }
 
     document.getElementById("score").innerText = "Счет: " + score;
-    if (score >= 30) {
-      document.getElementById("game-won").style.display = "block";
-      wins++;
-      document.getElementById("wins-losses").innerText = "Победы: " + wins + " | Поражения: " + losses;
-    } else if (score <= 0) {
-      document.getElementById("game-over").style.display = "block";
-      losses++;
-      document.getElementById("wins-losses").innerText = "Победы: " + wins + " | Поражения: " + losses;
+
+    if (score <= 0) {
+        losses++;
+        endGame();
+    } else if (score >= 30) {
+        wins++;
+        winGame();
     } else if (clicks >= 40) {
-      document.getElementById("game-won").style.display = "block";
-      wins++;
-      document.getElementById("wins-losses").innerText = "Победы: " + wins + " | Поражения: " + losses;
+        wins++;
+        winGame();
     }
+    updateWinsLosses();
+  }
+
+  function endGame() {
+    document.getElementById("game-over").style.display = "block";
+    document.getElementById("play-button").disabled = true;
+  }
+
+  function winGame() {
+    document.getElementById("game-won").style.display = "block";
+    document.getElementById("play-button").disabled = true;
   }
 
   function restartGame() {
     score = 15;
     clicks = 0;
-    document.getElementById("score").innerText = "Счет: 15";
-    document.getElementById("clicks-count").innerText = "Клики: 0";
+    document.getElementById("score").innerText = "Счет: " + score;
+    document.getElementById("clicks-count").innerText = "Клики: " + clicks;
     document.getElementById("result").innerText = "";
     document.getElementById("game-over").style.display = "none";
     document.getElementById("game-won").style.display = "none";
-    document.getElementById("play-button").disabled = false;
+    updateWinsLosses();
+  }
 
-    document.getElementById("cell1").innerText = "0";
-    document.getElementById("cell2").innerText = "0";
-    document.getElementById("cell3").innerText = "0";
+  function updateWinsLosses() {
+    document.getElementById("wins-losses").innerText = "Победы: " + wins + " | Поражения: " + losses;
   }
 </script>
 
