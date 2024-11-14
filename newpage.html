@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра</title>
+    <style>
+       body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-image: url('https://i.imgur.com/igRPPo4.jpeg');
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+    }
+
+    h1, h2, h3 {
+        margin: 5px;
+    }
+
+    .scoreboard, .messages {
+        margin-top: 20px;
+        color: black;
+        text-align: center;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 80px);
+        grid-gap: 10px;
+        margin: 20px;
+    }
+
+    .cell {
+        width: 80px;
+        height: 80px;
+        border: 3px solid #6D8C00;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        transition: background-color 0.3s;
+    }
+
+    /* Добавляем стили для адаптивности */
+    @media (max-width: 768px) {
+        .grid {
+            grid-template-columns: repeat(3, 60px);
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            font-size: 20px;
+        }
+        .play-button, .restart-button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .game-title {
+            font-size: 28px;
+        }
+        .game-rules {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .grid {
+            grid-template-columns: repeat(3, 50px);
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+        }
+        .play-button, .restart-button {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        .game-title {
+            font-size: 24px;
+        }
+        .game-rules {
+            font-size: 14px;
+        }
+    }
+
+    .highlight-green { background-color: lightgreen; }
+    .highlight-blue { background-color: lightblue; }
+    .highlight-yellow { background-color: lightyellow; }
+
+    .play-button, .restart-button {
+        margin-top: 20px;
+        padding: 12px 24px;
+        font-size: 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .play-button:hover, .restart-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+
+    .play-button[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: #ccc;
+    }
+
+    .message {
+        margin-top: 12px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+    .green { color: green; }
+    .blue { color: blue; }
+    .yellow { color: #EC9704; }
+    .black { color: black; }
+
+    /* Добавим стиль для названия и правил */
+    .game-title {
+        font-size: 36px;
+        color: #583E26;
+        margin-top: 20px;
+    }
+
+    .game-rules {
+        font-size: 18px;
+        color: #583E26;
+        margin-top: 10px;
+        text-align: center;
+        max-width: 600px;
+    }
+    </style>
+</head>
+<body>
+    <!-- Название игры -->
+    <div class="game-title">Игра "Найди совпадения"</div>
+
+    <!-- Правила игры -->
+    <div class="game-rules">
+        <p>Правила игры:</p>
+        <p>1. Игра состоит из сетки 3x3 с случайными числами от 0 до 9.</p>
+        <p>2. Для каждого ряда (горизонтального, вертикального и диагонального) будут проверяться совпадения чисел.</p>
+        <p>3. Если в ряду есть совпадения, вы получите очки. Чем больше совпадений, тем больше очков.</p>
+        <p>4. Если очки достигают 200, вы выигрываете!</p>
+        <p>5. Если очки становятся равны 0, вы проигрываете.</p>
+    </div>
+
+    <h1>Счет: <span id="score">30</span></h1>
+    <h2>Счетчик кликов: <span id="clickCount">0</span></h2>
+    <h3>Победы: <span id="winCount">0</span> Поражения: <span id="lossCount">0</span></h3>
+
+    <div class="grid">
+        <div class="cell" id="cell-0"></div>
+        <div class="cell" id="cell-1"></div>
+        <div class="cell" id="cell-2"></div>
+        <div class="cell" id="cell-3"></div>
+        <div class="cell" id="cell-4"></div>
+        <div class="cell" id="cell-5"></div>
+        <div class="cell" id="cell-6"></div>
+        <div class="cell" id="cell-7"></div>
+        <div class="cell" id="cell-8"></div>
+    </div>
+
+    <button class="play-button" id="playButton">Играть</button>
+
+    <div class="messages">
+        <div class="message green" id="horizontalMessage"></div>
+        <div class="message blue" id="verticalMessage"></div>
+        <div class="message yellow" id="diagonalMessage"></div>
+        <div class="message black" id="totalPointsMessage"></div>
+        <div class="message" id="endMessage"></div>
+    </div>
+
+    <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
+
+    <script>
+        const cells = Array.from(document.querySelectorAll('.cell'));
+        const scoreElement = document.getElementById('score');
+        const clickCountElement = document.getElementById('clickCount');
+        const winCountElement = document.getElementById('winCount');
+        const lossCountElement = document.getElementById('lossCount');
+        const playButton = document.getElementById('playButton');
+        const restartButton = document.getElementById('restartButton');
+
+        const messages = {
+            horizontal: document.getElementById('horizontalMessage'),
+            vertical: document.getElementById('verticalMessage'),
+            diagonal: document.getElementById('diagonalMessage'),
+            total: document.getElementById('totalPointsMessage'),
+            end: document.getElementById('endMessage')
+        };
+
+        let score = 30;
+        let clickCount = 0;
+        let winCount = 0;
+        let lossCount = 0;
+
+        function updateScore(points) {
+            score += points;
+            scoreElement.textContent = score;
+        }
+
+        function resetMessages() {
+            messages.horizontal.textContent = '';
+            messages.vertical.textContent = '';
+            messages.diagonal.textContent = '';
+            messages.total.textContent = '';
+            messages.end.textContent = '';
+        }
+
+        function flashCells(cellsToFlash, colorClass) {
+            cellsToFlash.forEach(cell => cell.classList.add(colorClass));
+            setTimeout(() => cellsToFlash.forEach(cell => cell.classList.remove(colorClass)), 500);
+        }
+
+        async function checkHorizontal() {
+            let points = 0;
+            let matchInfo = [];
+
+            for (let i = 0; i < 9; i += 3) {
+                const row = [cells[i], cells[i + 1], cells[i + 2]];
+                const values = row.map(cell => cell.textContent);
+                const counts = {};
+
+                values.forEach(value => {
+                    counts[value] = (counts[value] || 0) + 1;
+                });
+
+                if (Object.values(counts).includes(3)) {
+                    points += 5;
+                    flashCells(row, 'highlight-green');
+                    matchInfo.push("+5");
+                } else if (Object.values(counts).includes(2)) {
+                    points += 3;
+                    flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
+                    matchInfo.push("+3");
+                } else {
+                    matchInfo.push("0");
+                }
+            }
+
+            messages.horizontal.textContent = `По горизонтали: ${matchInfo.join(", ")}`;
+            return points;
+        }
+
+        async function checkVertical() {
+            let points = 0;
+            let matchInfo = [];
+
+            for (let i = 0; i < 3; i++) {
+                const column = [cells[i], cells[i + 3], cells[i + 6]];
+                const values = column.map(cell => cell.textContent);
+                const counts = {};
+
+                values.forEach(value => {
+                    counts[value] = (counts[value] || 0) + 1;
+                });
+
+                if (Object.values(counts).includes(3)) {
+                    points += 5;
+                    flashCells(column, 'highlight-blue');
+                    matchInfo.push("+5");
+                } else if (Object.values(counts).includes(2)) {
+                    points += 3;
+                    flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue');
+                    matchInfo.push("+3");
+                } else {
+                    matchInfo.push("0");
+                }
+            }
+
+            messages.vertical.textContent = `По вертикали: ${matchInfo.join(", ")}`;
+            return points;
+        }
+
+        async function checkDiagonal() {
+            let points = 0;
+            const mainDiagonal = [cells[0], cells[4], cells[8]];
+            const antiDiagonal = [cells[2], cells[4], cells[6]];
+            const diagonals = [mainDiagonal, antiDiagonal];
+            let matchInfo = [];
+
+            diagonals.forEach(diagonal => {
+                const values = diagonal.map(cell => cell.textContent);
+                const counts = {};
+
+                values.forEach(value => {
+                    counts[value] = (counts[value] || 0) + 1;
+                });
+
+                if (Object.values(counts).includes(3)) {
+                    points += 6;
+                    flashCells(diagonal, 'highlight-yellow');
+                    matchInfo.push("+6");
+                } else if (Object.values(counts).includes(2)) {
+                    points += 4;
+                    flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow');
+                    matchInfo.push("+4");
+                } else {
+                    matchInfo.push("0");
+                }
+            });
+
+            messages.diagonal.textContent = `По диагонали: ${matchInfo.join(", ")}`;
+            return points;
+        }
+
+        async function playGame() {
+            playButton.disabled = true;
+            resetMessages();
+            cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
+            clickCount++;
+            clickCountElement.textContent = clickCount;
+
+            const horizontalPoints = await checkHorizontal();
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            const verticalPoints = await checkVertical();
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            const diagonalPoints = await checkDiagonal();
+
+            const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
+
+            if (totalPoints > 0) {
+                messages.total.textContent = `Сумма всех рядов: ${totalPoints}`;
+                updateScore(totalPoints);
+            } else {
+                messages.total.textContent = "Совпадений нет, минус 8 очков!";
+                updateScore(-8);
+            }
+
+            if (score >= 200) {
+                winCount++;
+                winCountElement.textContent = winCount;
+                messages.end.textContent = "Вы выиграли!";
+                playButton.disabled = true;
+                restartButton.style.display = 'block';
+            } else if (score <= 0) {
+                lossCount++;
+                lossCountElement.textContent = lossCount;
+                messages.end.textContent = "Вы проиграли!";
+                playButton.disabled = true;
+                restartButton.style.display = 'block';
+            } else {
+                playButton.disabled = false;
+            }
+        }
+
+        restartButton.addEventListener('click', () => {
+            score = 30;
+            clickCount = 0;
+            scoreElement.textContent = score;
+            clickCountElement.textContent = clickCount;
+            playButton.disabled = false;
+            restartButton.style.display = 'none';
+            resetMessages();
+        });
+
+        playButton.addEventListener('click', playGame);
+    </script>
+</body>
+</html>
