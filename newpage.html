@@ -5,157 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Игра</title>
     <style>
-       body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background-image: url('https://i.imgur.com/igRPPo4.jpeg');
-        background-size: cover;
-        background-attachment: fixed;
-        background-position: center;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        min-height: 100vh;
-    }
-
-    h1, h2, h3 {
-        margin: 5px;
-    }
-
-    .scoreboard, .messages {
-        margin-top: 20px;
-        color: black;
-        text-align: center;
-    }
-
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(3, 80px);
-        grid-gap: 10px;
-        margin: 20px;
-    }
-
-    .cell {
-        width: 80px;
-        height: 80px;
-        border: 3px solid #6D8C00;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        transition: background-color 0.3s;
-    }
-
-    /* Добавляем стили для адаптивности */
-    @media (max-width: 768px) {
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('');
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+        h1, h2, h3 {
+            margin: 5px;
+        }
+        .scoreboard, .messages {
+            margin-top: 20px;
+            color: black;
+            text-align: center;
+        }
         .grid {
-            grid-template-columns: repeat(3, 60px);
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            grid-gap: 10px;
+            margin: 20px;
         }
         .cell {
-            width: 60px;
-            height: 60px;
-            font-size: 20px;
-        }
-        .play-button, .restart-button {
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-        .game-title {
-            font-size: 28px;
-        }
-        .game-rules {
-            font-size: 16px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .grid {
-            grid-template-columns: repeat(3, 50px);
-        }
-        .cell {
-            width: 50px;
-            height: 50px;
-            font-size: 18px;
-        }
-        .play-button, .restart-button {
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-        .game-title {
+            width: 80px;
+            height: 80px;
+            border: 3px solid #6D8C00;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 24px;
+            transition: background-color 0.3s;
+        }
+        .highlight-green { background-color: lightgreen; }
+        .highlight-blue { background-color: lightblue; }
+        .highlight-yellow { background-color: #EC9704; }
+        .play-button, .restart-button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .play-button:hover, .restart-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .play-button[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #ccc;
+        }
+
+        .message {
+            margin-top: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .green { color: green; }
+        .blue { color: blue; }
+        .yellow { color: #EC9704; }
+        .black { color: black; }
+
+        /* Добавим стиль для названия и правил */
+        .game-title {
+            font-size: 36px;
+            color: #583E26;
+            margin-top: 20px;
         }
         .game-rules {
-            font-size: 14px;
+            font-size: 18px;
+            color: #583E26;
+            margin-top: 10px;
+            text-align: center;
+            max-width: 600px;
         }
-    }
-
-    .highlight-green { background-color: lightgreen; }
-    .highlight-blue { background-color: lightblue; }
-    .highlight-yellow { background-color: lightyellow; }
-
-    .play-button, .restart-button {
-        margin-top: 20px;
-        padding: 12px 24px;
-        font-size: 18px;
-        border-radius: 8px;
-        cursor: pointer;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        transition: background-color 0.3s, transform 0.2s;
-    }
-
-    .play-button:hover, .restart-button:hover {
-        background-color: #45a049;
-        transform: scale(1.05);
-    }
-
-    .play-button[disabled] {
-        opacity: 0.6;
-        cursor: not-allowed;
-        background-color: #ccc;
-    }
-
-    .message {
-        margin-top: 12px;
-        font-size: 20px;
-        font-weight: bold;
-        color: #333;
-    }
-    .green { color: green; }
-    .blue { color: blue; }
-    .yellow { color: #EC9704; }
-    .black { color: black; }
-
-    /* Добавим стиль для названия и правил */
-    .game-title {
-        font-size: 36px;
-        color: #583E26;
-        margin-top: 20px;
-    }
-
-    .game-rules {
-        font-size: 18px;
-        color: #583E26;
-        margin-top: 10px;
-        text-align: center;
-        max-width: 600px;
-    }
     </style>
 </head>
 <body>
     <!-- Название игры -->
-    <div class="game-title">Игра "Найди совпадения"</div>
+    <div class="game-title">Совпадения в ряд</div>
 
     <!-- Правила игры -->
     <div class="game-rules">
-        <p>Правила игры:</p>
-        <p>1. Игра состоит из сетки 3x3 с случайными числами от 0 до 9.</p>
-        <p>2. Для каждого ряда (горизонтального, вертикального и диагонального) будут проверяться совпадения чисел.</p>
-        <p>3. Если в ряду есть совпадения, вы получите очки. Чем больше совпадений, тем больше очков.</p>
-        <p>4. Если очки достигают 200, вы выигрываете!</p>
-        <p>5. Если очки становятся равны 0, вы проигрываете.</p>
+        <p>Наберите 200 очков, чтобы победить</p>
+        <p>-8 очков за все разные</p>
+       
     </div>
 
     <h1>Счет: <span id="score">30</span></h1>
@@ -221,156 +164,167 @@
             messages.end.textContent = '';
         }
 
-        function flashCells(cellsToFlash, colorClass) {
+        function flashCells(cellsToFlash, colorClass, delay = 0) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
             cellsToFlash.forEach(cell => cell.classList.add(colorClass));
-            setTimeout(() => cellsToFlash.forEach(cell => cell.classList.remove(colorClass)), 500);
-        }
+        }, delay);
 
-        async function checkHorizontal() {
-            let points = 0;
-            let matchInfo = [];
+        setTimeout(() => {
+            cellsToFlash.forEach(cell => cell.classList.remove(colorClass));
+            resolve(); // Завершение подсветки
+        }, delay + 300); // Подсветка длится 500 мс
+    });
+}
 
-            for (let i = 0; i < 9; i += 3) {
-                const row = [cells[i], cells[i + 1], cells[i + 2]];
-                const values = row.map(cell => cell.textContent);
-                const counts = {};
+async function checkHorizontal() {
+    let points = 0;
+    let matchInfo = [];
+    for (let i = 0; i < 9; i += 3) {
+        const row = [cells[i], cells[i + 1], cells[i + 2]];
+        const values = row.map(cell => cell.textContent);
+        const counts = {};
 
-                values.forEach(value => {
-                    counts[value] = (counts[value] || 0) + 1;
-                });
-
-                if (Object.values(counts).includes(3)) {
-                    points += 5;
-                    flashCells(row, 'highlight-green');
-                    matchInfo.push("+5");
-                } else if (Object.values(counts).includes(2)) {
-                    points += 3;
-                    flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
-                    matchInfo.push("+3");
-                } else {
-                    matchInfo.push("0");
-                }
-            }
-
-            messages.horizontal.textContent = `По горизонтали: ${matchInfo.join(", ")}`;
-            return points;
-        }
-
-        async function checkVertical() {
-            let points = 0;
-            let matchInfo = [];
-
-            for (let i = 0; i < 3; i++) {
-                const column = [cells[i], cells[i + 3], cells[i + 6]];
-                const values = column.map(cell => cell.textContent);
-                const counts = {};
-
-                values.forEach(value => {
-                    counts[value] = (counts[value] || 0) + 1;
-                });
-
-                if (Object.values(counts).includes(3)) {
-                    points += 5;
-                    flashCells(column, 'highlight-blue');
-                    matchInfo.push("+5");
-                } else if (Object.values(counts).includes(2)) {
-                    points += 3;
-                    flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue');
-                    matchInfo.push("+3");
-                } else {
-                    matchInfo.push("0");
-                }
-            }
-
-            messages.vertical.textContent = `По вертикали: ${matchInfo.join(", ")}`;
-            return points;
-        }
-
-        async function checkDiagonal() {
-            let points = 0;
-            const mainDiagonal = [cells[0], cells[4], cells[8]];
-            const antiDiagonal = [cells[2], cells[4], cells[6]];
-            const diagonals = [mainDiagonal, antiDiagonal];
-            let matchInfo = [];
-
-            diagonals.forEach(diagonal => {
-                const values = diagonal.map(cell => cell.textContent);
-                const counts = {};
-
-                values.forEach(value => {
-                    counts[value] = (counts[value] || 0) + 1;
-                });
-
-                if (Object.values(counts).includes(3)) {
-                    points += 6;
-                    flashCells(diagonal, 'highlight-yellow');
-                    matchInfo.push("+6");
-                } else if (Object.values(counts).includes(2)) {
-                    points += 4;
-                    flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow');
-                    matchInfo.push("+4");
-                } else {
-                    matchInfo.push("0");
-                }
-            });
-
-            messages.diagonal.textContent = `По диагонали: ${matchInfo.join(", ")}`;
-            return points;
-        }
-
-        async function playGame() {
-            playButton.disabled = true;
-            resetMessages();
-            cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
-            clickCount++;
-            clickCountElement.textContent = clickCount;
-
-            const horizontalPoints = await checkHorizontal();
-            await new Promise(resolve => setTimeout(resolve, 200));
-
-            const verticalPoints = await checkVertical();
-            await new Promise(resolve => setTimeout(resolve, 200));
-
-            const diagonalPoints = await checkDiagonal();
-
-            const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
-
-            if (totalPoints > 0) {
-                messages.total.textContent = `Сумма всех рядов: ${totalPoints}`;
-                updateScore(totalPoints);
-            } else {
-                messages.total.textContent = "Совпадений нет, минус 8 очков!";
-                updateScore(-8);
-            }
-
-            if (score >= 200) {
-                winCount++;
-                winCountElement.textContent = winCount;
-                messages.end.textContent = "Вы выиграли!";
-                playButton.disabled = true;
-                restartButton.style.display = 'block';
-            } else if (score <= 0) {
-                lossCount++;
-                lossCountElement.textContent = lossCount;
-                messages.end.textContent = "Вы проиграли!";
-                playButton.disabled = true;
-                restartButton.style.display = 'block';
-            } else {
-                playButton.disabled = false;
-            }
-        }
-
-        restartButton.addEventListener('click', () => {
-            score = 30;
-            clickCount = 0;
-            scoreElement.textContent = score;
-            clickCountElement.textContent = clickCount;
-            playButton.disabled = false;
-            restartButton.style.display = 'none';
-            resetMessages();
+        values.forEach(value => {
+            counts[value] = (counts[value] || 0) + 1;
         });
 
-        playButton.addEventListener('click', playGame);
+        if (Object.values(counts).includes(3)) {
+            points += 5;
+            await flashCells(row, 'highlight-green'); // Подсветка для полного совпадения
+            matchInfo.push("+5");
+            await new Promise(resolve => setTimeout(resolve, 300)); // Добавляем задержку в 500 мс между подсветками
+        } else if (Object.values(counts).includes(2)) {
+            points += 3;
+            await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green'); // Подсветка для частичного совпадения
+            matchInfo.push("+3");
+            await new Promise(resolve => setTimeout(resolve, 100)); // Добавляем задержку
+        } else {
+            matchInfo.push("0");
+        }
+    }
+
+    messages.horizontal.textContent = `По горизонтали: ${matchInfo.join(", ")}`;
+    return points;
+}
+
+
+async function checkVertical() {
+    let points = 0;
+    let matchInfo = [];
+    for (let i = 0; i < 3; i++) {
+        const column = [cells[i], cells[i + 3], cells[i + 6]];
+        const values = column.map(cell => cell.textContent);
+        const counts = {};
+
+        values.forEach(value => {
+            counts[value] = (counts[value] || 0) + 1;
+        });
+
+        if (Object.values(counts).includes(3)) {
+            points += 5;
+            await flashCells(column, 'highlight-blue', 300); // Подсветка вертикального ряда с задержкой
+            matchInfo.push("+5");
+        } else if (Object.values(counts).includes(2)) {
+            points += 3;
+            await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue', 300);
+            matchInfo.push("+3");
+        } else {
+            matchInfo.push("0");
+        }
+    }
+
+    messages.vertical.textContent = `По вертикали: ${matchInfo.join(", ")}`;
+    return points;
+}
+
+async function checkDiagonal() {
+    let points = 0;
+    const mainDiagonal = [cells[0], cells[4], cells[8]];
+    const antiDiagonal = [cells[2], cells[4], cells[6]];
+    const diagonals = [mainDiagonal, antiDiagonal];
+    let matchInfo = [];
+
+    for (const diagonal of diagonals) {
+        const values = diagonal.map(cell => cell.textContent);
+        const counts = {};
+
+        values.forEach(value => {
+            counts[value] = (counts[value] || 0) + 1;
+        });
+
+        if (Object.values(counts).includes(3)) {
+            points += 6;
+            await flashCells(diagonal, 'highlight-yellow', 300); // Диагональная подсветка
+            matchInfo.push("+6");
+        } else if (Object.values(counts).includes(2)) {
+            points += 4;
+            await flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow', 300);
+            matchInfo.push("+4");
+        } else {
+            matchInfo.push("0");
+        }
+    }
+
+    messages.diagonal.textContent = `По диагонали: ${matchInfo.join(", ")}`;
+    return points;
+}
+
+async function playGame() {
+    playButton.disabled = true;
+    resetMessages();
+    cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10)); // Заполнение ячеек случайными числами
+    clickCount++;
+    clickCountElement.textContent = clickCount;
+
+    // Запуск подсветки поочередно
+    const horizontalPoints = await checkHorizontal();
+    await new Promise(resolve => setTimeout(resolve, 50)); // Перерыв между подсветками
+
+    const verticalPoints = await checkVertical();
+    await new Promise(resolve => setTimeout(resolve, 50)); // Перерыв
+
+    const diagonalPoints = await checkDiagonal();
+
+    const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
+
+    if (totalPoints > 0) {
+        messages.total.textContent = `Сумма всех рядов: ${totalPoints}`;
+        updateScore(totalPoints);
+    } else {
+        messages.total.textContent = "Совпадений нет, минус 8 очков!";
+        updateScore(-8);
+    }
+
+    if (score >= 200) {
+        winCount++;
+        winCountElement.textContent = winCount;
+        messages.end.textContent = "Вы выиграли!";
+        playButton.disabled = true;
+        restartButton.style.display = 'block';
+    } else if (score <= 0) {
+        lossCount++;
+        lossCountElement.textContent = lossCount;
+        messages.end.textContent = "Вы проиграли!";
+        playButton.disabled = true;
+        restartButton.style.display = 'block';
+    } else {
+        playButton.disabled = false;
+    }
+}
+
+restartButton.addEventListener('click', () => {
+    score = 30;
+    clickCount = 0;
+    scoreElement.textContent = score;
+    clickCountElement.textContent = clickCount;
+    playButton.disabled = false;
+    restartButton.style.display = 'none';
+    resetMessages();
+});
+
+playButton.addEventListener('click', playGame);
+
     </script>
 </body>
 </html>
