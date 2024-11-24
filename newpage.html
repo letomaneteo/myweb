@@ -39,6 +39,7 @@ background-position: center center;
         .grid {
             grid-template-columns: repeat(3, 60px);
             grid-gap: 8px;
+margin: 10px 0;
         }
         .cell {
             width: 60px;
@@ -47,6 +48,7 @@ background-position: center center;
         }
         h1, h2, h3 {
             font-size: 16px;
+ margin: 5px 0;
         }
         .game-title {
             font-size: 24px;
@@ -57,9 +59,11 @@ background-position: center center;
         .play-button, .restart-button {
             font-size: 14px;
             padding: 10px 20px;
+margin-top: 10px;
         }
         .messages .message {
             font-size: 14px;
+margin-top: 10px;
         }
  body {
         background-attachment: scroll; /* Позволяет фону прокручиваться на мобильных устройствах */
@@ -116,12 +120,13 @@ background-position: center center;
             margin-top: 20px;
         }
         .game-rules {
-            font-size: 18px;
-            color: #583E26;
-            margin-top: 10px;
-            text-align: center;
-            max-width: 600px;
-        }
+    font-size: 14px; /* Уменьшенный размер текста правил */
+    margin: 5px 0; /* Вертикальные отступы уменьшены */
+    line-height: 1.4; /* Меньшее расстояние между строками */
+    padding: 0; /* Убираем внутренние отступы */
+    max-width: 90%; /* Сужение блока для мобильных */
+    text-align: center;
+}
     </style>
 </head>
 <body>
