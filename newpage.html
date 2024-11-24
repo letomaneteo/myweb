@@ -5,39 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Игра</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-image: url('');
-            background-size: cover;
-            font-family: Arial, sans-serif;
+       body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-image: url('https://i.imgur.com/mCPYCHo.jpeg'); /* Замените на путь к вашей картинке */
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+background-position: center center;
+        font-family: Arial, sans-serif;
+        padding: 10px;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 80px);
+        grid-gap: 10px;
+        margin: 20px;
+    }
+    .cell {
+        width: 80px;
+        height: 80px;
+        border: 3px solid #6D8C00;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        transition: background-color 0.3s;
+    }
+    /* Медиазапросы для мобильных */
+    @media (max-width: 600px) {
+        .grid {
+            grid-template-columns: repeat(3, 60px);
+            grid-gap: 8px;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            font-size: 18px;
         }
         h1, h2, h3 {
-            margin: 5px;
+            font-size: 16px;
         }
+        .game-title {
+            font-size: 24px;
+        }
+        .game-rules {
+            font-size: 14px;
+        }
+        .play-button, .restart-button {
+            font-size: 14px;
+            padding: 10px 20px;
+        }
+        .messages .message {
+            font-size: 14px;
+        }
+ body {
+        background-attachment: scroll; /* Позволяет фону прокручиваться на мобильных устройствах */
+    }
+}
+  
         .scoreboard, .messages {
             margin-top: 20px;
             color: black;
             text-align: center;
         }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 80px);
-            grid-gap: 10px;
-            margin: 20px;
-        }
-        .cell {
-            width: 80px;
-            height: 80px;
-            border: 3px solid #6D8C00;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            transition: background-color 0.3s;
-        }
+       
         .highlight-green { background-color: lightgreen; }
         .highlight-blue { background-color: lightblue; }
         .highlight-yellow { background-color: #EC9704; }
@@ -92,11 +126,11 @@
 </head>
 <body>
     <!-- Название игры -->
-    <div class="game-title">Совпадения в ряд</div>
+    <div class="game-title">22 КЛИКА</div>
 
     <!-- Правила игры -->
     <div class="game-rules">
-        <p>Наберите 200 очков, чтобы победить</p>
+        <p>Наберите 200 очков за 22 клика, чтобы победить</p>
         <p>-8 очков за все разные</p>
        
     </div>
@@ -120,12 +154,20 @@
     <button class="play-button" id="playButton">Играть</button>
 
     <div class="messages">
-        <div class="message green" id="horizontalMessage"></div>
-        <div class="message blue" id="verticalMessage"></div>
-        <div class="message yellow" id="diagonalMessage"></div>
-        <div class="message black" id="totalPointsMessage"></div>
-        <div class="message" id="endMessage"></div>
+    <div class="message green" id="horizontalMessage">
+        По горизонтали: <span id="horizontalResult"></span>
     </div>
+    <div class="message blue" id="verticalMessage">
+        По вертикали: <span id="verticalResult"></span>
+    </div>
+    <div class="message yellow" id="diagonalMessage">
+        По диагонали: <span id="diagonalResult"></span>
+    </div>
+    <div class="message black" id="totalPointsMessage">
+        Сумма всех рядов: <span id="totalResult"></span>
+    </div>
+    <div class="message" id="endMessage"></div>
+</div>
 
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
 
@@ -156,13 +198,17 @@
             scoreElement.textContent = score;
         }
 
-        function resetMessages() {
-            messages.horizontal.textContent = '';
-            messages.vertical.textContent = '';
-            messages.diagonal.textContent = '';
-            messages.total.textContent = '';
-            messages.end.textContent = '';
-        }
+       function resetMessages() {
+    document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('horizontalResult').textContent = '';
+    document.getElementById('verticalResult').textContent = '';
+    document.getElementById('diagonalResult').textContent = '';
+    document.getElementById('totalResult').textContent = '';
+    messages.end.textContent = '';
+});
+
+}
+
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
     return new Promise((resolve) => {
@@ -191,23 +237,20 @@ async function checkHorizontal() {
 
         if (Object.values(counts).includes(3)) {
             points += 5;
-            await flashCells(row, 'highlight-green'); // Подсветка для полного совпадения
+            await flashCells(row, 'highlight-green');
             matchInfo.push("+5");
-            await new Promise(resolve => setTimeout(resolve, 300)); // Добавляем задержку в 500 мс между подсветками
         } else if (Object.values(counts).includes(2)) {
             points += 3;
-            await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green'); // Подсветка для частичного совпадения
+            await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
             matchInfo.push("+3");
-            await new Promise(resolve => setTimeout(resolve, 100)); // Добавляем задержку
         } else {
             matchInfo.push("0");
         }
     }
 
-    messages.horizontal.textContent = `По горизонтали: ${matchInfo.join(", ")}`;
+    document.getElementById('horizontalResult').textContent = matchInfo.join(", ");
     return points;
 }
-
 
 async function checkVertical() {
     let points = 0;
@@ -223,7 +266,7 @@ async function checkVertical() {
 
         if (Object.values(counts).includes(3)) {
             points += 5;
-            await flashCells(column, 'highlight-blue', 300); // Подсветка вертикального ряда с задержкой
+            await flashCells(column, 'highlight-blue', 300);
             matchInfo.push("+5");
         } else if (Object.values(counts).includes(2)) {
             points += 3;
@@ -234,7 +277,7 @@ async function checkVertical() {
         }
     }
 
-    messages.vertical.textContent = `По вертикали: ${matchInfo.join(", ")}`;
+    document.getElementById('verticalResult').textContent = matchInfo.join(", ");
     return points;
 }
 
@@ -255,7 +298,7 @@ async function checkDiagonal() {
 
         if (Object.values(counts).includes(3)) {
             points += 6;
-            await flashCells(diagonal, 'highlight-yellow', 300); // Диагональная подсветка
+            await flashCells(diagonal, 'highlight-yellow', 300);
             matchInfo.push("+6");
         } else if (Object.values(counts).includes(2)) {
             points += 4;
@@ -266,50 +309,55 @@ async function checkDiagonal() {
         }
     }
 
-    messages.diagonal.textContent = `По диагонали: ${matchInfo.join(", ")}`;
+    document.getElementById('diagonalResult').textContent = matchInfo.join(", ");
     return points;
 }
 
 async function playGame() {
-    playButton.disabled = true;
+    playButton.disabled = true; // Блокируем кнопку на время выполнения хода
     resetMessages();
-    cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10)); // Заполнение ячеек случайными числами
+
+    // Заполняем ячейки случайными числами
+    cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
     clickCount++;
     clickCountElement.textContent = clickCount;
 
-    // Запуск подсветки поочередно
+    // Подсчёт очков
     const horizontalPoints = await checkHorizontal();
-    await new Promise(resolve => setTimeout(resolve, 50)); // Перерыв между подсветками
-
     const verticalPoints = await checkVertical();
-    await new Promise(resolve => setTimeout(resolve, 50)); // Перерыв
-
     const diagonalPoints = await checkDiagonal();
 
     const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
 
     if (totalPoints > 0) {
-        messages.total.textContent = `Сумма всех рядов: ${totalPoints}`;
+        document.getElementById('totalResult').textContent = totalPoints;
         updateScore(totalPoints);
     } else {
-        messages.total.textContent = "Совпадений нет, минус 8 очков!";
+        document.getElementById('totalResult').textContent = "-8 (нет совпадений)";
         updateScore(-8);
     }
 
+    // Проверяем состояние игры
     if (score >= 200) {
         winCount++;
         winCountElement.textContent = winCount;
         messages.end.textContent = "Вы выиграли!";
         playButton.disabled = true;
         restartButton.style.display = 'block';
-    } else if (score <= 0) {
-        lossCount++;
-        lossCountElement.textContent = lossCount;
-        messages.end.textContent = "Вы проиграли!";
+    } else if (clickCount >= 22) { // Проверяем количество кликов
+        if (score < 200) {
+            lossCount++;
+            lossCountElement.textContent = lossCount;
+            messages.end.textContent = "Вы проиграли! Не хватило очков.";
+        } else {
+            winCount++;
+            winCountElement.textContent = winCount;
+            messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+        }
         playButton.disabled = true;
         restartButton.style.display = 'block';
     } else {
-        playButton.disabled = false;
+        playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
     }
 }
 
@@ -321,6 +369,7 @@ restartButton.addEventListener('click', () => {
     playButton.disabled = false;
     restartButton.style.display = 'none';
     resetMessages();
+    messages.end.textContent = ''; // Убираем текст "Вы выиграли!" или "Вы проиграли!"
 });
 
 playButton.addEventListener('click', playGame);
