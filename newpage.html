@@ -175,28 +175,7 @@ margin-top: 10px;
 </div>
 <h1>Привет, <span id="username"></span>!</h1>
 
-<script>
-        // Инициализация Telegram Web App SDK
-        Telegram.WebApp.init();
-
-        // Ожидаем, пока Web App SDK не инициализируется
-        Telegram.WebApp.onEvent('initialized', function() {
-            const user = Telegram.WebApp.initDataUnsafe;
-
-            if (user && user.user) {
-                const username = user.user.first_name || "Гость";  // Получаем имя пользователя или ставим "Гость", если имя отсутствует
-                const telegramId = user.user.id;  // Получаем ID пользователя
-
-                // Выводим имя пользователя и ID на странице
-                document.getElementById('username').textContent = username;
-                document.getElementById('user_id').textContent = telegramId;
-            } else {
-                // Если данные пользователя не доступны
-                document.getElementById('username').textContent = "Гость";
-                document.getElementById('user_id').textContent = "неизвестен";
-            }
-        });
-    </script>
+    
     <script>
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
@@ -260,6 +239,27 @@ function saveProgress() {
     localStorage.setItem(`progress_${telegramId}`, JSON.stringify(progress));
 }
 
+
+        // Инициализация Telegram Web App SDK
+        Telegram.WebApp.init();
+
+        // Ожидаем, пока Web App SDK не инициализируется
+        Telegram.WebApp.onEvent('initialized', function() {
+            const user = Telegram.WebApp.initDataUnsafe;
+
+            if (user && user.user) {
+                const username = user.user.first_name || "Гость";  // Получаем имя пользователя или ставим "Гость", если имя отсутствует
+                const telegramId = user.user.id;  // Получаем ID пользователя
+
+                // Выводим имя пользователя и ID на странице
+                document.getElementById('username').textContent = username;
+                document.getElementById('user_id').textContent = telegramId;
+            } else {
+                // Если данные пользователя не доступны
+                document.getElementById('username').textContent = "Гость";
+                document.getElementById('user_id').textContent = "неизвестен";
+            }
+        });
 function loadProgress() {
     const savedProgress = localStorage.getItem(`progress_${telegramId}`);
     if (savedProgress) {
