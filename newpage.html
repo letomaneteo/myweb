@@ -402,52 +402,6 @@ async function playGame() {
         playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
     }
 }
-@dp.message(Command(commands=["update_user_data"]))
-async def update_user_data_handler(message: Message) -> None:
-    if message.from_user.id != ADMIN_ID:
-        await message.answer("У вас нет прав для обновления данных пользователей.")
-        return
-
-    # Извлекаем данные из сообщения
-    data = message.text[len("/update_user_data "):].strip().split(',')
-    if len(data) != 3:
-        await message.answer("Пожалуйста, укажите id пользователя, новый уровень и очки в формате 'id,level,score'.")
-        return
-    
-    user_id, level, score = int(data[0]), int(data[1]), int(data[2])
-
-    # Обновляем данные пользователя
-    await update_user_data(user_id, level, score)
-    await message.answer(f"Данные пользователя {user_id} обновлены. Новый уровень: {level}, новые очки: {score}.")
-
-# Функция для обновления данных пользователя
-async def update_user_data(telegram_id, level, score):
-    async with aiosqlite.connect('telegram.db') as db:
-        # Проверяем текущие данные пользователя
-        cursor = await db.execute("SELECT level, score, victories FROM users WHERE telegram_id=?", (telegram_id,))
-        data = await cursor.fetchone()
-
-        if data is None:
-            return
-
-        current_level, current_score, current_victories = data
-
-        # Проверяем, увеличилось ли количество побед
-        if current_victories + 1 == level:  # Победа была увеличена на 1
-            # Обновляем уровень и очки
-            new_level = current_level + 1
-            new_score = current_score + 10
-
-            # Обновляем данные в базе данных
-            await db.execute("""
-                UPDATE users 
-                SET level = ?, score = ?, victories = ? 
-                WHERE telegram_id = ?
-            """, (new_level, new_score, current_victories + 1, telegram_id))
-            await db.commit()
-
-            return new_level, new_score
-        return None
 // После победы в игре
 function onVictory() {
     const userId = getUserId(); // Получаем ID пользователя
