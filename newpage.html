@@ -401,7 +401,7 @@ async function playGame() {
         // Отправляем обновленные данные боту через URL
         sendToBot();
     } else if (clickCount >= 22) { // Проверяем количество кликов
-        if (score < 200) {
+        if (score < 50) {
             lossCount++;
             lossCountElement.textContent = lossCount;
             messages.end.textContent = "Вы проиграли! Не хватило очков.";
