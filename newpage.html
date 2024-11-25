@@ -212,33 +212,58 @@ margin-top: 10px;
     messages.end.textContent = '';
 });
 
-// Функция для получения параметров из URL
+}
 function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
     return Object.fromEntries(params.entries());
 }
 
-// Извлекаем имя пользователя из URL
 const queryParams = getQueryParams();
-const username = queryParams['username'];
-
-// Если имя пользователя найдено, отображаем приветствие
-if (username) {
-    const greetingMessage = `Здравствуйте, ${username}!`;
-    const greetingElement = document.createElement('div');
-    greetingElement.textContent = greetingMessage;
-    document.body.insertBefore(greetingElement, document.querySelector('.game-title')); // Вставляем приветствие перед названием игры
-} else {
-    console.error("Имя пользователя не найдено в параметрах URL.");
-}
 const telegramId = queryParams['telegram_id'];
+const userName = queryParams['name'] || 'Гость'; // По умолчанию — "Гость"
 
 if (telegramId) {
-    console.log("Telegram ID:", telegramId);
-    // Здесь вы можете выполнить авторизацию
+    const greetingElement = document.createElement('h2');
+    greetingElement.textContent = `Здравствуйте, ${userName} (ID: ${telegramId})`;
+    document.body.insertBefore(greetingElement, document.body.firstChild);
 } else {
     console.error("Telegram ID не найден в параметрах URL.");
 }
+function saveProgress() {
+    const progress = {
+        score,
+        clickCount,
+        winCount,
+        lossCount,
+    };
+    localStorage.setItem(`progress_${telegramId}`, JSON.stringify(progress));
+}
+
+function loadProgress() {
+    const savedProgress = localStorage.getItem(`progress_${telegramId}`);
+    if (savedProgress) {
+        const { score: savedScore, clickCount: savedClickCount, winCount: savedWinCount, lossCount: savedLossCount } = JSON.parse(savedProgress);
+        score = savedScore;
+        clickCount = savedClickCount;
+        winCount = savedWinCount;
+        lossCount = savedLossCount;
+
+        scoreElement.textContent = score;
+        clickCountElement.textContent = clickCount;
+        winCountElement.textContent = winCount;
+        lossCountElement.textContent = lossCount;
+    }
+}
+
+// Загружаем прогресс при запуске
+document.addEventListener('DOMContentLoaded', () => {
+    loadProgress();
+});
+
+// Сохраняем прогресс после каждого действия
+playButton.addEventListener('click', saveProgress);
+restartButton.addEventListener('click', saveProgress);
+
 
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
