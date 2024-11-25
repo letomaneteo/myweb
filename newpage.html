@@ -13,7 +13,7 @@
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
-        background-position: center center;
+background-position: center center;
         font-family: Arial, sans-serif;
         padding: 10px;
     }
@@ -34,63 +34,113 @@
         font-size: 24px;
         transition: background-color 0.3s;
     }
-    .scoreboard, .messages {
-        margin-top: 20px;
-        color: black;
-        text-align: center;
+    /* Медиазапросы для мобильных */
+    @media (max-width: 600px) {
+        .grid {
+            grid-template-columns: repeat(3, 60px);
+            grid-gap: 8px;
+margin: 10px 0;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            font-size: 18px;
+        }
+        h1, h2, h3 {
+            font-size: 16px;
+ margin: 2px 0;
+        }
+        .game-title {
+            font-size: 20px;
+        }
+        .game-rules {
+            font-size: 14px;
+        }
+        .play-button, .restart-button {
+            font-size: 14px;
+            padding: 10px 20px;
+margin-top: 10px;
+        }
+        .messages .message {
+            font-size: 14px;
+margin-top: 10px;
+        }
+ body {
+        background-attachment: scroll; /* Позволяет фону прокручиваться на мобильных устройствах */
     }
-    .highlight-green { background-color: lightgreen; }
-    .highlight-blue { background-color: lightblue; }
-    .highlight-yellow { background-color: #EC9704; }
-    .play-button, .restart-button {
-        margin-top: 20px;
-        padding: 12px 24px;
-        font-size: 18px;
-        border-radius: 8px;
-        cursor: pointer;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        transition: background-color 0.3s, transform 0.2s;
-    }
+}
+  
+        .scoreboard, .messages {
+            margin-top: 20px;
+            color: black;
+            text-align: center;
+        }
+       
+        .highlight-green { background-color: lightgreen; }
+        .highlight-blue { background-color: lightblue; }
+        .highlight-yellow { background-color: #EC9704; }
+        .play-button, .restart-button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            transition: background-color 0.3s, transform 0.2s;
+        }
 
-    .play-button:hover, .restart-button:hover {
-        background-color: #45a049;
-        transform: scale(1.05);
-    }
+        .play-button:hover, .restart-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
 
-    .message {
-        margin-top: 12px;
-        font-size: 20px;
-        font-weight: bold;
-        color: #333;
-    }
-    .green { color: green; }
-    .blue { color: blue; }
-    .yellow { color: #EC9704; }
-    .black { color: black; }
+        .play-button[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #ccc;
+        }
 
-    .game-title {
-        font-size: 36px;
-        color: #583E26;
-        margin-top: 20px;
-    }
+        .message {
+            margin-top: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .green { color: green; }
+        .blue { color: blue; }
+        .yellow { color: #EC9704; }
+        .black { color: black; }
 
-    .game-rules {
-        font-size: 14px;
-        margin: 5px 0;
-        line-height: 1.4;
-        padding: 0;
-        max-width: 90%;
-        text-align: center;
-    }
+        /* Добавим стиль для названия и правил */
+        .game-title {
+            font-size: 36px;
+            color: #583E26;
+            margin-top: 20px;
+        }
+        .game-rules {
+    font-size: 14px; /* Уменьшенный размер текста правил */
+    margin: 5px 0; /* Вертикальные отступы уменьшены */
+    line-height: 1.4; /* Меньшее расстояние между строками */
+    padding: 0; /* Убираем внутренние отступы */
+    max-width: 90%; /* Сужение блока для мобильных */
+    text-align: center;
+}
     </style>
 </head>
 <body>
+    <!-- Добавьте сюда, где нужно отображать имя пользователя -->
+<h1>Привет, <span id="username">Гость</span>!</h1>
+
+    <!-- Название игры -->
     <div class="game-title">22 КЛИКА</div>
+
+    <!-- Правила игры -->
     <div class="game-rules">
         <p>Наберите 200 очков за 22 клика, чтобы победить</p>
         <p>-8 очков за все разные</p>
+       
     </div>
 
     <h1>Счет: <span id="score">30</span></h1>
@@ -112,27 +162,24 @@
     <button class="play-button" id="playButton">Играть</button>
 
     <div class="messages">
-        <div class="message green" id="horizontalMessage">
-            По горизонтали: <span id="horizontalResult"></span>
-        </div>
-        <div class="message blue" id="verticalMessage">
-            По вертикали: <span id="verticalResult"></span>
-        </div>
-        <div class="message yellow" id="diagonalMessage">
-            По диагонали: <span id="diagonalResult"></span>
-        </div>
-        <div class="message black" id="totalPointsMessage">
-            Сумма всех рядов: <span id="totalResult"></span>
-        </div>
-        <div class="message" id="endMessage"></div>
+    <div class="message green" id="horizontalMessage">
+        По горизонтали: <span id="horizontalResult"></span>
     </div>
+    <div class="message blue" id="verticalMessage">
+        По вертикали: <span id="verticalResult"></span>
+    </div>
+    <div class="message yellow" id="diagonalMessage">
+        По диагонали: <span id="diagonalResult"></span>
+    </div>
+    <div class="message black" id="totalPointsMessage">
+        Сумма всех рядов: <span id="totalResult"></span>
+    </div>
+    <div class="message" id="endMessage"></div>
+</div>
 
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();  // Инициализация SDK
-
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
         const clickCountElement = document.getElementById('clickCount');
@@ -154,108 +201,230 @@
         let winCount = 0;
         let lossCount = 0;
 
-        // Получаем данные пользователя из Telegram WebApp SDK
-        const user = tg.initDataUnsafe?.user;
-        const userName = user?.first_name || 'Гость';
-        const telegramId = user?.id || 'Неизвестно';
-
-        // Отображаем приветствие с именем пользователя
-        const greetingElement = document.createElement('div');
-        greetingElement.textContent = `Привет, ${userName}! Ваш ID: ${telegramId}`;
-        document.body.prepend(greetingElement);  // Добавляем приветствие на страницу
-
-        // Сохраняем прогресс игры в локальное хранилище (для примера)
-        function saveProgress() {
-            localStorage.setItem(`gameProgress_${telegramId}`, JSON.stringify({ score, winCount, lossCount }));
-        }
-
-        // Загрузка прогресса игры
-        function loadProgress() {
-            const savedData = localStorage.getItem(`gameProgress_${telegramId}`);
-            if (savedData) {
-                const progress = JSON.parse(savedData);
-                score = progress.score;
-                winCount = progress.winCount;
-                lossCount = progress.lossCount;
-
-                // Обновляем интерфейс
-                scoreElement.textContent = score;
-                winCountElement.textContent = winCount;
-                lossCountElement.textContent = lossCount;
-            }
-        }
-
-        loadProgress(); // Загружаем прогресс при загрузке страницы
-
         function updateScore(points) {
             score += points;
             scoreElement.textContent = score;
-            saveProgress();  // Сохраняем прогресс после изменения счета
         }
 
-        function resetMessages() {
-            document.addEventListener('DOMContentLoaded', () => {
-                document.getElementById('horizontalResult').textContent = '';
-                document.getElementById('verticalResult').textContent = '';
-                document.getElementById('diagonalResult').textContent = '';
-                document.getElementById('totalResult').textContent = '';
-                messages.end.textContent = '';
-            });
+       function resetMessages() {
+    document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('horizontalResult').textContent = '';
+    document.getElementById('verticalResult').textContent = '';
+    document.getElementById('diagonalResult').textContent = '';
+    document.getElementById('totalResult').textContent = '';
+    messages.end.textContent = '';
+});
+
+}
+function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return Object.fromEntries(params.entries());
+}
+
+const queryParams = getQueryParams();
+const telegramId = queryParams['telegram_id'];
+
+if (telegramId) {
+    console.log("Telegram ID:", telegramId);
+    // Здесь вы можете выполнить авторизацию
+} else {
+    console.error("Telegram ID не найден в параметрах URL.");
+}
+document.addEventListener("DOMContentLoaded", () => {
+    // Проверка, доступен ли Telegram WebApp API
+    if (window.Telegram && window.Telegram.WebApp) {
+        // Инициализация WebApp
+        window.Telegram.WebApp.init();
+
+        // Получение информации о пользователе
+        const user = window.Telegram.WebApp.initDataUnsafe?.user;
+
+        if (user) {
+            const telegramId = user.id;
+            const username = user.username || 'Гость';
+
+            // Отображение данных о пользователе на странице
+            console.log('Telegram ID:', telegramId);
+            console.log('Username:', username);
+
+            // Отображаем имя пользователя на странице
+            const userNameElement = document.getElementById('username');
+            if (userNameElement) {
+                userNameElement.textContent = username;
+            }
+        } else {
+            console.error("Не удалось получить данные пользователя.");
         }
+    } else {
+        console.error("Telegram WebApp API не доступен.");
+    }
+});
+
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    cellsToFlash.forEach(cell => cell.classList.add(colorClass));
-                }, delay);
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            cellsToFlash.forEach(cell => cell.classList.add(colorClass));
+        }, delay);
 
-                setTimeout(() => {
-                    cellsToFlash.forEach(cell => cell.classList.remove(colorClass));
-                    resolve();
-                }, delay + 1000);
-            });
-        }
+        setTimeout(() => {
+            cellsToFlash.forEach(cell => cell.classList.remove(colorClass));
+            resolve(); // Завершение подсветки
+        }, delay + 300); // Подсветка длится 500 мс
+    });
+}
 
-        function checkWin() {
-            // Проверка на выигрыш
-            if (score >= 200) {
-                messages.end.textContent = "Вы выиграли!";
-                winCount++;
-                winCountElement.textContent = winCount;
-                restartButton.style.display = 'block';
-            }
-        }
+async function checkHorizontal() {
+    let points = 0;
+    let matchInfo = [];
+    for (let i = 0; i < 9; i += 3) {
+        const row = [cells[i], cells[i + 1], cells[i + 2]];
+        const values = row.map(cell => cell.textContent);
+        const counts = {};
 
-        function handleClick(event) {
-            if (clickCount < 22) {
-                clickCount++;
-                clickCountElement.textContent = clickCount;
-                updateScore(5);
-                checkWin();
-            } else {
-                messages.end.textContent = "Вы проиграли!";
-                lossCount++;
-                lossCountElement.textContent = lossCount;
-                restartButton.style.display = 'block';
-            }
-        }
-
-        cells.forEach(cell => {
-            cell.addEventListener('click', handleClick);
+        values.forEach(value => {
+            counts[value] = (counts[value] || 0) + 1;
         });
 
-        playButton.addEventListener('click', () => {
-            clickCount = 0;
-            clickCountElement.textContent = clickCount;
-            score = 30;
-            scoreElement.textContent = score;
-            restartButton.style.display = 'none';
-            resetMessages();
+        if (Object.values(counts).includes(3)) {
+            points += 5;
+            await flashCells(row, 'highlight-green');
+            matchInfo.push("+5");
+        } else if (Object.values(counts).includes(2)) {
+            points += 3;
+            await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
+            matchInfo.push("+3");
+        } else {
+            matchInfo.push("0");
+        }
+    }
+
+    document.getElementById('horizontalResult').textContent = matchInfo.join(", ");
+    return points;
+}
+
+async function checkVertical() {
+    let points = 0;
+    let matchInfo = [];
+    for (let i = 0; i < 3; i++) {
+        const column = [cells[i], cells[i + 3], cells[i + 6]];
+        const values = column.map(cell => cell.textContent);
+        const counts = {};
+
+        values.forEach(value => {
+            counts[value] = (counts[value] || 0) + 1;
         });
 
-        restartButton.addEventListener('click', () => {
-            playButton.click();
+        if (Object.values(counts).includes(3)) {
+            points += 5;
+            await flashCells(column, 'highlight-blue', 300);
+            matchInfo.push("+5");
+        } else if (Object.values(counts).includes(2)) {
+            points += 3;
+            await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue', 300);
+            matchInfo.push("+3");
+        } else {
+            matchInfo.push("0");
+        }
+    }
+
+    document.getElementById('verticalResult').textContent = matchInfo.join(", ");
+    return points;
+}
+
+async function checkDiagonal() {
+    let points = 0;
+    const mainDiagonal = [cells[0], cells[4], cells[8]];
+    const antiDiagonal = [cells[2], cells[4], cells[6]];
+    const diagonals = [mainDiagonal, antiDiagonal];
+    let matchInfo = [];
+
+    for (const diagonal of diagonals) {
+        const values = diagonal.map(cell => cell.textContent);
+        const counts = {};
+
+        values.forEach(value => {
+            counts[value] = (counts[value] || 0) + 1;
         });
+
+        if (Object.values(counts).includes(3)) {
+            points += 6;
+            await flashCells(diagonal, 'highlight-yellow', 300);
+            matchInfo.push("+6");
+        } else if (Object.values(counts).includes(2)) {
+            points += 4;
+            await flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow', 300);
+            matchInfo.push("+4");
+        } else {
+            matchInfo.push("0");
+        }
+    }
+
+    document.getElementById('diagonalResult').textContent = matchInfo.join(", ");
+    return points;
+}
+
+async function playGame() {
+    playButton.disabled = true; // Блокируем кнопку на время выполнения хода
+    resetMessages();
+
+    // Заполняем ячейки случайными числами
+    cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
+    clickCount++;
+    clickCountElement.textContent = clickCount;
+
+    // Подсчёт очков
+    const horizontalPoints = await checkHorizontal();
+    const verticalPoints = await checkVertical();
+    const diagonalPoints = await checkDiagonal();
+
+    const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
+
+    if (totalPoints > 0) {
+        document.getElementById('totalResult').textContent = totalPoints;
+        updateScore(totalPoints);
+    } else {
+        document.getElementById('totalResult').textContent = "-8 (нет совпадений)";
+        updateScore(-8);
+    }
+
+    // Проверяем состояние игры
+    if (score >= 200) {
+        winCount++;
+        winCountElement.textContent = winCount;
+        messages.end.textContent = "Вы выиграли!";
+        playButton.disabled = true;
+        restartButton.style.display = 'block';
+    } else if (clickCount >= 22) { // Проверяем количество кликов
+        if (score < 200) {
+            lossCount++;
+            lossCountElement.textContent = lossCount;
+            messages.end.textContent = "Вы проиграли! Не хватило очков.";
+        } else {
+            winCount++;
+            winCountElement.textContent = winCount;
+            messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+        }
+        playButton.disabled = true;
+        restartButton.style.display = 'block';
+    } else {
+        playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
+    }
+}
+
+restartButton.addEventListener('click', () => {
+    score = 30;
+    clickCount = 0;
+    scoreElement.textContent = score;
+    clickCountElement.textContent = clickCount;
+    playButton.disabled = false;
+    restartButton.style.display = 'none';
+    resetMessages();
+    messages.end.textContent = ''; // Убираем текст "Вы выиграли!" или "Вы проиграли!"
+});
+
+playButton.addEventListener('click', playGame);
+
     </script>
 </body>
 </html>
