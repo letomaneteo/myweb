@@ -173,9 +173,9 @@ margin-top: 10px;
     </div>
     <div class="message" id="endMessage"></div>
 </div>
-<h1>Привет, <span id="username"></span>!</h1>
 
-    
+    <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
+
     <script>
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
@@ -220,71 +220,13 @@ function getQueryParams() {
 
 const queryParams = getQueryParams();
 const telegramId = queryParams['telegram_id'];
-const userName = queryParams['name'] || 'Гость'; // По умолчанию — "Гость"
 
 if (telegramId) {
-    const greetingElement = document.createElement('h2');
-    greetingElement.textContent = `Здравствуйте, ${userName} (ID: ${telegramId})`;
-    document.body.insertBefore(greetingElement, document.body.firstChild);
+    console.log("Telegram ID:", telegramId);
+    // Здесь вы можете выполнить авторизацию
 } else {
     console.error("Telegram ID не найден в параметрах URL.");
 }
-function saveProgress() {
-    const progress = {
-        score,
-        clickCount,
-        winCount,
-        lossCount,
-    };
-    localStorage.setItem(`progress_${telegramId}`, JSON.stringify(progress));
-}
-
-
-        // Инициализация Telegram Web App SDK
-        Telegram.WebApp.init();
-
-        // Ожидаем, пока Web App SDK не инициализируется
-        Telegram.WebApp.onEvent('initialized', function() {
-            const user = Telegram.WebApp.initDataUnsafe;
-
-            if (user && user.user) {
-                const username = user.user.first_name || "Гость";  // Получаем имя пользователя или ставим "Гость", если имя отсутствует
-                const telegramId = user.user.id;  // Получаем ID пользователя
-
-                // Выводим имя пользователя и ID на странице
-                document.getElementById('username').textContent = username;
-                document.getElementById('user_id').textContent = telegramId;
-            } else {
-                // Если данные пользователя не доступны
-                document.getElementById('username').textContent = "Гость";
-                document.getElementById('user_id').textContent = "неизвестен";
-            }
-        });
-function loadProgress() {
-    const savedProgress = localStorage.getItem(`progress_${telegramId}`);
-    if (savedProgress) {
-        const { score: savedScore, clickCount: savedClickCount, winCount: savedWinCount, lossCount: savedLossCount } = JSON.parse(savedProgress);
-        score = savedScore;
-        clickCount = savedClickCount;
-        winCount = savedWinCount;
-        lossCount = savedLossCount;
-
-        scoreElement.textContent = score;
-        clickCountElement.textContent = clickCount;
-        winCountElement.textContent = winCount;
-        lossCountElement.textContent = lossCount;
-    }
-}
-
-// Загружаем прогресс при запуске
-document.addEventListener('DOMContentLoaded', () => {
-    loadProgress();
-});
-
-// Сохраняем прогресс после каждого действия
-playButton.addEventListener('click', saveProgress);
-restartButton.addEventListener('click', saveProgress);
-
 
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
