@@ -231,23 +231,21 @@ if (telegramId) {
     console.error("Telegram ID не найден в параметрах URL.");
 }
 document.addEventListener("DOMContentLoaded", () => {
-    // Проверка, доступен ли Telegram WebApp API
     if (window.Telegram && window.Telegram.WebApp) {
-        // Инициализация WebApp
-        window.Telegram.WebApp.init();
+        window.Telegram.WebApp.init();  // Инициализация WebApp
 
-        // Получение информации о пользователе
+        // Получаем данные о пользователе
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
 
         if (user) {
-            const telegramId = user.id;
             const username = user.username || 'Гость';
+            const telegramId = user.id;
 
             // Отображение данных о пользователе на странице
             console.log('Telegram ID:', telegramId);
             console.log('Username:', username);
 
-            // Отображаем имя пользователя на странице
+            // Обновляем элемент с именем пользователя на странице
             const userNameElement = document.getElementById('username');
             if (userNameElement) {
                 userNameElement.textContent = username;
@@ -259,6 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Telegram WebApp API не доступен.");
     }
 });
+
 
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
