@@ -354,6 +354,75 @@ async function checkDiagonal() {
     document.getElementById('diagonalResult').textContent = matchInfo.join(", ");
     return points;
 }
+let winCount = 0;  // Счётчик побед
+let level = 1;     // Начальный уровень
+let score = 0;     // Начальные очки
+
+// Обновление отображения
+function updateGameDisplay() {
+    document.getElementById('userScore').textContent = score;
+    document.getElementById('userLevel').textContent = level;
+    document.getElementById('winCount').textContent = winCount;
+}
+
+// Функция для обработки победы
+function handleWin() {
+    winCount++; // Увеличиваем счётчик побед
+    level++;    // Увеличиваем уровень на 1
+
+    // Каждые 3 победы добавляем 3 очка
+    if (winCount % 3 === 0) {
+        score += 3; // Добавляем 3 очка
+    }
+
+    // Обновляем отображение
+    updateGameDisplay();
+
+    // Проверка на победу в игре (200 очков)
+    if (score >= 200) {
+        document.getElementById('endMessage').textContent = "Вы выиграли!";
+        document.getElementById('playButton').disabled = true;
+        document.getElementById('restartButton').style.display = 'block';
+    }
+}
+
+// Функция для обработки поражения
+function handleLoss() {
+    // Если поражение, просто обновляем отображение
+    document.getElementById('endMessage').textContent = "Вы проиграли!";
+    document.getElementById('playButton').disabled = true;
+    document.getElementById('restartButton').style.display = 'block';
+}
+
+// Логика игры:
+async function playGame() {
+    playButton.disabled = true; // Блокируем кнопку на время выполнения хода
+    resetMessages();  // Очистка сообщений
+
+    // Логика игры
+    // После победы:
+    if (score >= 200) {
+        handleWin(); // Если победа (например, если очки >= 200)
+    } else {
+        handleLoss(); // Если проигрыш (например, если клики >= 22, но очков < 200)
+    }
+}
+
+// Перезапуск игры
+restartButton.addEventListener('click', () => {
+    // Сброс состояния
+    score = 0;
+    winCount = 0;
+    level = 1;
+    updateGameDisplay(); // Обновление состояния
+    playButton.disabled = false;
+    restartButton.style.display = 'none';
+    resetMessages();
+    document.getElementById('endMessage').textContent = ''; // Убираем текст "Вы выиграли!" или "Вы проиграли!"
+});
+
+// Запуск игры
+playButton.addEventListener('click', playGame);
 
 async function playGame() {
     playButton.disabled = true; // Блокируем кнопку на время выполнения хода
@@ -401,49 +470,6 @@ async function playGame() {
     } else {
         playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
     }
-}
-let winCount = 0;  // Счётчик побед
-let level = 1;     // Начальный уровень
-let score = 0;     // Начальные очки
-
-let winCount = 0;  // Счётчик побед
-let level = 1;     // Начальный уровень
-let score = 0;     // Начальные очки
-
-// Обновление отображения
-function updateGameDisplay() {
-    document.getElementById('userScore').textContent = score;
-    document.getElementById('userLevel').textContent = level;
-    document.getElementById('winCount').textContent = winCount;
-}
-
-// Функция для обработки победы
-function handleWin() {
-    winCount++; // Увеличиваем счётчик побед
-    level++;    // Увеличиваем уровень на 1
-
-    // Каждые 3 победы добавляем 3 очка
-    if (winCount % 3 === 0) {
-        score += 3; // Добавляем 3 очка
-    }
-
-    // Обновляем отображение
-    updateGameDisplay();
-
-    // Проверка на победу в игре (200 очков)
-    if (score >= 200) {
-        document.getElementById('endMessage').textContent = "Вы выиграли!";
-        document.getElementById('playButton').disabled = true;
-        document.getElementById('restartButton').style.display = 'block';
-    }
-}
-
-// Функция для обработки поражения
-function handleLoss() {
-    // Если поражение, просто обновляем отображение
-    document.getElementById('endMessage').textContent = "Вы проиграли!";
-    document.getElementById('playButton').disabled = true;
-    document.getElementById('restartButton').style.display = 'block';
 }
 
 restartButton.addEventListener('click', () => {
