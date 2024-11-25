@@ -130,7 +130,11 @@ margin-top: 10px;
     </style>
 </head>
 <body>
-    <div id="greeting"></div>
+    <div id="greeting"></div>  <!-- Приветственное сообщение -->
+<!-- Добавьте блоки для отображения очков и уровня -->
+<h1>Очки: <span id="userScore">0</span></h1>
+<h2>Уровень: <span id="userLevel">1</span></h2>
+
     <!-- Название игры -->
     <div class="game-title">22 КЛИКА</div>
 
@@ -222,15 +226,30 @@ function getQueryParams() {
 const queryParams = getQueryParams();
 const telegramId = queryParams['telegram_id'];
 const username = queryParams['username'];
+const userScore = queryParams['score'];  // Получаем очки
+const userLevel = queryParams['level'];  // Получаем уровень
 
 if (telegramId && username) {
     const greeting = `Здравствуйте, ${username} (${telegramId})`;
     console.log(greeting);
-    // Вы можете вывести это сообщение на страницу, например, так:
     document.getElementById('greeting').textContent = greeting;
 } else {
     console.error("Не найдены параметры username или telegram_id в URL.");
 }
+
+// Если есть параметры очков и уровня, отображаем их
+if (userScore !== undefined) {
+    document.getElementById('userScore').textContent = userScore;
+} else {
+    console.error("Не найдены параметры score в URL.");
+}
+
+if (userLevel !== undefined) {
+    document.getElementById('userLevel').textContent = userLevel;
+} else {
+    console.error("Не найдены параметры level в URL.");
+}
+
 
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
