@@ -379,42 +379,113 @@ async function playGame() {
         updateScore(-8);
     }
 
-    // Проверяем состояние игры
-    if (score >= 200) {
-        winCount++;
-        winCountElement.textContent = winCount;
-        messages.end.textContent = "Вы выиграли!";
-        playButton.disabled = true;
-        restartButton.style.display = 'block';
-    } else if (clickCount >= 22) { // Проверяем количество кликов
-        if (score < 200) {
-            lossCount++;
-            lossCountElement.textContent = lossCount;
-            messages.end.textContent = "Вы проиграли! Не хватило очков.";
+  // Функция отправки данных в Telegram
+    function sendResultsToTelegram() {
+        // Проверяем наличие данных Telegram
+        if (!telegramId || !username) {
+            console.error("Нет данных пользователя для отправки в Telegram.");
+            return;
+        }
+
+        // Формируем данные для отправки
+        const gameData = {
+            telegram_id: telegramId,
+            username: username,
+            score: score,
+            clicks: clickCount,
+            wins: winCount,
+            losses: lossCount
+        };
+
+        // Отправка данных через Fetch API
+        fetch('https://ваш-сервер-или-бот-url', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(gameData),
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Результаты успешно отправлены в Telegram.");
+            } else {
+                console.error("Ошибка при отправке результатов:", response.status);
+            }
+        })
+        .catch(error => {
+            console.error("Произошла ошибка при отправке:", error);
+        });
+    }
+
+    // Проверка победы или поражения, добавляем вызов отправки данных
+    async function playGame() {
+        playButton.disabled = true; // Блокируем кнопку на время выполнения хода
+        resetMessages();
+
+        // Заполняем ячейки случайными числами
+        cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
+        clickCount++;
+        clickCountElement.textContent = clickCount;
+
+        // Подсчёт очков
+        const horizontalPoints = await checkHorizontal();
+        const verticalPoints = await checkVertical();
+        const diagonalPoints = await checkDiagonal();
+
+        const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
+
+        if (totalPoints > 0) {
+            document.getElementById('totalResult').textContent = totalPoints;
+            updateScore(totalPoints);
         } else {
+            document.getElementById('totalResult').textContent = "-8 (нет совпадений)";
+            updateScore(-8);
+        }
+
+        // Проверяем состояние игры
+        if (score >= 200) {
             winCount++;
             winCountElement.textContent = winCount;
-            messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+            messages.end.textContent = "Вы выиграли!";
+            playButton.disabled = true;
+            restartButton.style.display = 'block';
+
+            // Отправляем результаты в Telegram
+            sendResultsToTelegram();
+        } else if (clickCount >= 22) {
+            if (score < 200) {
+                lossCount++;
+                lossCountElement.textContent = lossCount;
+                messages.end.textContent = "Вы проиграли! Не хватило очков.";
+            } else {
+                winCount++;
+                winCountElement.textContent = winCount;
+                messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+            }
+            playButton.disabled = true;
+            restartButton.style.display = 'block';
+
+            // Отправляем результаты в Telegram
+            sendResultsToTelegram();
+        } else {
+            playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
         }
-        playButton.disabled = true;
-        restartButton.style.display = 'block';
-    } else {
-        playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
     }
-}
 
-restartButton.addEventListener('click', () => {
-    score = 30;
-    clickCount = 0;
-    scoreElement.textContent = score;
-    clickCountElement.textContent = clickCount;
-    playButton.disabled = false;
-    restartButton.style.display = 'none';
-    resetMessages();
-    messages.end.textContent = ''; // Убираем текст "Вы выиграли!" или "Вы проиграли!"
-});
+    // Обработчик кнопки "Начать заново" с отправкой результатов
+    restartButton.addEventListener('click', () => {
+        // Отправляем результаты перед сбросом
+        sendResultsToTelegram();
 
-playButton.addEventListener('click', playGame);
+        score = 30;
+        clickCount = 0;
+        scoreElement.textContent = score;
+        clickCountElement.textContent = clickCount;
+        playButton.disabled = false;
+        restartButton.style.display = 'none';
+        resetMessages();
+        messages.end.textContent = ''; // Убираем текст "Вы выиграли!" или "Вы проиграли!"
+    });
 
     </script>
 </body>
