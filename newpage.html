@@ -202,6 +202,31 @@ margin-top: 10px;
         let clickCount = 0;
         let winCount = 0;
         let lossCount = 0;
+        let userScore = 0; // Общие очки, начальное значение
+        let userLevel = 1; // Уровень, начальное значение
+    
+        const userScoreElement = document.getElementById('userScore'); // Отображение очков
+        const userLevelElement = document.getElementById('userLevel'); // Отображение уровня
+
+        function handleWin() {
+    // Увеличиваем уровень
+    userLevel++;
+    userLevelElement.textContent = userLevel;
+
+    // Каждые 3 победы добавляем 10 очков
+    if (winCount % 3 === 0) {
+        userScore += 10;
+    }
+
+    // Обновляем отображение
+    userScoreElement.textContent = userScore;
+}
+
+function handleLoss() {
+    // Фиксируем поражение
+    lossCount++;
+    lossCountElement.textContent = lossCount;
+}
 
         function updateScore(points) {
             score += points;
@@ -380,27 +405,26 @@ async function playGame() {
     }
 
     // Проверяем состояние игры
-    if (score >= 200) {
+   if (score >= 200) {
+    winCount++;
+    winCountElement.textContent = winCount;
+    handleWin(); // Обрабатываем логику для userScore и userLevel
+    messages.end.textContent = "Вы выиграли!";
+    playButton.disabled = true;
+    restartButton.style.display = 'block';
+} else if (clickCount >= 22) { 
+    if (score < 200) {
+        handleLoss(); // Обрабатываем поражение
+        messages.end.textContent = "Вы проиграли! Не хватило очков.";
+    } else {
         winCount++;
         winCountElement.textContent = winCount;
-        messages.end.textContent = "Вы выиграли!";
-        playButton.disabled = true;
-        restartButton.style.display = 'block';
-    } else if (clickCount >= 22) { // Проверяем количество кликов
-        if (score < 200) {
-            lossCount++;
-            lossCountElement.textContent = lossCount;
-            messages.end.textContent = "Вы проиграли! Не хватило очков.";
-        } else {
-            winCount++;
-            winCountElement.textContent = winCount;
-            messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
-        }
-        playButton.disabled = true;
-        restartButton.style.display = 'block';
-    } else {
-        playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
+        handleWin(); // Победа на последнем клике
+        messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
     }
+    playButton.disabled = true;
+    restartButton.style.display = 'block';
+}
 }
 
 restartButton.addEventListener('click', () => {
