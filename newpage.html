@@ -173,7 +173,20 @@ margin-top: 10px;
     </div>
     <div class="message" id="endMessage"></div>
 </div>
+<h1>Привет, <span id="username"></span>!</h1>
 
+    <script>
+        // Инициализация Telegram Web App SDK
+        Telegram.WebApp.init();
+
+        // Получаем информацию о пользователе через Telegram API
+        const user = Telegram.WebApp.initDataUnsafe;
+        const username = user ? user.user.first_name : "Гость"; // Получаем имя пользователя
+        const telegramId = user ? user.user.id : "неизвестен";  // Получаем ID пользователя
+
+        // Выводим имя пользователя и ID
+        document.getElementById('username').textContent = username;
+    </script>
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
 
     <script>
