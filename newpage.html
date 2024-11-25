@@ -402,32 +402,6 @@ async function playGame() {
         playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
     }
 }
-        let winCount = 0;
-let userScore = 0;
-let userLevel = 1;
-
-// Функция для обновления userScore и userLevel при победе
-function updateUserStats() {
-    userScore += 1; // Увеличиваем очки пользователя за победу
-    if (userScore % 5 === 0) { // Например, повышение уровня каждые 5 побед
-        userLevel += 1;
-    }
-}
-
-// Функция для проверки победы
-function checkVictory() {
-    const previousWinCount = winCount;
-
-    // Логика победы (например, победа при наборе 200 очков или другой механизм)
-    if (/* условие победы */) {
-        winCount++;
-    }
-
-    // Если победа произошла (winCount увеличился), обновляем статистику
-    if (winCount > previousWinCount) {
-        updateUserStats();
-    }
-}
 
 restartButton.addEventListener('click', () => {
     score = 30;
