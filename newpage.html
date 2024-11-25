@@ -5,7 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Игра</title>
     <style>
-        /* Ваши стили */
+       body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-image: url('https://i.imgur.com/mCPYCHo.jpeg'); /* Замените на путь к вашей картинке */
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center center;
+        font-family: Arial, sans-serif;
+        padding: 10px;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 80px);
+        grid-gap: 10px;
+        margin: 20px;
+    }
+    .cell {
+        width: 80px;
+        height: 80px;
+        border: 3px solid #6D8C00;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        transition: background-color 0.3s;
+    }
+    .scoreboard, .messages {
+        margin-top: 20px;
+        color: black;
+        text-align: center;
+    }
+    .highlight-green { background-color: lightgreen; }
+    .highlight-blue { background-color: lightblue; }
+    .highlight-yellow { background-color: #EC9704; }
+    .play-button, .restart-button {
+        margin-top: 20px;
+        padding: 12px 24px;
+        font-size: 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .play-button:hover, .restart-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+
+    .message {
+        margin-top: 12px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+    .green { color: green; }
+    .blue { color: blue; }
+    .yellow { color: #EC9704; }
+    .black { color: black; }
+
+    .game-title {
+        font-size: 36px;
+        color: #583E26;
+        margin-top: 20px;
+    }
+
+    .game-rules {
+        font-size: 14px;
+        margin: 5px 0;
+        line-height: 1.4;
+        padding: 0;
+        max-width: 90%;
+        text-align: center;
+    }
     </style>
 </head>
 <body>
@@ -14,12 +92,11 @@
         <p>Наберите 200 очков за 22 клика, чтобы победить</p>
         <p>-8 очков за все разные</p>
     </div>
+
     <h1>Счет: <span id="score">30</span></h1>
     <h2>Счетчик кликов: <span id="clickCount">0</span></h2>
     <h3>Победы: <span id="winCount">0</span> Поражения: <span id="lossCount">0</span></h3>
 
-    <div id="greeting"></div> <!-- Элемент для приветствия пользователя -->
-    
     <div class="grid">
         <div class="cell" id="cell-0"></div>
         <div class="cell" id="cell-1"></div>
@@ -33,6 +110,7 @@
     </div>
 
     <button class="play-button" id="playButton">Играть</button>
+
     <div class="messages">
         <div class="message green" id="horizontalMessage">
             По горизонтали: <span id="horizontalResult"></span>
@@ -53,7 +131,7 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready();
+        tg.ready();  // Инициализация SDK
 
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
@@ -76,56 +154,53 @@
         let winCount = 0;
         let lossCount = 0;
 
-        function updateScore(points) {
-            score += points;
-            scoreElement.textContent = score;
-        }
-
-        function resetMessages() {
-            document.getElementById('horizontalResult').textContent = '';
-            document.getElementById('verticalResult').textContent = '';
-            document.getElementById('diagonalResult').textContent = '';
-            document.getElementById('totalResult').textContent = '';
-            messages.end.textContent = '';
-        }
-
-        // Получаем информацию о пользователе Telegram
+        // Получаем данные пользователя из Telegram WebApp SDK
         const user = tg.initDataUnsafe?.user;
         const userName = user?.first_name || 'Гость';
         const telegramId = user?.id || 'Неизвестно';
 
-        // Отображаем приветствие
-        const greetingElement = document.getElementById('greeting');
-        greetingElement.textContent = `Привет, ${userName}! Ваш Telegram ID: ${telegramId}`;
+        // Отображаем приветствие с именем пользователя
+        const greetingElement = document.createElement('div');
+        greetingElement.textContent = `Привет, ${userName}! Ваш ID: ${telegramId}`;
+        document.body.prepend(greetingElement);  // Добавляем приветствие на страницу
 
-        // Загрузим прогресс
-        loadProgress();
-
+        // Сохраняем прогресс игры в локальное хранилище (для примера)
         function saveProgress() {
-            const progress = {
-                score,
-                clickCount,
-                winCount,
-                lossCount,
-            };
-            localStorage.setItem(`gameProgress-${telegramId}`, JSON.stringify(progress));
+            localStorage.setItem(`gameProgress_${telegramId}`, JSON.stringify({ score, winCount, lossCount }));
         }
 
+        // Загрузка прогресса игры
         function loadProgress() {
-            const savedProgress = localStorage.getItem(`gameProgress-${telegramId}`);
-            if (savedProgress) {
-                const { score: savedScore, clickCount: savedClickCount, winCount: savedWinCount, lossCount: savedLossCount } = JSON.parse(savedProgress);
+            const savedData = localStorage.getItem(`gameProgress_${telegramId}`);
+            if (savedData) {
+                const progress = JSON.parse(savedData);
+                score = progress.score;
+                winCount = progress.winCount;
+                lossCount = progress.lossCount;
 
-                score = savedScore;
-                clickCount = savedClickCount;
-                winCount = savedWinCount;
-                lossCount = savedLossCount;
-
+                // Обновляем интерфейс
                 scoreElement.textContent = score;
-                clickCountElement.textContent = clickCount;
                 winCountElement.textContent = winCount;
                 lossCountElement.textContent = lossCount;
             }
+        }
+
+        loadProgress(); // Загружаем прогресс при загрузке страницы
+
+        function updateScore(points) {
+            score += points;
+            scoreElement.textContent = score;
+            saveProgress();  // Сохраняем прогресс после изменения счета
+        }
+
+        function resetMessages() {
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('horizontalResult').textContent = '';
+                document.getElementById('verticalResult').textContent = '';
+                document.getElementById('diagonalResult').textContent = '';
+                document.getElementById('totalResult').textContent = '';
+                messages.end.textContent = '';
+            });
         }
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
@@ -137,90 +212,50 @@
                 setTimeout(() => {
                     cellsToFlash.forEach(cell => cell.classList.remove(colorClass));
                     resolve();
-                }, delay + 300);
+                }, delay + 1000);
             });
         }
 
-        async function checkHorizontal() {
-            let points = 0;
-            let matchInfo = [];
-            for (let i = 0; i < 9; i += 3) {
-                const row = [cells[i], cells[i + 1], cells[i + 2]];
-                const values = row.map(cell => cell.textContent);
-                const counts = {};
-
-                values.forEach(value => {
-                    counts[value] = (counts[value] || 0) + 1;
-                });
-
-                if (Object.values(counts).includes(3)) {
-                    points += 5;
-                    await flashCells(row, 'highlight-green');
-                    matchInfo.push("+5");
-                } else if (Object.values(counts).includes(2)) {
-                    points += 3;
-                    await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
-                    matchInfo.push("+3");
-                } else {
-                    matchInfo.push("0");
-                }
-            }
-
-            document.getElementById('horizontalResult').textContent = matchInfo.join(", ");
-            return points;
-        }
-
-        // Другие функции для вертикальных и диагональных проверок ...
-
-        // Функция для начала игры
-        async function playGame() {
-            playButton.disabled = true;
-            resetMessages();
-            cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
-            clickCount++;
-            clickCountElement.textContent = clickCount;
-
-            const horizontalPoints = await checkHorizontal();
-            const verticalPoints = await checkVertical();
-            const diagonalPoints = await checkDiagonal();
-
-            const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
-
-            if (totalPoints > 0) {
-                document.getElementById('totalResult').textContent = `Очков: ${totalPoints}`;
-                updateScore(totalPoints);
-            }
-
-            saveProgress();
-
+        function checkWin() {
+            // Проверка на выигрыш
             if (score >= 200) {
+                messages.end.textContent = "Вы выиграли!";
                 winCount++;
                 winCountElement.textContent = winCount;
-                messages.end.textContent = "Вы победили!";
-                restartButton.style.display = 'block';
-            } else if (clickCount >= 22) {
-                lossCount++;
-                lossCountElement.textContent = lossCount;
-                messages.end.textContent = "Вы проиграли!";
                 restartButton.style.display = 'block';
             }
-
-            playButton.disabled = false;
         }
 
-        // Перезапуск игры
-        restartButton.addEventListener('click', () => {
-            score = 30;
-            clickCount = 0;
-            messages.end.textContent = '';
-            winCount = 0;
-            lossCount = 0;
-            loadProgress();
-            restartButton.style.display = 'none';
-            playButton.disabled = false;
+        function handleClick(event) {
+            if (clickCount < 22) {
+                clickCount++;
+                clickCountElement.textContent = clickCount;
+                updateScore(5);
+                checkWin();
+            } else {
+                messages.end.textContent = "Вы проиграли!";
+                lossCount++;
+                lossCountElement.textContent = lossCount;
+                restartButton.style.display = 'block';
+            }
+        }
+
+        cells.forEach(cell => {
+            cell.addEventListener('click', handleClick);
         });
 
-        playButton.addEventListener('click', playGame);
+        playButton.addEventListener('click', () => {
+            clickCount = 0;
+            clickCountElement.textContent = clickCount;
+            score = 30;
+            scoreElement.textContent = score;
+            restartButton.style.display = 'none';
+            resetMessages();
+        });
+
+        restartButton.addEventListener('click', () => {
+            playButton.click();
+        });
     </script>
 </body>
 </html>
