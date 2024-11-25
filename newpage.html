@@ -406,6 +406,10 @@ let winCount = 0;  // Счётчик побед
 let level = 1;     // Начальный уровень
 let score = 0;     // Начальные очки
 
+let winCount = 0;  // Счётчик побед
+let level = 1;     // Начальный уровень
+let score = 0;     // Начальные очки
+
 // Обновление отображения
 function updateGameDisplay() {
     document.getElementById('userScore').textContent = score;
@@ -440,7 +444,6 @@ function handleLoss() {
     document.getElementById('endMessage').textContent = "Вы проиграли!";
     document.getElementById('playButton').disabled = true;
     document.getElementById('restartButton').style.display = 'block';
-}
 }
 
 restartButton.addEventListener('click', () => {
