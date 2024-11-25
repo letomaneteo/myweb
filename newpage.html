@@ -441,19 +441,6 @@ function handleLoss() {
     document.getElementById('playButton').disabled = true;
     document.getElementById('restartButton').style.display = 'block';
 }
-
-// Пример использования в контексте игры:
-async function playGame() {
-    playButton.disabled = true; // Блокируем кнопку на время выполнения хода
-    resetMessages();  // Очистка сообщений
-
-    // Логика игры
-    // После победы:
-    if (score >= 200) {
-        handleWin(); // Если победа (например, если очки >= 200)
-    } else {
-        handleLoss(); // Если проигрыш (например, если клики >= 22, но очков < 200)
-    }
 }
 
 restartButton.addEventListener('click', () => {
