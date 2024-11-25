@@ -212,13 +212,25 @@ margin-top: 10px;
     messages.end.textContent = '';
 });
 
-}
+// Функция для получения параметров из URL
 function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
     return Object.fromEntries(params.entries());
 }
 
+// Извлекаем имя пользователя из URL
 const queryParams = getQueryParams();
+const username = queryParams['username'];
+
+// Если имя пользователя найдено, отображаем приветствие
+if (username) {
+    const greetingMessage = `Здравствуйте, ${username}!`;
+    const greetingElement = document.createElement('div');
+    greetingElement.textContent = greetingMessage;
+    document.body.insertBefore(greetingElement, document.querySelector('.game-title')); // Вставляем приветствие перед названием игры
+} else {
+    console.error("Имя пользователя не найдено в параметрах URL.");
+}
 const telegramId = queryParams['telegram_id'];
 
 if (telegramId) {
