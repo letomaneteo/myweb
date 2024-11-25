@@ -182,239 +182,153 @@ margin-top: 10px;
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
 
     <script>
-        const cells = Array.from(document.querySelectorAll('.cell'));
-        const scoreElement = document.getElementById('score');
-        const clickCountElement = document.getElementById('clickCount');
-        const winCountElement = document.getElementById('winCount');
-        const lossCountElement = document.getElementById('lossCount');
-        const playButton = document.getElementById('playButton');
-        const restartButton = document.getElementById('restartButton');
+        <script>
+    const cells = Array.from(document.querySelectorAll('.cell'));
+    const scoreElement = document.getElementById('score');
+    const clickCountElement = document.getElementById('clickCount');
+    const winCountElement = document.getElementById('winCount');
+    const lossCountElement = document.getElementById('lossCount');
+    const playButton = document.getElementById('playButton');
+    const restartButton = document.getElementById('restartButton');
 
-        const messages = {
-            horizontal: document.getElementById('horizontalMessage'),
-            vertical: document.getElementById('verticalMessage'),
-            diagonal: document.getElementById('diagonalMessage'),
-            total: document.getElementById('totalPointsMessage'),
-            end: document.getElementById('endMessage')
-        };
+    const messages = {
+        horizontal: document.getElementById('horizontalMessage'),
+        vertical: document.getElementById('verticalMessage'),
+        diagonal: document.getElementById('diagonalMessage'),
+        total: document.getElementById('totalPointsMessage'),
+        end: document.getElementById('endMessage')
+    };
 
-        let score = 30;
-        let clickCount = 0;
-        let winCount = 0;
-        let lossCount = 0;
+    let score = 30;
+    let clickCount = 0;
+    let winCount = 0;
+    let lossCount = 0;
 
-        function updateScore(points) {
-            score += points;
-            scoreElement.textContent = score;
-        }
-
-       function resetMessages() {
-    document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('horizontalResult').textContent = '';
-    document.getElementById('verticalResult').textContent = '';
-    document.getElementById('diagonalResult').textContent = '';
-    document.getElementById('totalResult').textContent = '';
-    messages.end.textContent = '';
-});
-
-}
-function getQueryParams() {
-    const params = new URLSearchParams(window.location.search);
-    return Object.fromEntries(params.entries());
-}
-
-const queryParams = getQueryParams();
-const telegramId = queryParams['telegram_id'];
-const username = queryParams['username'];
-const userScore = queryParams['score'];  // Получаем очки
-const userLevel = queryParams['level'];  // Получаем уровень
-
-if (telegramId && username) {
-    const greeting = `Здравствуйте, ${username} (${telegramId})`;
-    console.log(greeting);
-    document.getElementById('greeting').textContent = greeting;
-} else {
-    console.error("Не найдены параметры username или telegram_id в URL.");
-}
-
-// Если есть параметры очков и уровня, отображаем их
-if (userScore !== undefined) {
-    document.getElementById('userScore').textContent = userScore;
-} else {
-    console.error("Не найдены параметры score в URL.");
-}
-
-if (userLevel !== undefined) {
-    document.getElementById('userLevel').textContent = userLevel;
-} else {
-    console.error("Не найдены параметры level в URL.");
-}
-
-
-
-        function flashCells(cellsToFlash, colorClass, delay = 0) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            cellsToFlash.forEach(cell => cell.classList.add(colorClass));
-        }, delay);
-
-        setTimeout(() => {
-            cellsToFlash.forEach(cell => cell.classList.remove(colorClass));
-            resolve(); // Завершение подсветки
-        }, delay + 300); // Подсветка длится 500 мс
-    });
-}
-
-async function checkHorizontal() {
-    let points = 0;
-    let matchInfo = [];
-    for (let i = 0; i < 9; i += 3) {
-        const row = [cells[i], cells[i + 1], cells[i + 2]];
-        const values = row.map(cell => cell.textContent);
-        const counts = {};
-
-        values.forEach(value => {
-            counts[value] = (counts[value] || 0) + 1;
-        });
-
-        if (Object.values(counts).includes(3)) {
-            points += 5;
-            await flashCells(row, 'highlight-green');
-            matchInfo.push("+5");
-        } else if (Object.values(counts).includes(2)) {
-            points += 3;
-            await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
-            matchInfo.push("+3");
-        } else {
-            matchInfo.push("0");
-        }
+    function updateScore(points) {
+        score += points;
+        scoreElement.textContent = score;
     }
 
-    document.getElementById('horizontalResult').textContent = matchInfo.join(", ");
-    return points;
-}
+    // Получаем параметры из URL
+    const queryParams = new URLSearchParams(window.location.search);
+    const telegramId = queryParams.get('telegram_id');
+    const username = queryParams.get('username');
+    let userScore = parseInt(queryParams.get('score')) || 0;  // Получаем очки
+    let userLevel = parseInt(queryParams.get('level')) || 1;  // Получаем уровень
 
-async function checkVertical() {
-    let points = 0;
-    let matchInfo = [];
-    for (let i = 0; i < 3; i++) {
-        const column = [cells[i], cells[i + 3], cells[i + 6]];
-        const values = column.map(cell => cell.textContent);
-        const counts = {};
-
-        values.forEach(value => {
-            counts[value] = (counts[value] || 0) + 1;
-        });
-
-        if (Object.values(counts).includes(3)) {
-            points += 5;
-            await flashCells(column, 'highlight-blue', 300);
-            matchInfo.push("+5");
-        } else if (Object.values(counts).includes(2)) {
-            points += 3;
-            await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue', 300);
-            matchInfo.push("+3");
-        } else {
-            matchInfo.push("0");
-        }
-    }
-
-    document.getElementById('verticalResult').textContent = matchInfo.join(", ");
-    return points;
-}
-
-async function checkDiagonal() {
-    let points = 0;
-    const mainDiagonal = [cells[0], cells[4], cells[8]];
-    const antiDiagonal = [cells[2], cells[4], cells[6]];
-    const diagonals = [mainDiagonal, antiDiagonal];
-    let matchInfo = [];
-
-    for (const diagonal of diagonals) {
-        const values = diagonal.map(cell => cell.textContent);
-        const counts = {};
-
-        values.forEach(value => {
-            counts[value] = (counts[value] || 0) + 1;
-        });
-
-        if (Object.values(counts).includes(3)) {
-            points += 6;
-            await flashCells(diagonal, 'highlight-yellow', 300);
-            matchInfo.push("+6");
-        } else if (Object.values(counts).includes(2)) {
-            points += 4;
-            await flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow', 300);
-            matchInfo.push("+4");
-        } else {
-            matchInfo.push("0");
-        }
-    }
-
-    document.getElementById('diagonalResult').textContent = matchInfo.join(", ");
-    return points;
-}
-
-async function playGame() {
-    playButton.disabled = true; // Блокируем кнопку на время выполнения хода
-    resetMessages();
-
-    // Заполняем ячейки случайными числами
-    cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
-    clickCount++;
-    clickCountElement.textContent = clickCount;
-
-    // Подсчёт очков
-    const horizontalPoints = await checkHorizontal();
-    const verticalPoints = await checkVertical();
-    const diagonalPoints = await checkDiagonal();
-
-    const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
-
-    if (totalPoints > 0) {
-        document.getElementById('totalResult').textContent = totalPoints;
-        updateScore(totalPoints);
+    if (telegramId && username) {
+        const greeting = `Здравствуйте, ${username} (${telegramId})`;
+        console.log(greeting);
+        document.getElementById('greeting').textContent = greeting;
     } else {
-        document.getElementById('totalResult').textContent = "-8 (нет совпадений)";
-        updateScore(-8);
+        console.error("Не найдены параметры username или telegram_id в URL.");
     }
 
-    // Проверяем состояние игры
-    if (score >= 200) {
+    if (userScore !== undefined) {
+        document.getElementById('userScore').textContent = userScore;
+    } else {
+        console.error("Не найдены параметры score в URL.");
+    }
+
+    if (userLevel !== undefined) {
+        document.getElementById('userLevel').textContent = userLevel;
+    } else {
+        console.error("Не найдены параметры level в URL.");
+    }
+
+    // Логика для увеличения очков за каждую победу
+    function increaseLevelAndScore() {
         winCount++;
-        winCountElement.textContent = winCount;
-        messages.end.textContent = "Вы выиграли!";
-        playButton.disabled = true;
-        restartButton.style.display = 'block';
-    } else if (clickCount >= 22) { // Проверяем количество кликов
-        if (score < 200) {
-            lossCount++;
-            lossCountElement.textContent = lossCount;
-            messages.end.textContent = "Вы проиграли! Не хватило очков.";
-        } else {
-            winCount++;
-            winCountElement.textContent = winCount;
-            messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+        if (winCount % 3 === 0) {
+            userScore += 10; // Добавляем 10 очков за каждые 3 победы
+            userLevel++; // Увеличиваем уровень
+            document.getElementById('userScore').textContent = userScore;
+            document.getElementById('userLevel').textContent = userLevel;
+            
+            // Отправляем обновленные данные на сервер
+            fetch(`/update_user_level?telegram_id=${telegramId}&level=${userLevel}&score=${userScore}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Обновлены данные пользователя:', data);
+                })
+                .catch(error => {
+                    console.error('Ошибка обновления данных пользователя:', error);
+                });
         }
-        playButton.disabled = true;
-        restartButton.style.display = 'block';
-    } else {
-        playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
+        winCountElement.textContent = winCount;
     }
-}
 
-restartButton.addEventListener('click', () => {
-    score = 30;
-    clickCount = 0;
-    scoreElement.textContent = score;
-    clickCountElement.textContent = clickCount;
-    playButton.disabled = false;
-    restartButton.style.display = 'none';
-    resetMessages();
-    messages.end.textContent = ''; // Убираем текст "Вы выиграли!" или "Вы проиграли!"
-});
+    function resetMessages() {
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('horizontalResult').textContent = '';
+            document.getElementById('verticalResult').textContent = '';
+            document.getElementById('diagonalResult').textContent = '';
+            document.getElementById('totalResult').textContent = '';
+            messages.end.textContent = '';
+        });
+    }
 
-playButton.addEventListener('click', playGame);
+    async function playGame() {
+        playButton.disabled = true; // Блокируем кнопку на время выполнения хода
+        resetMessages();
+
+        // Заполняем ячейки случайными числами
+        cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
+        clickCount++;
+        clickCountElement.textContent = clickCount;
+
+        // Подсчёт очков
+        const horizontalPoints = await checkHorizontal();
+        const verticalPoints = await checkVertical();
+        const diagonalPoints = await checkDiagonal();
+
+        const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
+
+        if (totalPoints > 0) {
+            document.getElementById('totalResult').textContent = totalPoints;
+            updateScore(totalPoints);
+        } else {
+            document.getElementById('totalResult').textContent = "-8 (нет совпадений)";
+            updateScore(-8);
+        }
+
+        // Проверяем состояние игры
+        if (score >= 200) {
+            increaseLevelAndScore();
+            messages.end.textContent = "Вы выиграли!";
+            playButton.disabled = true;
+            restartButton.style.display = 'block';
+        } else if (clickCount >= 22) { // Проверяем количество кликов
+            if (score < 200) {
+                lossCount++;
+                lossCountElement.textContent = lossCount;
+                messages.end.textContent = "Вы проиграли! Не хватило очков.";
+            } else {
+                increaseLevelAndScore();
+                winCountElement.textContent = winCount;
+                messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+            }
+            playButton.disabled = true;
+            restartButton.style.display = 'block';
+        } else {
+            playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
+        }
+    }
+
+    restartButton.addEventListener('click', () => {
+        score = 30;
+        clickCount = 0;
+        scoreElement.textContent = score;
+        clickCountElement.textContent = clickCount;
+        playButton.disabled = false;
+        restartButton.style.display = 'none';
+        resetMessages();
+        messages.end.textContent = ''; // Убираем текст "Вы выиграли!" или "Вы проиграли!"
+    });
+
+    playButton.addEventListener('click', playGame);
+</script>
+
 
     </script>
 </body>
