@@ -175,19 +175,28 @@ margin-top: 10px;
 </div>
 <h1>Привет, <span id="username"></span>!</h1>
 
+<script>
         // Инициализация Telegram Web App SDK
         Telegram.WebApp.init();
 
-        // Получаем информацию о пользователе через Telegram API
-        const user = Telegram.WebApp.initDataUnsafe;
-        const username = user ? user.user.first_name : "Гость"; // Получаем имя пользователя
-        const telegramId = user ? user.user.id : "неизвестен";  // Получаем ID пользователя
+        // Ожидаем, пока Web App SDK не инициализируется
+        Telegram.WebApp.onEvent('initialized', function() {
+            const user = Telegram.WebApp.initDataUnsafe;
 
-        // Выводим имя пользователя и ID
-        document.getElementById('username').textContent = username;
-    
-    <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
+            if (user && user.user) {
+                const username = user.user.first_name || "Гость";  // Получаем имя пользователя или ставим "Гость", если имя отсутствует
+                const telegramId = user.user.id;  // Получаем ID пользователя
 
+                // Выводим имя пользователя и ID на странице
+                document.getElementById('username').textContent = username;
+                document.getElementById('user_id').textContent = telegramId;
+            } else {
+                // Если данные пользователя не доступны
+                document.getElementById('username').textContent = "Гость";
+                document.getElementById('user_id').textContent = "неизвестен";
+            }
+        });
+    </script>
     <script>
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
