@@ -130,9 +130,7 @@ margin-top: 10px;
     </style>
 </head>
 <body>
-    <!-- Добавьте сюда, где нужно отображать имя пользователя -->
-<h1>Привет, <span id="username">Гость</span>!</h1>
-
+    <div id="greeting"></div>
     <!-- Название игры -->
     <div class="game-title">22 КЛИКА</div>
 
@@ -223,41 +221,16 @@ function getQueryParams() {
 
 const queryParams = getQueryParams();
 const telegramId = queryParams['telegram_id'];
+const username = queryParams['username'];
 
-if (telegramId) {
-    console.log("Telegram ID:", telegramId);
-    // Здесь вы можете выполнить авторизацию
+if (telegramId && username) {
+    const greeting = `Здравствуйте, ${username} (${telegramId})`;
+    console.log(greeting);
+    // Вы можете вывести это сообщение на страницу, например, так:
+    document.getElementById('greeting').textContent = greeting;
 } else {
-    console.error("Telegram ID не найден в параметрах URL.");
+    console.error("Не найдены параметры username или telegram_id в URL.");
 }
-document.addEventListener("DOMContentLoaded", () => {
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.init();  // Инициализация WebApp
-
-        // Получаем данные о пользователе
-        const user = window.Telegram.WebApp.initDataUnsafe?.user;
-
-        if (user) {
-            const username = user.username || 'Гость';
-            const telegramId = user.id;
-
-            // Отображение данных о пользователе на странице
-            console.log('Telegram ID:', telegramId);
-            console.log('Username:', username);
-
-            // Обновляем элемент с именем пользователя на странице
-            const userNameElement = document.getElementById('username');
-            if (userNameElement) {
-                userNameElement.textContent = username;
-            }
-        } else {
-            console.error("Не удалось получить данные пользователя.");
-        }
-    } else {
-        console.error("Telegram WebApp API не доступен.");
-    }
-});
-
 
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
