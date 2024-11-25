@@ -213,6 +213,20 @@ margin-top: 10px;
 });
 
 }
+function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return Object.fromEntries(params.entries());
+}
+
+const queryParams = getQueryParams();
+const telegramId = queryParams['telegram_id'];
+
+if (telegramId) {
+    console.log("Telegram ID:", telegramId);
+    // Здесь вы можете выполнить авторизацию
+} else {
+    console.error("Telegram ID не найден в параметрах URL.");
+}
 
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
