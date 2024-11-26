@@ -203,6 +203,27 @@ margin-top: 10px;
         let winCount = 0;
         let lossCount = 0;
 
+function updateUserStats() {
+    // Проверяем результат игры
+    if (messages.end.textContent.includes("Вы выиграли")) {
+        userScore = parseInt(userScore) + 10; // Увеличиваем очки
+    } else if (messages.end.textContent.includes("Вы проиграли")) {
+        userScore = parseInt(userScore) - 10; // Уменьшаем очки
+    }
+
+    // Каждые три победы увеличиваем уровень
+    if (winCount % 3 === 0 && winCount > 0) {
+        userLevel = parseInt(userLevel) + 1;
+    }
+
+    // Отображаем обновленные значения на странице
+    document.getElementById('userScore').textContent = userScore;
+    document.getElementById('userLevel').textContent = userLevel;
+
+    // Отправляем обновленные данные на сервер
+    sendStatsToServer(userScore, userLevel);
+}
+
         function updateScore(points) {
             score += points;
             scoreElement.textContent = score;
@@ -386,11 +407,13 @@ async function playGame() {
         messages.end.textContent = "Вы выиграли!";
         playButton.disabled = true;
         restartButton.style.display = 'block';
+updateUserStats();
     } else if (clickCount >= 22) { // Проверяем количество кликов
         if (score < 200) {
             lossCount++;
             lossCountElement.textContent = lossCount;
             messages.end.textContent = "Вы проиграли! Не хватило очков.";
+
         } else {
             winCount++;
             winCountElement.textContent = winCount;
@@ -400,26 +423,8 @@ async function playGame() {
         restartButton.style.display = 'block';
     } else {
         playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
+updateUserStats();
     }
-}
-// После победы в игре
-function onVictory() {
-    const userId = getUserId(); // Получаем ID пользователя
-    const username = getUsername(); // Получаем имя пользователя
-    const victories = getVictories(); // Получаем количество побед
-
-    // Генерируем URL с новыми данными
-    const level = getUserLevel() + 1; // Увеличиваем уровень
-    const score = getUserScore() + 10; // Увеличиваем очки
-    const url = generateWebAppUrl('https://yourbotlink.com', userId, username, level, score, victories + 1);
-
-    // Отправляем данные в URL
-    window.location.href = url;
-}
-
-// Функция генерации URL с параметрами
-function generateWebAppUrl(baseUrl, userId, username, level, score, victories) {
-    return `${baseUrl}?user_id=${userId}&username=${username}&level=${level}&score=${score}&victories=${victories}`;
 }
 
 restartButton.addEventListener('click', () => {
