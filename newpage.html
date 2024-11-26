@@ -259,6 +259,9 @@ if (telegramId && username) {
     const greeting = `Здравствуйте, ${username} (${telegramId})`;
     console.log(greeting);
     document.getElementById('greeting').textContent = greeting;
+    let userScore = isNaN(parseInt(queryParams['score'])) ? 0 : parseInt(queryParams['score']);
+let userLevel = isNaN(parseInt(queryParams['level'])) ? 1 : parseInt(queryParams['level']);
+
 } else {
     console.error("Не найдены параметры username или telegram_id в URL.");
 }
