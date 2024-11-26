@@ -206,17 +206,17 @@ margin-top: 10px;
 function updateUserStats() {
     // Проверяем результат игры
     if (messages.end.textContent.includes("Вы выиграли")) {
-        userScore = userScore + 10; // Увеличиваем очки
+        userScore += 10; // Увеличиваем очки
     } else if (messages.end.textContent.includes("Вы проиграли")) {
-        userScore = userScore - 10; // Уменьшаем очки
+        userScore -= 10; // Уменьшаем очки
     }
 
     // Каждые три победы увеличиваем уровень
     if (winCount % 3 === 0 && winCount > 0) {
-        userLevel = userLevel + 1;
+        userLevel++;
     }
 
-    // Обновляем значения на странице
+    // Обновляем отображение
     document.getElementById('userScore').textContent = userScore;
     document.getElementById('userLevel').textContent = userLevel;
 
