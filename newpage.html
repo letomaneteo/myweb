@@ -191,16 +191,7 @@ margin-top: 10px;
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
 
     <script>
-        const queryParams = new URLSearchParams(window.location.search);
-const telegramId = queryParams.get('telegram_id');
-const username = queryParams.get('username');
-
-if (telegramId && username) {
-    const greeting = `Здравствуйте, ${username} (${telegramId})`;
-    document.getElementById('greeting').textContent = greeting;
-} else {
-    console.error("Не найдены параметры username или telegram_id в URL.");
-}
+      
 
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
