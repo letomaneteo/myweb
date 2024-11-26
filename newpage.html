@@ -203,6 +203,27 @@ margin-top: 10px;
         let winCount = 0;
         let lossCount = 0;
 
+function updateUserStats() {
+    // Проверяем результат игры
+    if (messages.end.textContent.includes("Вы выиграли")) {
+        userScore = userScore + 10; // Увеличиваем очки
+    } else if (messages.end.textContent.includes("Вы проиграли")) {
+        userScore = userScore - 10; // Уменьшаем очки
+    }
+
+    // Каждые три победы увеличиваем уровень
+    if (winCount % 3 === 0 && winCount > 0) {
+        userLevel = userLevel + 1;
+    }
+
+    // Обновляем значения на странице
+    document.getElementById('userScore').textContent = userScore;
+    document.getElementById('userLevel').textContent = userLevel;
+
+    // Отправляем данные на сервер
+    sendStatsToServer(userScore, userLevel);
+}
+
         function updateScore(points) {
             score += points;
             scoreElement.textContent = score;
@@ -226,8 +247,13 @@ function getQueryParams() {
 const queryParams = getQueryParams();
 const telegramId = queryParams['telegram_id'];
 const username = queryParams['username'];
-const userScore = queryParams['score'];  // Получаем очки
-const userLevel = queryParams['level'];  // Получаем уровень
+let userScore = parseInt(queryParams['score']) || 0;  // Используем || 0 для обработки undefined
+let userLevel = parseInt(queryParams['level']) || 1;  // То же для уровня
+
+// Отображаем значения на странице при загрузке
+document.getElementById('userScore').textContent = userScore;
+document.getElementById('userLevel').textContent = userLevel;
+
 
 if (telegramId && username) {
     const greeting = `Здравствуйте, ${username} (${telegramId})`;
@@ -386,11 +412,13 @@ async function playGame() {
         messages.end.textContent = "Вы выиграли!";
         playButton.disabled = true;
         restartButton.style.display = 'block';
+        updateUserStats(); // Вызовем функцию обновления статистики
     } else if (clickCount >= 22) { // Проверяем количество кликов
         if (score < 200) {
             lossCount++;
             lossCountElement.textContent = lossCount;
             messages.end.textContent = "Вы проиграли! Не хватило очков.";
+
         } else {
             winCount++;
             winCountElement.textContent = winCount;
@@ -398,8 +426,10 @@ async function playGame() {
         }
         playButton.disabled = true;
         restartButton.style.display = 'block';
+        updateUserStats(); // Вызовем функцию обновления статистики
     } else {
         playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
+        updateUserStats(); // В случае продолжения игры обновим статистику
     }
 }
 
