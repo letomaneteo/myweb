@@ -261,7 +261,6 @@ let userScore = parseInt(queryParams['score']) || 0;  // Используем ||
 let userLevel = parseInt(queryParams['level']) || 1;  // То же для уровня
 
 // Отображаем значения на странице при загрузке
-document.getElementById('greeting').textContent = greeting;
 document.getElementById('userScore').textContent = userScore;
 document.getElementById('userLevel').textContent = userLevel;
 
@@ -456,6 +455,15 @@ restartButton.addEventListener('click', () => {
 });
 
 playButton.addEventListener('click', playGame);
+        
+        function sendStatsToServer(score, level) {
+    fetch('https://example.com/api/stats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score, level })
+    }).then(response => console.log("Статистика отправлена", response));
+}
+
     </script>
 </body>
 </html>
