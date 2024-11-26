@@ -261,6 +261,7 @@ let userScore = parseInt(queryParams['score']) || 0;  // Используем ||
 let userLevel = parseInt(queryParams['level']) || 1;  // То же для уровня
 
 // Отображаем значения на странице при загрузке
+document.getElementById('greeting').textContent = greeting;
 document.getElementById('userScore').textContent = userScore;
 document.getElementById('userLevel').textContent = userLevel;
 
