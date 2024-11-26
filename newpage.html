@@ -238,11 +238,24 @@ function updateUserStats() {
     messages.end.textContent = '';
 });
 
-}
 function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
     return Object.fromEntries(params.entries());
 }
+
+const queryParams = getQueryParams();
+const telegramId = queryParams['telegram_id'];
+const username = queryParams['username'];
+
+if (telegramId && username) {
+    const greeting = `Здравствуйте, ${username} (${telegramId})`;
+    console.log(greeting);
+    // Вы можете вывести это сообщение на страницу, например, так:
+    document.getElementById('greeting').textContent = greeting;
+} else {
+    console.error("Не найдены параметры username или telegram_id в URL.");
+}
+
 
 const queryParams = getQueryParams();
 const telegramId = queryParams['telegram_id'];
