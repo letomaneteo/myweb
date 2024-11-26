@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -34,13 +34,6 @@ background-position: center center;
         font-size: 24px;
         transition: background-color 0.3s;
     }
-        #greeting {
-    margin: 20px 0;
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-}
     /* Медиазапросы для мобильных */
     @media (max-width: 600px) {
         .grid {
@@ -139,7 +132,6 @@ margin-top: 10px;
 <body>
     <div id="greeting"></div>  <!-- Приветственное сообщение -->
 <!-- Добавьте блоки для отображения очков и уровня -->
-   <!-- Добавьте блоки для отображения очков и уровня -->
 <h1>Очки: <span id="userScore">0</span></h1>
 <h2>Уровень: <span id="userLevel">1</span></h2>
 
@@ -190,8 +182,6 @@ margin-top: 10px;
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
 
     <script>
-      
-
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
         const clickCountElement = document.getElementById('clickCount');
@@ -212,27 +202,6 @@ margin-top: 10px;
         let clickCount = 0;
         let winCount = 0;
         let lossCount = 0;
-
-function updateUserStats() {
-    // Проверяем результат игры
-    if (messages.end.textContent.includes("Вы выиграли")) {
-        userScore = userScore + 10; // Увеличиваем очки
-    } else if (messages.end.textContent.includes("Вы проиграли")) {
-        userScore = userScore - 10; // Уменьшаем очки
-    }
-
-    // Каждые три победы увеличиваем уровень
-    if (winCount % 3 === 0 && winCount > 0) {
-        userLevel = userLevel + 1;
-    }
-
-    // Обновляем значения на странице
-    document.getElementById('userScore').textContent = userScore;
-    document.getElementById('userLevel').textContent = userLevel;
-
-    // Отправляем данные на сервер
-    sendStatsToServer(userScore, userLevel);
-}
 
         function updateScore(points) {
             score += points;
@@ -257,16 +226,11 @@ function getQueryParams() {
 const queryParams = getQueryParams();
 const telegramId = queryParams['telegram_id'];
 const username = queryParams['username'];
-let userScore = parseInt(queryParams['score']) || 0;  // Используем || 0 для обработки undefined
-let userLevel = parseInt(queryParams['level']) || 1;  // То же для уровня
-
-// Отображаем значения на странице при загрузке
-document.getElementById('userScore').textContent = userScore;
-document.getElementById('userLevel').textContent = userLevel;
-
+const userScore = queryParams['score'];  // Получаем очки
+const userLevel = queryParams['level'];  // Получаем уровень
 
 if (telegramId && username) {
-    const greeting = Здравствуйте, ${username} (${telegramId});
+    const greeting = `Здравствуйте, ${username} (${telegramId})`;
     console.log(greeting);
     document.getElementById('greeting').textContent = greeting;
 } else {
@@ -422,13 +386,11 @@ async function playGame() {
         messages.end.textContent = "Вы выиграли!";
         playButton.disabled = true;
         restartButton.style.display = 'block';
-        updateUserStats(); // Вызовем функцию обновления статистики
     } else if (clickCount >= 22) { // Проверяем количество кликов
         if (score < 200) {
             lossCount++;
             lossCountElement.textContent = lossCount;
             messages.end.textContent = "Вы проиграли! Не хватило очков.";
-
         } else {
             winCount++;
             winCountElement.textContent = winCount;
@@ -436,10 +398,8 @@ async function playGame() {
         }
         playButton.disabled = true;
         restartButton.style.display = 'block';
-        updateUserStats(); // Вызовем функцию обновления статистики
     } else {
         playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
-        updateUserStats(); // В случае продолжения игры обновим статистику
     }
 }
 
@@ -455,14 +415,6 @@ restartButton.addEventListener('click', () => {
 });
 
 playButton.addEventListener('click', playGame);
-        
-        function sendStatsToServer(score, level) {
-    fetch('https://example.com/api/stats', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score, level })
-    }).then(response => console.log("Статистика отправлена", response));
-}
 
     </script>
 </body>
