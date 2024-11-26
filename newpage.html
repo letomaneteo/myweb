@@ -206,17 +206,17 @@ margin-top: 10px;
 function updateUserStats() {
     // Проверяем результат игры
     if (messages.end.textContent.includes("Вы выиграли")) {
-        userScore += 10; // Увеличиваем очки
+        userScore = userScore + 10; // Увеличиваем очки
     } else if (messages.end.textContent.includes("Вы проиграли")) {
-        userScore -= 10; // Уменьшаем очки
+        userScore = userScore - 10; // Уменьшаем очки
     }
 
     // Каждые три победы увеличиваем уровень
     if (winCount % 3 === 0 && winCount > 0) {
-        userLevel++;
+        userLevel = userLevel + 1;
     }
 
-    // Обновляем отображение
+    // Обновляем значения на странице
     document.getElementById('userScore').textContent = userScore;
     document.getElementById('userLevel').textContent = userLevel;
 
@@ -237,25 +237,12 @@ function updateUserStats() {
     document.getElementById('totalResult').textContent = '';
     messages.end.textContent = '';
 });
+
 }
 function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
     return Object.fromEntries(params.entries());
 }
-
-const queryParams = getQueryParams();
-const telegramId = queryParams['telegram_id'];
-const username = queryParams['username'];
-
-if (telegramId && username) {
-    const greeting = `Здравствуйте, ${username} (${telegramId})`;
-    console.log(greeting);
-    // Вы можете вывести это сообщение на страницу, например, так:
-    document.getElementById('greeting').textContent = greeting;
-} else {
-    console.error("Не найдены параметры username или telegram_id в URL.");
-}
-
 
 const queryParams = getQueryParams();
 const telegramId = queryParams['telegram_id'];
@@ -458,14 +445,6 @@ restartButton.addEventListener('click', () => {
 });
 
 playButton.addEventListener('click', playGame);
-
-function sendStatsToServer(score, level) {
-    fetch('https://example.com/api/stats', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score, level })
-    }).then(response => console.log("Статистика отправлена", response));
-}
 
     </script>
 </body>
