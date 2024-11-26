@@ -203,57 +203,31 @@ margin-top: 10px;
         let winCount = 0;
         let lossCount = 0;
 
-// Функция для обновления данных и отправки на сервер
-function updateUserStats(newScore, newLevel) {
-    // Обновляем локальные данные
-    userScore = newScore;
-    userLevel = newLevel;
-
-    // Вызываем функцию отправки данных на сервер
-    sendStatsToServer();
-}
-
-// Пример обновления данных
-document.getElementById('updateButton').addEventListener('click', function() {
-    // Здесь вы можете изменить очки и уровень на основе логики вашего приложения
-    const newScore = userScore + 10;  // Пример обновления очков
-    const newLevel = userLevel + 1;   // Пример обновления уровня
-    
-    // Обновляем и отправляем данные
-    updateUserStats(newScore, newLevel);
-});
-
-// Функция отправки данных на сервер
-async function sendStatsToServer() {
-    const serverUrl = "http://localhost:8080/update_user_data"; // Убедитесь, что это правильный адрес
-
-    // Параметры, которые будут отправлены на сервер
-    const data = {
-        user_id: telegramId,
-        username: username,
-        score: userScore,
-        level: userLevel
-    };
-
-    try {
-        const response = await fetch(serverUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            console.log('Данные успешно отправлены на сервер');
-        } else {
-            console.error('Ошибка при отправке данных на сервер');
-        }
-    } catch (error) {
-        console.error('Ошибка сети:', error);
+function updateUserStats() {
+    // Проверяем результат игры
+    if (messages.end.textContent.includes("Вы выиграли")) {
+        userScore = userScore + 10; // Увеличиваем очки
+    } else if (messages.end.textContent.includes("Вы проиграли")) {
+        userScore = userScore - 10; // Уменьшаем очки
     }
+
+    // Каждые три победы увеличиваем уровень
+    if (winCount % 3 === 0 && winCount > 0) {
+        userLevel = userLevel + 1;
+    }
+
+    // Обновляем значения на странице
+    document.getElementById('userScore').textContent = userScore;
+    document.getElementById('userLevel').textContent = userLevel;
+
+    // Отправляем данные на сервер
+    sendStatsToServer(userScore, userLevel);
 }
 
+        function updateScore(points) {
+            score += points;
+            scoreElement.textContent = score;
+        }
 
        function resetMessages() {
     document.addEventListener('DOMContentLoaded', () => {
@@ -276,44 +250,15 @@ const username = queryParams['username'];
 let userScore = parseInt(queryParams['score']) || 0;  // Используем || 0 для обработки undefined
 let userLevel = parseInt(queryParams['level']) || 1;  // То же для уровня
 
-// Функция для отправки данных на сервер
-function sendStatsToServer(score, level) {
-    const payload = {
-        user_id: telegramId, // Используем telegramId из URL
-        score: score,
-        level: level
-    };
-
-    const serverUrl = "http://localhost:8080/update_user_data"; // Адрес сервера
-
-    fetch(serverUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log("Данные успешно отправлены на сервер");
-        } else {
-            console.error("Ошибка при отправке данных на сервер");
-        }
-    })
-    .catch(error => {
-        console.error("Ошибка сети:", error);
-    });
-}
-
 // Отображаем значения на странице при загрузке
 document.getElementById('userScore').textContent = userScore;
 document.getElementById('userLevel').textContent = userLevel;
+
 
 if (telegramId && username) {
     const greeting = `Здравствуйте, ${username} (${telegramId})`;
     console.log(greeting);
     document.getElementById('greeting').textContent = greeting;
-
-    // Отправляем данные на сервер
-    sendStatsToServer(userScore, userLevel);
 } else {
     console.error("Не найдены параметры username или telegram_id в URL.");
 }
@@ -330,6 +275,7 @@ if (userLevel !== undefined) {
 } else {
     console.error("Не найдены параметры level в URL.");
 }
+
 
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
