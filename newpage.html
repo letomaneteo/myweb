@@ -260,14 +260,6 @@ let userLevel = parseInt(queryParams['level']) || 1;  // То же для уро
     const score = urlParams.get('score');
     const hash = urlParams.get('hash');
 
-
-    document.body.insertAdjacentHTML('beforeend', `
-        <p>User ID: ${userId}</p>
-        <p>Username: ${username}</p>
-        <p>Level: ${level}</p>
-        <p>Score: ${score}</p>
-        <p>Hash: ${hash}</p>
-    `);
 });
 
 
@@ -481,24 +473,6 @@ async function playGame() {
         updateUserStats(); // В случае продолжения игры обновим статистику
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-
-    const userId = urlParams.get('user_id') || "не указан";
-    const username = urlParams.get('username') || "Гость";
-    const level = urlParams.get('level') || 0;
-    const score = urlParams.get('score') || 0;
-    const hash = urlParams.get('hash') || "нет данных";
-
-    // Приветствие вверху
-    const greeting = `
-        <h1>Добро пожаловать, ${username}!</h1>
-        <p>Ваш уровень: ${level}</p>
-        <p>Ваши очки: ${score}</p>
-    `;
-    document.body.insertAdjacentHTML('afterbegin', greeting);
-});
 
 
 
