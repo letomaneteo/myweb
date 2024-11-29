@@ -487,34 +487,30 @@ async function playGame() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('https://example.com/api/user/123'); // Замените на URL вашего API
-        const data = await response.json();
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
 
-        if (response.ok) {
-            const { userId, username, level, score, hash } = data;
+    const userId = urlParams.get('user_id') || "не указан";
+    const username = urlParams.get('username') || "Гость";
+    const level = urlParams.get('level') || 0;
+    const score = urlParams.get('score') || 0;
+    const hash = urlParams.get('hash') || "нет данных";
 
-            // Выводим приветствие вверху страницы
-            const greeting = `
-                <h1>Добро пожаловать, ${username}!</h1>
-                <p>Ваш уровень: ${level}</p>
-                <p>Ваши очки: ${score}</p>
-            `;
-            document.body.insertAdjacentHTML('afterbegin', greeting);
+    // Приветствие вверху
+    const greeting = `
+        <h1>Добро пожаловать, ${username}!</h1>
+        <p>Ваш уровень: ${level}</p>
+        <p>Ваши очки: ${score}</p>
+    `;
+    document.body.insertAdjacentHTML('afterbegin', greeting);
 
-            // Дополнительная информация (если требуется)
-            document.body.insertAdjacentHTML('beforeend', `
-                <p>User ID: ${userId}</p>
-                <p>Hash: ${hash}</p>
-            `);
-        } else {
-            console.error('Ошибка получения данных:', data.message);
-        }
-    } catch (error) {
-        console.error('Ошибка подключения к API:', error);
-    }
+    // Информация внизу
+    document.body.insertAdjacentHTML('beforeend', `
+        <p>User ID: ${userId}</p>
+        <p>Hash: ${hash}</p>
+    `);
 });
+
 
 
 playButton.addEventListener('click', playGame);
