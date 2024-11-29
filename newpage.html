@@ -485,6 +485,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 playButton.addEventListener('click', playGame);
+        
+restartButton.addEventListener('click', () => {
+    // Сброс параметров
+    score = 30; // Начальное значение очков
+    clickCount = 0;
+    document.getElementById('score').textContent = score;
+    document.getElementById('clickCount').textContent = clickCount;
+
+    // Сброс сообщений
+    resetMessages();
+
+    // Очистка ячеек
+    cells.forEach(cell => {
+        cell.textContent = ''; // Убираем текст
+    });
+
+    // Скрыть кнопку "Начать заново" и включить кнопку "Играть"
+    restartButton.style.display = 'none';
+    playButton.disabled = false;
+
+    // Сброс конца игры
+    messages.end.textContent = '';
+});
 
     </script>
 </body>
