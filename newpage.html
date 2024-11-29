@@ -250,6 +250,31 @@ const username = queryParams['username'];
 let userScore = parseInt(queryParams['score']) || 0;  // Используем || 0 для обработки undefined
 let userLevel = parseInt(queryParams['level']) || 1;  // То же для уровня
 
+        document.addEventListener('DOMContentLoaded', () => {
+    // Ваш код
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const userId = urlParams.get('user_id');
+    const username = urlParams.get('username');
+    const level = urlParams.get('level');
+    const score = urlParams.get('score');
+    const hash = urlParams.get('hash');
+
+    console.log("User ID:", userId);
+    console.log("Username:", username);
+    console.log("Level:", level);
+    console.log("Score:", score);
+    console.log("Hash:", hash);
+
+    document.body.innerHTML += `
+      <p>User ID: ${userId}</p>
+      <p>Username: ${username}</p>
+      <p>Level: ${level}</p>
+      <p>Score: ${score}</p>
+      <p>Hash: ${hash}</p>
+    `;
+});
+
 // Функция для отправки данных на сервер
 function sendStatsToServer(score, level) {
     const payload = {
