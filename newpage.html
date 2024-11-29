@@ -490,7 +490,13 @@ async function playGame() {
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
 
-      // Приветствие вверху
+    const userId = urlParams.get('user_id') || "не указан";
+    const username = urlParams.get('username') || "Гость";
+    const level = urlParams.get('level') || 0;
+    const score = urlParams.get('score') || 0;
+    const hash = urlParams.get('hash') || "нет данных";
+
+    // Приветствие вверху
     const greeting = `
         <h1>Добро пожаловать, ${username}!</h1>
         <p>Ваш уровень: ${level}</p>
@@ -512,3 +518,7 @@ playButton.addEventListener('click', playGame);
     </script>
 </body>
 </html>
+
+    
+
+
