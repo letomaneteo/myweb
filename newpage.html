@@ -229,15 +229,6 @@ function updateUserStats() {
             scoreElement.textContent = score;
         }
 
-       function resetMessages() {
-    document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('horizontalResult').textContent = '';
-    document.getElementById('verticalResult').textContent = '';
-    document.getElementById('diagonalResult').textContent = '';
-    document.getElementById('totalResult').textContent = '';
-    messages.end.textContent = '';
-});
-
 }
 function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
@@ -246,7 +237,6 @@ function getQueryParams() {
 
 const queryParams = getQueryParams();
 const telegramId = queryParams['telegram_id'];
-const username = queryParams['username'];
 let userScore = parseInt(queryParams['score']) || 0;  // Используем || 0 для обработки undefined
 let userLevel = parseInt(queryParams['level']) || 1;  // То же для уровня
 
