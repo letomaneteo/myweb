@@ -252,15 +252,14 @@ let userLevel = parseInt(queryParams['level']) || 1;  // То же для уро
 
 
 
-// Функция для отправки данных на сервер
-function sendStatsToServer(score, level) {
+function sendStatsToServer(winCount, lossCount) {
     const payload = {
-        user_id: telegramId, // Используем telegramId из URL
-        score: score,
-        level: level
+        user_id: telegramId, // ID пользователя
+        wins: winCount,
+        losses: lossCount
     };
 
-    const serverUrl = "http://localhost:8080/update_user_data"; // Адрес сервера
+    const serverUrl = "http://localhost:8080/update_user_data";
 
     fetch(serverUrl, {
         method: "POST",
@@ -269,15 +268,39 @@ function sendStatsToServer(score, level) {
     })
     .then(response => {
         if (response.ok) {
-            console.log("Данные успешно отправлены на сервер");
+            return response.json();
         } else {
-            console.error("Ошибка при отправке данных на сервер");
+            throw new Error("Ошибка при отправке данных на сервер");
         }
     })
+    .then(data => {
+        userScore = data.score; // Обновляем очки
+        userLevel = data.level; // Обновляем уровень
+
+        document.getElementById('userScore').textContent = userScore;
+        document.getElementById('userLevel').textContent = userLevel;
+
+        console.log("Обновлённые данные пользователя:", data);
+    })
     .catch(error => {
-        console.error("Ошибка сети:", error);
+        console.error("Ошибка отправки данных:", error);
     });
 }
+
+// Увеличение побед
+function increaseWinCount() {
+    winCount++;
+    winCountElement.textContent = winCount;
+    sendStatsToServer(winCount, lossCount); // Отправляем изменения на сервер
+}
+
+// Увеличение поражений
+function increaseLossCount() {
+    lossCount++;
+    lossCountElement.textContent = lossCount;
+    sendStatsToServer(winCount, lossCount); // Отправляем изменения на сервер
+}
+
 
 // Отображаем значения на странице при загрузке
 document.getElementById('userScore').textContent = userScore;
