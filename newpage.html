@@ -490,44 +490,26 @@ async function playGame() {
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
 
-    const userId = urlParams.get('user_id');
-    const username = urlParams.get('username');
-    const level = urlParams.get('level');
-    const score = urlParams.get('score');
+    const userId = urlParams.get('user_id') || "не указан";
+    const username = urlParams.get('username') || "Гость";
+    const level = urlParams.get('level') || 0;
+    const score = urlParams.get('score') || 0;
+    const hash = urlParams.get('hash') || "нет данных";
 
-    // Добавляем приветствие с информацией об уровне и очках
-    const greetingElement = document.getElementById('greeting');
-    greetingElement.innerHTML = `
-      Здравствуйте, ${username}! Ваш уровень: ${level}, Ваши очки: ${score}.
+    // Приветствие вверху
+    const greeting = `
+        <h1>Добро пожаловать, ${username}!</h1>
+        <p>Ваш уровень: ${level}</p>
+        <p>Ваши очки: ${score}</p>
     `;
+    document.body.insertAdjacentHTML('afterbegin', greeting);
+
+    // Информация внизу
+    document.body.insertAdjacentHTML('beforeend', `
+        <p>User ID: ${userId}</p>
+        <p>Hash: ${hash}</p>
+    `);
 });
-
-function updateGameData(newLevel, newScore) {
-    const userId = new URLSearchParams(window.location.search).get('user_id');
-
-    fetch('/update_user_data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            user_id: userId,
-            level: newLevel,
-            score: newScore,
-        }),
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log(data);
-        const greetingElement = document.getElementById('greeting');
-        greetingElement.innerHTML = `
-          Ваш новый уровень: ${newLevel}, Ваши новые очки: ${newScore}.
-        `;
-    })
-    .catch(error => {
-        console.error('Ошибка при обновлении данных:', error);
-    });
-}
 
 
 
