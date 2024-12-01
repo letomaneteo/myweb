@@ -204,25 +204,20 @@ margin-top: 10px;
         let lossCount = 0;
 
 function updateUserStats() {
-    // Проверяем результат игры
-    if (messages.end.textContent.includes("Вы выиграли")) {
-        userScore = userScore + 10; // Увеличиваем очки
-    } else if (messages.end.textContent.includes("Вы проиграли")) {
-        userScore = userScore - 10; // Уменьшаем очки
-    }
+    // Обновляем уровень на основе побед
+    userLevel = Math.floor(winCount / 3) + 1;
 
-    // Каждые три победы увеличиваем уровень
-    if (winCount % 3 === 0 && winCount > 0) {
-        userLevel = userLevel + 1;
-    }
+    // Обновляем очки на основе побед и поражений
+    userScore = winCount * 10 - lossCount * 10;
 
-    // Обновляем значения на странице
+    // Отображаем значения на странице
     document.getElementById('userScore').textContent = userScore;
     document.getElementById('userLevel').textContent = userLevel;
 
     // Отправляем данные на сервер
     sendStatsToServer(userScore, userLevel);
 }
+
 
         function updateScore(points) {
             score += points;
@@ -291,6 +286,7 @@ function sendStatsToServer(winCount, lossCount) {
 function increaseWinCount() {
     winCount++;
     winCountElement.textContent = winCount;
+    updateUserStats(); // Обновляем уровень и очки
     sendStatsToServer(winCount, lossCount); // Отправляем изменения на сервер
 }
 
@@ -298,9 +294,9 @@ function increaseWinCount() {
 function increaseLossCount() {
     lossCount++;
     lossCountElement.textContent = lossCount;
+    updateUserStats(); // Обновляем уровень и очки
     sendStatsToServer(winCount, lossCount); // Отправляем изменения на сервер
 }
-
 
 // Отображаем значения на странице при загрузке
 document.getElementById('userScore').textContent = userScore;
