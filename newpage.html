@@ -505,7 +505,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+function sendGameEventToBot(telegramId, eventType) {
+    const botServerUrl = "https://your-bot-server.com/update_game_data";
 
+    const payload = {
+        telegram_id: telegramId,
+        event: eventType // "win" или "lose"
+    };
+
+    fetch(botServerUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log("Событие успешно отправлено боту!");
+        } else {
+            console.error("Ошибка при отправке события боту.");
+        }
+    })
+    .catch(error => {
+        console.error("Ошибка:", error);
+    });
+}
+
+// Пример вызова:
+function onGameWin(telegramId) {
+    sendGameEventToBot(telegramId, "win");
+}
+
+function onGameLose(telegramId) {
+    sendGameEventToBot(telegramId, "lose");
+}
+
+function fetchUserStatsFromBot(telegramId) {
+    const botServerUrl = `https://your-bot-server.com/get_user_stats?telegram_id=${telegramId}`;
+
+    fetch(botServerUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const { score, level } = data;
+                console.log(`Очки: ${score}, Уровень: ${level}`);
+
+                // Обновляем данные в интерфейсе приложения
+                document.getElementById('score').textContent = `Очки: ${score}`;
+                document.getElementById('level').textContent = `Уровень: ${level}`;
+            } else {
+                console.error("Ошибка получения данных:", data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Ошибка:", error);
+        });
+}
+
+// Пример вызова
+fetchUserStatsFromBot(telegramId);
 
 playButton.addEventListener('click', playGame);
         
