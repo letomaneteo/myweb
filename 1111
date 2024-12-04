@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            font-size: 16px;
+            margin: 10px;
+        }
+        .result {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Change and Save Number</h1>
+    
+    <input type="number" id="numberInput" placeholder="Enter a number" />
+    <button id="saveButton">Save Number</button>
+    
+    <div class="result" id="result">Current Value: 0</div>
+
+    <script>
+        const saveButton = document.getElementById("saveButton");
+        const numberInput = document.getElementById("numberInput");
+        const resultDiv = document.getElementById("result");
+
+        const apiUrl = "http://localhost:8080/update";  // URL вашего бота
+
+        // Функция для получения текущего числа из базы
+        async function getNumber() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                resultDiv.textContent = "Current Value: " + data.value;
+            } catch (error) {
+                console.error("Error fetching number:", error);
+            }
+        }
+
+        // Функция для отправки нового числа на сервер
+        async function saveNumber() {
+            const newValue = numberInput.value;
+            if (newValue !== "") {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ value: newValue })
+                    });
+
+                    if (response.ok) {
+                        alert("Number saved!");
+                        getNumber();  // Получаем и показываем обновленное значение
+                    } else {
+                        alert("Failed to save number.");
+                    }
+                } catch (error) {
+                    console.error("Error saving number:", error);
+                }
+            }
+        }
+
+        // Загрузка начального значения при загрузке страницы
+        window.onload = getNumber;
+
+        // Обработчик нажатия на кнопку сохранения
+        saveButton.addEventListener("click", saveNumber);
+    </script>
+</body>
+</html>
