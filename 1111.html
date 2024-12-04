@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test App</title>
+    <title>Update Wins</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-    <h1>Update and View Wins</h1>
+    <h1>Update Wins and View</h1>
     
     <input type="number" id="winsInput" placeholder="Enter number of wins" />
     <button id="saveButton">Save Wins</button>
@@ -32,44 +32,52 @@
         const winsInput = document.getElementById("winsInput");
         const resultDiv = document.getElementById("result");
 
-     const apiUrl = "https://289c-213-109-224-151.ngrok-free.app";  // Для публичного сервера через ngrok
+        const apiUrl = "https://289c-213-109-224-151.ngrok-free.app";  // URL вашего сервера через ngrok
 
-// Функция для получения текущего количества побед из базы данных
-async function getWins() {
-    try {
-        const response = await fetch(`${apiUrl}/get_user_info?user_id=123456789`);
-        const data = await response.json();
-        resultDiv.textContent = "Current Wins: " + data.data.wins; // предполагаем, что ответ содержит поле wins
-    } catch (error) {
-        console.error("Error fetching wins:", error);
-    }
-}
-
-// Функция для отправки нового количества побед на сервер
-async function saveWins() {
-    const newWins = winsInput.value;
-    if (newWins !== "") {
-        try {
-            const response = await fetch(`${apiUrl}/update_results`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ user_id: 123456789, wins: newWins })  // Пример с id пользователя
-            });
-
-            if (response.ok) {
-                alert("Wins saved!");
-                getWins();  // Получаем и показываем обновленное количество побед
-            } else {
-                alert("Failed to save wins.");
+        // Функция для получения текущего количества побед из базы данных
+        async function getWins() {
+            try {
+                const response = await fetch(`${apiUrl}/get_user_info?user_id=123456789`);
+                const data = await response.json();
+                
+                // Проверяем успешный ответ и выводим данные
+                if (data.status === "success" && data.data) {
+                    resultDiv.textContent = "Current Wins: " + data.data.wins;
+                } else {
+                    resultDiv.textContent = "Error fetching data.";
+                }
+            } catch (error) {
+                console.error("Error fetching wins:", error);
             }
-        } catch (error) {
-            console.error("Error saving wins:", error);
         }
-    }
-}
 
+        // Функция для отправки нового количества побед на сервер
+        async function saveWins() {
+            const newWins = winsInput.value;
+            if (newWins !== "") {
+                try {
+                    const response = await fetch(`${apiUrl}/update_results`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            user_id: 123456789,  // Пример с ID пользователя
+                            wins: newWins        // Новое количество побед
+                        })
+                    });
+
+                    if (response.ok) {
+                        alert("Wins saved!");
+                        getWins();  // Получаем и показываем обновленное количество побед
+                    } else {
+                        alert("Failed to save wins.");
+                    }
+                } catch (error) {
+                    console.error("Error saving wins:", error);
+                }
+            }
+        }
 
         // Загрузка начального количества побед при загрузке страницы
         window.onload = getWins;
