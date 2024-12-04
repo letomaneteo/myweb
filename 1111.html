@@ -20,61 +20,61 @@
     </style>
 </head>
 <body>
-    <h1>Change and Save Number</h1>
+    <h1>Update and View Wins</h1>
     
-    <input type="number" id="numberInput" placeholder="Enter a number" />
-    <button id="saveButton">Save Number</button>
+    <input type="number" id="winsInput" placeholder="Enter number of wins" />
+    <button id="saveButton">Save Wins</button>
     
-    <div class="result" id="result">Current Value: 0</div>
+    <div class="result" id="result">Current Wins: 0</div>
 
     <script>
         const saveButton = document.getElementById("saveButton");
-        const numberInput = document.getElementById("numberInput");
+        const winsInput = document.getElementById("winsInput");
         const resultDiv = document.getElementById("result");
 
-        const apiUrl = "http://localhost:8080/update";  // URL вашего бота
+        const apiUrl = "https://289c-213-109-224-151.ngrok-free.app";  // URL вашего бота
 
-        // Функция для получения текущего числа из базы
-        async function getNumber() {
+        // Функция для получения текущего количества побед из базы данных
+        async function getWins() {
             try {
                 const response = await fetch(apiUrl);
                 const data = await response.json();
-                resultDiv.textContent = "Current Value: " + data.value;
+                resultDiv.textContent = "Current Wins: " + data.wins;
             } catch (error) {
-                console.error("Error fetching number:", error);
+                console.error("Error fetching wins:", error);
             }
         }
 
-        // Функция для отправки нового числа на сервер
-        async function saveNumber() {
-            const newValue = numberInput.value;
-            if (newValue !== "") {
+        // Функция для отправки нового количества побед на сервер
+        async function saveWins() {
+            const newWins = winsInput.value;
+            if (newWins !== "") {
                 try {
                     const response = await fetch(apiUrl, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ value: newValue })
+                        body: JSON.stringify({ wins: newWins })
                     });
 
                     if (response.ok) {
-                        alert("Number saved!");
-                        getNumber();  // Получаем и показываем обновленное значение
+                        alert("Wins saved!");
+                        getWins();  // Получаем и показываем обновленное количество побед
                     } else {
-                        alert("Failed to save number.");
+                        alert("Failed to save wins.");
                     }
                 } catch (error) {
-                    console.error("Error saving number:", error);
+                    console.error("Error saving wins:", error);
                 }
             }
         }
 
-        // Загрузка начального значения при загрузке страницы
-        window.onload = getNumber;
+        // Загрузка начального количества побед при загрузке страницы
+        window.onload = getWins;
 
         // Обработчик нажатия на кнопку сохранения
-        saveButton.addEventListener("click", saveNumber);
+        saveButton.addEventListener("click", saveWins);
     </script>
 </body>
 </html>
