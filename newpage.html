@@ -259,7 +259,7 @@ function sendStatsToServer(winCount, lossCount) {
         losses: lossCount
     };
 
-    const serverUrl = "https://cd28-213-109-225-123.ngrok-free.app/update_results";
+    const serverUrl = "https://289c-213-109-224-151.ngrok-free.app";
 
     fetch(serverUrl, {
         method: "POST",
@@ -506,7 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function sendGameEventToBot(telegramId, eventType) {
-    const botServerUrl = "https://cd28-213-109-225-123.ngrok-free.app/update_results";
+    const botServerUrl = "https://289c-213-109-224-151.ngrok-free.app";
 
     const payload = {
         telegram_id: telegramId,
@@ -540,7 +540,7 @@ function onGameLose(telegramId) {
 }
 
 function fetchUserStatsFromBot(telegramId) {
-    const botServerUrl = `https://cd28-213-109-225-123.ngrok-free.app/update_results`;
+    const botServerUrl = `https://289c-213-109-224-151.ngrok-free.app`;
 
     fetch(botServerUrl)
         .then(response => response.json())
