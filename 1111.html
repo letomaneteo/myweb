@@ -32,52 +32,33 @@
         const winsInput = document.getElementById("winsInput");
         const resultDiv = document.getElementById("result");
 
-        const apiUrl = "https://289c-213-109-224-151.ngrok-free.app/update_results";  // URL вашего сервера через ngrok
+       const apiUrl = "https://289c-213-109-224-151.ngrok-free.app";  // Ваш реальный ngrok адрес
 
-        // Функция для получения текущего количества побед из базы данных
-        async function getWins() {
-            try {
-                const response = await fetch(`${apiUrl}/get_user_info?user_id=123456789`);
-                const data = await response.json();
-                
-                // Проверяем успешный ответ и выводим данные
-                if (data.status === "success" && data.data) {
-                    resultDiv.textContent = "Current Wins: " + data.data.wins;
-                } else {
-                    resultDiv.textContent = "Error fetching data.";
-                }
-            } catch (error) {
-                console.error("Error fetching wins:", error);
-            }
+// Функция для отправки нового количества побед на сервер
+async function saveWins() {
+    const newWins = winsInput.value;  // Получаем значение побед
+    if (newWins !== "") {
+        try {
+            const response = await fetch(`${apiUrl}/update_results`, {  // Добавляем /update_results
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_id: 123456789,  // Пример идентификатора пользователя
+                    username: "user123", // Пример имени пользователя
+                    wins: newWins        // Количество побед
+                })
+            });
+
+            const result = await response.json();
+            console.log(result.message); // Логируем ответ сервера
+        } catch (error) {
+            console.error("Ошибка при отправке данных:", error);
         }
+    }
+}
 
-        // Функция для отправки нового количества побед на сервер
-        async function saveWins() {
-            const newWins = winsInput.value;
-            if (newWins !== "") {
-                try {
-                    const response = await fetch(`${apiUrl}/update_results`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            user_id: 123456789,  // Пример с ID пользователя
-                            wins: newWins        // Новое количество побед
-                        })
-                    });
-
-                    if (response.ok) {
-                        alert("Wins saved!");
-                        getWins();  // Получаем и показываем обновленное количество побед
-                    } else {
-                        alert("Failed to save wins.");
-                    }
-                } catch (error) {
-                    console.error("Error saving wins:", error);
-                }
-            }
-        }
 
         // Загрузка начального количества побед при загрузке страницы
         window.onload = getWins;
