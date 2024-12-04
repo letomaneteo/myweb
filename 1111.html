@@ -32,7 +32,7 @@
         const winsInput = document.getElementById("winsInput");
         const resultDiv = document.getElementById("result");
 
-       const apiUrl = "http://localhost:8080";  // Для локального сервера
+     const apiUrl = "https://289c-213-109-224-151.ngrok-free.app";  // Для публичного сервера через ngrok
 
 // Функция для получения текущего количества побед из базы данных
 async function getWins() {
@@ -69,6 +69,7 @@ async function saveWins() {
         }
     }
 }
+
 
         // Загрузка начального количества побед при загрузке страницы
         window.onload = getWins;
