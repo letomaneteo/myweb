@@ -32,19 +32,23 @@
 
 <div class="container">
     <h1>Введите число:</h1>
-    <input type="number" id="numberInput" />
+    <input type="number" id="numberInput" placeholder="Введите количество побед" />
+    <input type="text" id="usernameInput" placeholder="Введите имя пользователя" />
+    <input type="number" id="userIdInput" placeholder="Введите ID пользователя" />
     <button onclick="sendData()">Отправить в бота</button>
     <div id="result"></div>
 </div>
 
 <script>
-    const apiUrl = "https://289c-213-109-224-151.ngrok-free.app"; // URL вашего сервера
+    const apiUrl = "https://289c-213-109-224-151.ngrok-free.app/update_results"; // URL вашего сервера
 
-    // Функция для отправки числа на сервер и получения ответа
+    // Функция для отправки данных на сервер и получения ответа
     async function sendData() {
-        const number = document.getElementById('numberInput').value;
+        const wins = document.getElementById('numberInput').value;
+        const username = document.getElementById('usernameInput').value;
+        const userId = document.getElementById('userIdInput').value;
 
-        if (number) {
+        if (wins && username && userId) {
             try {
                 // Отправляем POST-запрос с числом на сервер
                 const response = await fetch(apiUrl, {
@@ -53,7 +57,9 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        wins: number
+                        wins: wins,
+                        username: username,
+                        user_id: userId,
                     })
                 });
 
@@ -67,7 +73,7 @@
                 document.getElementById('result').textContent = "Ошибка: " + error.message;
             }
         } else {
-            document.getElementById('result').textContent = "Введите число";
+            document.getElementById('result').textContent = "Пожалуйста, заполните все поля";
         }
     }
 </script>
