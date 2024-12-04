@@ -3,68 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Wins</title>
+    <title>Telegram Bot Example</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
         }
-        input, button {
-            font-size: 16px;
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        input {
+            padding: 10px;
             margin: 10px;
+            font-size: 18px;
         }
-        .result {
-            font-size: 24px;
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        #result {
             margin-top: 20px;
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
-    <h1>Update Wins and View</h1>
-    
-    <input type="number" id="winsInput" placeholder="Enter number of wins" />
-    <button id="saveButton">Save Wins</button>
-    
-    <div class="result" id="result">Current Wins: 0</div>
 
-    <script>
-        const saveButton = document.getElementById("saveButton");
-        const winsInput = document.getElementById("winsInput");
-        const resultDiv = document.getElementById("result");
+<div class="container">
+    <h1>Введите число:</h1>
+    <input type="number" id="numberInput" />
+    <button onclick="sendData()">Отправить в бота</button>
+    <div id="result"></div>
+</div>
 
-       const apiUrl = "https://289c-213-109-224-151.ngrok-free.app";  // Ваш реальный ngrok адрес
+<script>
+    const apiUrl = "https://289c-213-109-224-151.ngrok-free.app/update_results"; // URL вашего сервера
 
-// Функция для отправки нового количества побед на сервер
-async function saveWins() {
-    const newWins = winsInput.value;  // Получаем значение побед
-    if (newWins !== "") {
-        try {
-            const response = await fetch(`${apiUrl}/update_results`, {  // Добавляем /update_results
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    user_id: 123456789,  // Пример идентификатора пользователя
-                    username: "user123", // Пример имени пользователя
-                    wins: newWins        // Количество побед
-                })
-            });
+    // Функция для отправки числа на сервер и получения ответа
+    async function sendData() {
+        const number = document.getElementById('numberInput').value;
 
-            const result = await response.json();
-            console.log(result.message); // Логируем ответ сервера
-        } catch (error) {
-            console.error("Ошибка при отправке данных:", error);
+        if (number) {
+            try {
+                // Отправляем POST-запрос с числом на сервер
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        wins: number
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    document.getElementById('result').textContent = `Число получено и сохранено: ${result.wins}`;
+                } else {
+                    document.getElementById('result').textContent = "Ошибка при отправке данных";
+                }
+            } catch (error) {
+                document.getElementById('result').textContent = "Ошибка: " + error.message;
+            }
+        } else {
+            document.getElementById('result').textContent = "Введите число";
         }
     }
-}
+</script>
 
-
-        // Загрузка начального количества побед при загрузке страницы
-        window.onload = getWins;
-
-        // Обработчик нажатия на кнопку сохранения
-        saveButton.addEventListener("click", saveWins);
-    </script>
 </body>
 </html>
