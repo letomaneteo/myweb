@@ -1,81 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Bot Example</title>
+    <title>Telegram Bot Data App</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
         .container {
-            text-align: center;
-            margin-top: 50px;
+            width: 100%;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
-        input {
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input, button {
+            width: 100%;
             padding: 10px;
-            margin: 10px;
-            font-size: 18px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
         button {
-            padding: 10px 20px;
-            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
             cursor: pointer;
         }
-        #result {
+        button:hover {
+            background-color: #45a049;
+        }
+        .data-output {
             margin-top: 20px;
-            font-size: 24px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Введите число:</h1>
-    <input type="number" id="numberInput" placeholder="Введите количество побед" />
-    <input type="text" id="usernameInput" placeholder="Введите имя пользователя" />
-    <input type="number" id="userIdInput" placeholder="Введите ID пользователя" />
-    <button onclick="sendData()">Отправить в бота</button>
-    <div id="result"></div>
+    <h1>Telegram Bot Data App</h1>
+
+    <div class="form-group">
+        <label for="score">Очки:</label>
+        <input type="number" id="score" placeholder="Введите количество очков">
+    </div>
+    <div class="form-group">
+        <label for="level">Уровень:</label>
+        <input type="number" id="level" placeholder="Введите уровень">
+    </div>
+    <div class="form-group">
+        <label for="wins">Победы:</label>
+        <input type="number" id="wins" placeholder="Введите количество побед">
+    </div>
+    <div class="form-group">
+        <label for="losses">Поражения:</label>
+        <input type="number" id="losses" placeholder="Введите количество поражений">
+    </div>
+
+    <button onclick="sendDataToBot()">Отправить данные боту</button>
+
+    <div class="data-output">
+        <h2>Текущие данные:</h2>
+        <p id="currentData">Загрузка...</p>
+    </div>
 </div>
 
 <script>
-    const apiUrl = "https://289c-213-109-224-151.ngrok-free.app/update_results"; // URL вашего сервера
+// Функция отправки данных в бота
+async function sendDataToBot() {
+    const score = document.getElementById('score').value;
+    const level = document.getElementById('level').value;
+    const wins = document.getElementById('wins').value;
+    const losses = document.getElementById('losses').value;
 
-    // Функция для отправки данных на сервер и получения ответа
-    async function sendData() {
-        const wins = document.getElementById('numberInput').value;
-        const username = document.getElementById('usernameInput').value;
-        const userId = document.getElementById('userIdInput').value;
+    // Параметры для отправки
+    const data = {
+        user_id: "1234567890", // Это должен быть реальный user_id Telegram
+        username: "username_from_telegram", // Имя пользователя из Telegram
+        score: score,
+        level: level,
+        wins: wins,
+        losses: losses
+    };
 
-        if (wins && username && userId) {
-            try {
-                // Отправляем POST-запрос с числом на сервер
-                const response = await fetch(apiUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        wins: wins,
-                        username: username,
-                        user_id: userId,
-                    })
-                });
+    try {
+        // Отправляем данные на сервер, где работает ваш бот
+        const response = await fetch('https://3e9f-213-109-225-230.ngrok-free.app/webhook', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    document.getElementById('result').textContent = `Число получено и сохранено: ${result.wins}`;
-                } else {
-                    document.getElementById('result').textContent = "Ошибка при отправке данных";
-                }
-            } catch (error) {
-                document.getElementById('result').textContent = "Ошибка: " + error.message;
-            }
+        if (response.ok) {
+            alert('Данные успешно отправлены!');
+            fetchDataFromBot();  // После отправки данных получаем актуальные данные из бота
         } else {
-            document.getElementById('result').textContent = "Пожалуйста, заполните все поля";
+            alert('Ошибка при отправке данных');
         }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при отправке данных');
     }
+}
+
+// Функция получения данных от бота
+async function fetchDataFromBot() {
+    try {
+        const response = await fetch('https://3e9f-213-109-225-230.ngrok-free.app/webhook', {
+            method: 'GET',
+        });
+
+        const data = await response.json();
+
+        // Отображаем данные на экране
+        document.getElementById('currentData').innerHTML = `
+            <strong>Очки:</strong> ${data.score} <br>
+            <strong>Уровень:</strong> ${data.level} <br>
+            <strong>Победы:</strong> ${data.wins} <br>
+            <strong>Поражения:</strong> ${data.losses} <br>
+        `;
+    } catch (error) {
+        console.error('Ошибка при получении данных:', error);
+        document.getElementById('currentData').textContent = 'Не удалось загрузить данные';
+    }
+}
+
+// Загружаем данные при старте страницы
+fetchDataFromBot();
 </script>
 
 </body>
