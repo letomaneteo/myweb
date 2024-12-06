@@ -3,145 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Bot Data App</title>
+    <title>Telegram Bot Interface</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .data-output {
-            margin-top: 20px;
-            text-align: center;
-        }
+        body { font-family: Arial, sans-serif; }
+        #dataContainer { margin-top: 20px; }
+        .message { padding: 10px; background: #f0f0f0; border: 1px solid #ddd; margin-bottom: 10px; }
     </style>
 </head>
 <body>
+    <h1>Telegram Bot Interface</h1>
+    <div id="dataContainer"></div>
 
-<div class="container">
-    <h1>Telegram Bot Data App</h1>
+    <h2>Отправить новые данные в бота</h2>
+    <input type="text" id="newMessage" placeholder="Введите сообщение">
+    <button id="sendMessageBtn">Отправить</button>
 
-    <div class="form-group">
-        <label for="score">Очки:</label>
-        <input type="number" id="score" placeholder="Введите количество очков">
-    </div>
-    <div class="form-group">
-        <label for="level">Уровень:</label>
-        <input type="number" id="level" placeholder="Введите уровень">
-    </div>
-    <div class="form-group">
-        <label for="wins">Победы:</label>
-        <input type="number" id="wins" placeholder="Введите количество побед">
-    </div>
-    <div class="form-group">
-        <label for="losses">Поражения:</label>
-        <input type="number" id="losses" placeholder="Введите количество поражений">
-    </div>
+    <script>
+        const BOT_API_URL = 'https://example.com/app'; // Укажите ваш URL
 
-    <button onclick="sendDataToBot()">Отправить данные боту</button>
-
-    <div class="data-output">
-        <h2>Текущие данные:</h2>
-        <p id="currentData">Загрузка...</p>
-    </div>
-</div>
-
-<script>
-// Функция отправки данных в бота
-async function sendDataToBot() {
-    const score = document.getElementById('score').value;
-    const level = document.getElementById('level').value;
-    const wins = document.getElementById('wins').value;
-    const losses = document.getElementById('losses').value;
-
-    // Параметры для отправки
-    const data = {
-        user_id: "1234567890", // Это должен быть реальный user_id Telegram
-        username: "username_from_telegram", // Имя пользователя из Telegram
-        score: score,
-        level: level,
-        wins: wins,
-        losses: losses
-    };
-
-    try {
-        // Отправляем данные на сервер, где работает ваш бот
-        const response = await fetch('https://3e9f-213-109-225-230.ngrok-free.app/webhook', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            alert('Данные успешно отправлены!');
-            fetchDataFromBot();  // После отправки данных получаем актуальные данные из бота
-        } else {
-            alert('Ошибка при отправке данных');
+        // Функция для получения данных из базы через API
+        async function fetchData() {
+            try {
+                const response = await fetch(`${BOT_API_URL}/get_data`, { method: 'GET' });
+                if (response.ok) {
+                    const data = await response.json();
+                    displayData(data);
+                } else {
+                    console.error('Ошибка получения данных');
+                }
+            } catch (error) {
+                console.error('Ошибка запроса:', error);
+            }
         }
-    } catch (error) {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при отправке данных');
-    }
-}
 
-// Функция получения данных от бота
-async function fetchDataFromBot() {
-    try {
-        const response = await fetch('https://3e9f-213-109-225-230.ngrok-free.app/webhook', {
-            method: 'GET',
-        });
+        // Функция для отображения данных на экране
+        function displayData(data) {
+            const dataContainer = document.getElementById('dataContainer');
+            dataContainer.innerHTML = '';  // Очистка контейнера
 
-        const data = await response.json();
+            if (data && data.length > 0) {
+                data.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.classList.add('message');
+                    userElement.textContent = `User: ${user.username}, Score: ${user.score}`;
+                    dataContainer.appendChild(userElement);
+                });
+            } else {
+                dataContainer.textContent = 'Нет данных для отображения.';
+            }
+        }
 
-        // Отображаем данные на экране
-        document.getElementById('currentData').innerHTML = `
-            <strong>Очки:</strong> ${data.score} <br>
-            <strong>Уровень:</strong> ${data.level} <br>
-            <strong>Победы:</strong> ${data.wins} <br>
-            <strong>Поражения:</strong> ${data.losses} <br>
-        `;
-    } catch (error) {
-        console.error('Ошибка при получении данных:', error);
-        document.getElementById('currentData').textContent = 'Не удалось загрузить данные';
-    }
-}
+        // Функция для отправки новых данных в Telegram
+        async function sendNewData() {
+            const message = document.getElementById('newMessage').value;
+            if (!message) return;
 
-// Загружаем данные при старте страницы
-fetchDataFromBot();
-</script>
+            try {
+                const response = await fetch(`${BOT_API_URL}/send_data`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message })
+                });
 
+                if (response.ok) {
+                    alert('Данные успешно отправлены!');
+                    document.getElementById('newMessage').value = '';  // Очистка поля
+                } else {
+                    alert('Ошибка при отправке данных');
+                }
+            } catch (error) {
+                alert('Ошибка отправки данных');
+                console.error('Ошибка запроса:', error);
+            }
+        }
+
+        // Обработчик отправки нового сообщения
+        document.getElementById('sendMessageBtn').addEventListener('click', sendNewData);
+
+        // Получаем данные при загрузке страницы
+        fetchData();
+    </script>
 </body>
 </html>
