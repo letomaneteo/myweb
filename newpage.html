@@ -203,6 +203,27 @@ margin-top: 10px;
         let winCount = 0;
         let lossCount = 0;
 
+function updateUserStats() {
+    // Проверяем результат игры
+    if (messages.end.textContent.includes("Вы выиграли")) {
+        userScore = userScore + 10; // Увеличиваем очки
+    } else if (messages.end.textContent.includes("Вы проиграли")) {
+        userScore = userScore - 10; // Уменьшаем очки
+    }
+
+    // Каждые три победы увеличиваем уровень
+    if (winCount % 3 === 0 && winCount > 0) {
+        userLevel = userLevel + 1;
+    }
+
+    // Обновляем значения на странице
+    document.getElementById('userScore').textContent = userScore;
+    document.getElementById('userLevel').textContent = userLevel;
+
+    // Отправляем данные на сервер
+    sendStatsToServer(userScore, userLevel);
+}
+
         function updateScore(points) {
             score += points;
             scoreElement.textContent = score;
@@ -226,13 +247,72 @@ function getQueryParams() {
 const queryParams = getQueryParams();
 const telegramId = queryParams['telegram_id'];
 const username = queryParams['username'];
-const userScore = queryParams['score'];  // Получаем очки
-const userLevel = queryParams['level'];  // Получаем уровень
+let userScore = parseInt(queryParams['score']) || 0;  // Используем || 0 для обработки undefined
+let userLevel = parseInt(queryParams['level']) || 1;  // То же для уровня
+
+
+
+function sendStatsToServer(winCount, lossCount) {
+    const payload = {
+        user_id: telegramId, // ID пользователя
+        wins: winCount,
+        losses: lossCount
+    };
+
+    const serverUrl = "http://localhost:8080/update_user_data";
+
+    fetch(serverUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error("Ошибка при отправке данных на сервер");
+        }
+    })
+    .then(data => {
+        userScore = data.score; // Обновляем очки
+        userLevel = data.level; // Обновляем уровень
+
+        document.getElementById('userScore').textContent = userScore;
+        document.getElementById('userLevel').textContent = userLevel;
+
+        console.log("Обновлённые данные пользователя:", data);
+    })
+    .catch(error => {
+        console.error("Ошибка отправки данных:", error);
+    });
+}
+
+// Увеличение побед
+function increaseWinCount() {
+    winCount++;
+    winCountElement.textContent = winCount;
+    sendStatsToServer(winCount, lossCount); // Отправляем изменения на сервер
+}
+
+// Увеличение поражений
+function increaseLossCount() {
+    lossCount++;
+    lossCountElement.textContent = lossCount;
+    sendStatsToServer(winCount, lossCount); // Отправляем изменения на сервер
+}
+
+
+// Отображаем значения на странице при загрузке
+document.getElementById('userScore').textContent = userScore;
+document.getElementById('userLevel').textContent = userLevel;
 
 if (telegramId && username) {
     const greeting = `Здравствуйте, ${username} (${telegramId})`;
     console.log(greeting);
     document.getElementById('greeting').textContent = greeting;
+
+    // Отправляем данные на сервер
+    sendStatsToServer(userScore, userLevel);
 } else {
     console.error("Не найдены параметры username или telegram_id в URL.");
 }
@@ -249,7 +329,6 @@ if (userLevel !== undefined) {
 } else {
     console.error("Не найдены параметры level в URL.");
 }
-
 
 
         function flashCells(cellsToFlash, colorClass, delay = 0) {
@@ -386,11 +465,13 @@ async function playGame() {
         messages.end.textContent = "Вы выиграли!";
         playButton.disabled = true;
         restartButton.style.display = 'block';
+        updateUserStats(); // Вызовем функцию обновления статистики
     } else if (clickCount >= 22) { // Проверяем количество кликов
         if (score < 200) {
             lossCount++;
             lossCountElement.textContent = lossCount;
             messages.end.textContent = "Вы проиграли! Не хватило очков.";
+
         } else {
             winCount++;
             winCountElement.textContent = winCount;
@@ -398,23 +479,58 @@ async function playGame() {
         }
         playButton.disabled = true;
         restartButton.style.display = 'block';
+        updateUserStats(); // Вызовем функцию обновления статистики
     } else {
         playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
+        updateUserStats(); // В случае продолжения игры обновим статистику
     }
 }
 
-restartButton.addEventListener('click', () => {
-    score = 30;
-    clickCount = 0;
-    scoreElement.textContent = score;
-    clickCountElement.textContent = clickCount;
-    playButton.disabled = false;
-    restartButton.style.display = 'none';
-    resetMessages();
-    messages.end.textContent = ''; // Убираем текст "Вы выиграли!" или "Вы проиграли!"
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const userId = urlParams.get('user_id') || "не указан";
+    const username = urlParams.get('username') || "Гость";
+    const level = urlParams.get('level') || 0;
+    const score = urlParams.get('score') || 0;
+    const hash = urlParams.get('hash') || "нет данных";
+
+    // Приветствие вверху
+    const greeting = `
+        <h1>Добро пожаловать, ${username}!</h1>
+        <p>Ваш уровень: ${level}</p>
+        <p>Ваши очки: ${score}</p>
+    `;
+    document.body.insertAdjacentHTML('afterbegin', greeting);
+
 });
 
+
+
 playButton.addEventListener('click', playGame);
+        
+restartButton.addEventListener('click', () => {
+    // Сброс параметров
+    score = 30; // Начальное значение очков
+    clickCount = 0;
+    document.getElementById('score').textContent = score;
+    document.getElementById('clickCount').textContent = clickCount;
+
+    // Сброс сообщений
+    resetMessages();
+
+    // Очистка ячеек
+    cells.forEach(cell => {
+        cell.textContent = ''; // Убираем текст
+    });
+
+    // Скрыть кнопку "Начать заново" и включить кнопку "Играть"
+    restartButton.style.display = 'none';
+    playButton.disabled = false;
+
+    // Сброс конца игры
+    messages.end.textContent = '';
+});
 
     </script>
 </body>
