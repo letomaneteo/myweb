@@ -1,93 +1,122 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Bot Interface</title>
+    <title>Приложение</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        #dataContainer { margin-top: 20px; }
-        .message { padding: 10px; background: #f0f0f0; border: 1px solid #ddd; margin-bottom: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            max-width: 400px;
+        }
+        input, button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+        }
+        .info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>Telegram Bot Interface</h1>
-    <div id="dataContainer"></div>
-
-    <h2>Отправить новые данные в бота</h2>
-    <input type="text" id="newMessage" placeholder="Введите сообщение">
-    <button id="sendMessageBtn">Отправить</button>
+    <h1>Добро пожаловать!</h1>
+    <div class="info" id="user-info">
+        Загрузка данных...
+    </div>
+    <form id="update-points-form">
+        <label for="points">Добавить очков:</label>
+        <input type="number" id="points" placeholder="Введите количество очков" required>
+        <button type="submit">Отправить</button>
+    </form>
 
     <script>
-        const BOT_API_URL = 'https://3e9f-213-109-225-230.ngrok-free.app'; // Ваш ngrok URL
+        // URL API бота для получения данных
+        const botApiUrl = "https://8fd5-213-109-225-82.ngrok-free.app"; // Замените на URL API вашего бота
+        const botSendDataUrl = "https://8fd5-213-109-225-82.ngrok-free.app"; // Замените на URL для отправки данных боту
 
-        // Функция для получения данных из базы через API
+        // Элемент для отображения данных
+        const userInfo = document.getElementById("user-info");
+        const form = document.getElementById("update-points-form");
+        const pointsInput = document.getElementById("points");
+
+        // Заглушка для хранения данных
+        let userData = {};
+
+        // Функция для получения данных от бота
         async function fetchData() {
             try {
-                const response = await fetch(`${BOT_API_URL}/get_data`, { method: 'GET' });
+                const response = await fetch(botApiUrl);
                 if (response.ok) {
-                    const data = await response.json();
-                    displayData(data);
+                    userData = await response.json();
+                    displayUserData();
                 } else {
-                    console.error('Ошибка получения данных');
-                    alert('Ошибка получения данных');
+                    userInfo.innerText = "Ошибка при загрузке данных.";
                 }
             } catch (error) {
-                console.error('Ошибка запроса:', error);
-                alert('Ошибка запроса');
+                userInfo.innerText = `Ошибка: ${error.message}`;
             }
         }
 
         // Функция для отображения данных на экране
-        function displayData(data) {
-            const dataContainer = document.getElementById('dataContainer');
-            dataContainer.innerHTML = '';  // Очистка контейнера
-
-            if (data && Array.isArray(data) && data.length > 0) {
-                data.forEach(user => {
-                    const userElement = document.createElement('div');
-                    userElement.classList.add('message');
-                    userElement.textContent = `User: ${user.username}, Score: ${user.score}`;
-                    dataContainer.appendChild(userElement);
-                });
-            } else {
-                dataContainer.textContent = 'Нет данных для отображения.';
-            }
+        function displayUserData() {
+            userInfo.innerHTML = `
+                <p><strong>ID:</strong> ${userData.id}</p>
+                <p><strong>Имя:</strong> ${userData.username}</p>
+                <p><strong>Очки:</strong> ${userData.points}</p>
+            `;
         }
 
-        // Функция для отправки новых данных в Telegram
-        async function sendNewData() {
-            const message = document.getElementById('newMessage').value.trim();
-            if (!message) {
-                alert('Пожалуйста, введите сообщение');
+        // Обработчик отправки формы
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const additionalPoints = parseInt(pointsInput.value, 10);
+            if (isNaN(additionalPoints) || additionalPoints <= 0) {
+                alert("Введите положительное число.");
                 return;
             }
 
+            // Отправляем обновленные данные боту
+            const updatedData = {
+                id: userData.id,
+                username: userData.username,
+                points: userData.points + additionalPoints
+            };
+
             try {
-                const response = await fetch(`${BOT_API_URL}/send_data`, {
-                    method: 'POST',
+                const response = await fetch(botSendDataUrl, {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json'
+                        "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ message })
+                    body: JSON.stringify(updatedData)
                 });
 
                 if (response.ok) {
-                    alert('Данные успешно отправлены!');
-                    document.getElementById('newMessage').value = '';  // Очистка поля ввода
+                    alert("Очки успешно обновлены!");
+                    // Обновляем локальные данные и интерфейс
+                    userData.points += additionalPoints;
+                    displayUserData();
                 } else {
-                    alert('Ошибка при отправке данных');
+                    alert("Ошибка при отправке данных.");
                 }
             } catch (error) {
-                alert('Ошибка отправки данных');
-                console.error('Ошибка запроса:', error);
+                alert(`Ошибка: ${error.message}`);
             }
-        }
 
-        // Обработчик отправки нового сообщения
-        document.getElementById('sendMessageBtn').addEventListener('click', sendNewData);
+            // Очищаем поле ввода
+            pointsInput.value = "";
+        });
 
-        // Получаем данные при загрузке страницы
+        // Загрузка данных при старте
         fetchData();
     </script>
 </body>
