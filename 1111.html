@@ -87,25 +87,12 @@ async function sendDataToBot() {
 
     // Параметры для отправки
     const data = {
-        update_id: 123456789,  // Пример уникального update_id
-        message: {
-            message_id: 1, // Пример идентификатора сообщения
-            from: {
-                id: 1234567890, // Это должен быть реальный user_id Telegram
-                is_bot: false,
-                first_name: "Dan", // Имя пользователя
-                username: "Gordaniele", // Никнейм пользователя
-                language_code: "ru" // Язык пользователя
-            },
-            chat: {
-                id: 1234567890, // chat_id
-                first_name: "Dan", // Имя чата
-                username: "Gordaniele", // Никнейм чата
-                type: "private" // Тип чата (приватный)
-            },
-            date: Math.floor(Date.now() / 1000), // Время в формате UNIX
-            text: "/start" // Команда, отправленная пользователем
-        }
+        user_id: "1234567890", // Это должен быть реальный user_id Telegram
+        username: "username_from_telegram", // Имя пользователя из Telegram
+        score: score,
+        level: level,
+        wins: wins,
+        losses: losses
     };
 
     try {
