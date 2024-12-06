@@ -24,7 +24,7 @@
         // Функция для получения данных из базы через API
         async function fetchData() {
             try {
-                const response = await fetch(`${BOT_API_URL}/get_data`, { method: 'GET' });
+                const response = await fetch(`${https://3e9f-213-109-225-230.ngrok-free.app}/get_data`, { method: 'GET' });
                 if (response.ok) {
                     const data = await response.json();
                     displayData(data);
