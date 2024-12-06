@@ -84,12 +84,23 @@
                 return;
             }
 
+            // Проверка, что userData.points - это число
+            if (isNaN(userData.points)) {
+                alert("Ошибка: очки пользователя не являются числом!");
+                return;
+            }
+
             // Отправляем обновленные данные боту
             const updatedData = {
                 id: userData.id,
                 username: userData.username,
                 points: userData.points + additionalPoints
             };
+
+            // Логирование данных для проверки
+            console.log("userData:", userData);
+            console.log("additionalPoints:", additionalPoints);
+            console.log("updatedData:", updatedData);
 
             try {
                 const response = await fetch(botSendDataUrl, {
