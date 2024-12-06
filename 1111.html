@@ -37,7 +37,7 @@
         <button type="submit">Отправить</button>
     </form>
 
-   <script>
+  <script>
     // URL API бота для получения данных
     const botApiUrl = "https://8fd5-213-109-225-82.ngrok-free.app/get_data"; // Замените на URL API вашего бота
     const botSendDataUrl = "https://8fd5-213-109-225-82.ngrok-free.app/send_data"; // Замените на URL для отправки данных боту
@@ -56,6 +56,12 @@
             const response = await fetch(botApiUrl);
             if (response.ok) {
                 userData = await response.json();
+
+                // Добавим проверку, чтобы убедиться, что points — это число
+                if (typeof userData.points !== 'number' || isNaN(userData.points)) {
+                    userData.points = 0; // Инициализируем points значением по умолчанию, если это не число
+                }
+
                 displayUserData();
             } else {
                 userInfo.innerText = "Ошибка при загрузке данных.";
@@ -136,6 +142,7 @@
     // Загрузка данных при старте
     fetchData();
 </script>
+
 
 </body>
 </html>
