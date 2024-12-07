@@ -6,23 +6,21 @@
     <title>Обновление данных пользователя</title>
     <script>
         // Функция для получения данных пользователя из базы по ID
-       async function fetchUserData() {
-    const userId = document.getElementById('userId').value; // Получаем ID из поля
-    try {
-        const response = await fetch(`https://4f52-213-109-225-82.ngrok-free.app/get_data/${userId}`);
-        
-        const textResponse = await response.text(); // Получаем ответ как текст
-        console.log('Ответ от сервера:', textResponse); // Логируем ответ
+        async function fetchUserData() {
+            const userId = document.getElementById('userId').value; // Получаем ID из поля
+            try {
+                const response = await fetch(`https://4f52-213-109-225-82.ngrok-free.app/get_data/${userId}`);
+                const textResponse = await response.text(); // Получаем ответ как текст
+                console.log('Ответ от сервера:', textResponse); // Логируем ответ
 
-        // Попытка распарсить ответ как JSON
-        const data = JSON.parse(textResponse);
-        displayUserData(data); // Отображаем данные на экране
-    } catch (error) {
-        console.error('Ошибка при получении данных:', error);
-        alert('Ошибка при загрузке данных.');
-    }
-}
-
+                // Попытка распарсить ответ как JSON
+                const data = JSON.parse(textResponse);
+                displayUserData(data); // Отображаем данные на экране
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+                alert('Ошибка при загрузке данных.');
+            }
+        }
 
         // Функция для отображения данных пользователя на экране
         function displayUserData(data) {
@@ -44,8 +42,17 @@
                 return;
             }
 
+            // Получение имени пользователя из ранее загруженных данных
+            const username = document.getElementById('userData').querySelector('p:nth-child(2)').innerText.split(': ')[1]; 
+            
+            if (!username) {
+                alert('Имя пользователя не найдено.');
+                return;
+            }
+
             const requestData = {
                 id: userId,
+                username: username,
                 points: newPoints
             };
 
