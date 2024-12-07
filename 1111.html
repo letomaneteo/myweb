@@ -38,10 +38,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Получить данные пользователя</h1>
-        <label for="user-id">Введите ID пользователя:</label>
-        <input type="number" id="user-id" placeholder="ID пользователя">
-        <button onclick="getUserData()">Получить данные</button>
+        <h1 id="greeting">Добро пожаловать!</h1>
 
         <div id="user-data" style="display: none;">
             <h2>Данные пользователя:</h2>
@@ -57,16 +54,13 @@
 
     <script>
         const BOT_API_URL = 'https://4f52-213-109-225-82.ngrok-free.app'; // URL сервера бота
+        let userId = null;
 
-        // Получение данных пользователя
-        async function getUserData() {
-            const userId = document.getElementById('user-id').value;
-            if (!userId) {
-                alert('Введите ID пользователя!');
-                return;
-            }
-
+        // Получение данных пользователя при загрузке страницы
+        async function fetchUserData() {
             try {
+                // Замените на фактический ID пользователя, который вы хотите использовать
+                userId = 12345; // Пример ID пользователя
                 const response = await fetch(`${BOT_API_URL}/get_data/${userId}`);
                 if (!response.ok) {
                     const error = await response.json();
@@ -78,6 +72,11 @@
                 document.getElementById('data-id').innerText = userData.id;
                 document.getElementById('data-username').innerText = userData.username;
                 document.getElementById('data-points').innerText = userData.points;
+
+                // Обновляем приветствие
+                document.getElementById('greeting').innerText = `Добро пожаловать, ${userData.username}!`;
+
+                // Отображаем блок с данными
                 document.getElementById('user-data').style.display = 'block';
             } catch (error) {
                 alert(`Ошибка соединения: ${error.message}`);
@@ -86,7 +85,6 @@
 
         // Обновление очков пользователя
         async function updateUserPoints() {
-            const userId = document.getElementById('data-id').innerText;
             const points = document.getElementById('update-points').value;
 
             if (!points) {
@@ -112,6 +110,9 @@
                 alert(`Ошибка соединения: ${error.message}`);
             }
         }
+
+        // Загружаем данные пользователя при открытии страницы
+        fetchUserData();
     </script>
 </body>
 </html>
