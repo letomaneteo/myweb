@@ -52,24 +52,31 @@
 
         // Функция для получения данных от бота
         async function fetchData() {
-            try {
-                const response = await fetch(botApiUrl);
-                if (response.ok) {
-                    userData = await response.json();
+    try {
+        const response = await fetch(botApiUrl);
+        console.log("Статус ответа при получении данных:", response.status);
+        
+        if (response.ok) {
+            userData = await response.json();
+            console.log("Полученные данные:", userData);
 
-                    // Проверка и инициализация очков
-                    if (typeof userData.points !== 'number' || isNaN(userData.points)) {
-                        userData.points = 0; // Устанавливаем очки по умолчанию
-                    }
-
-                    displayUserData();
-                } else {
-                    userInfo.innerText = "Ошибка при загрузке данных.";
-                }
-            } catch (error) {
-                userInfo.innerText = `Ошибка: ${error.message}`;
+            // Инициализация очков
+            if (typeof userData.points !== 'number' || isNaN(userData.points)) {
+                userData.points = 0; // Очки по умолчанию
             }
+
+            displayUserData();
+        } else {
+            const errorText = await response.text();
+            userInfo.innerText = `Ошибка загрузки: ${errorText}`;
+            console.error("Ошибка получения данных:", errorText);
         }
+    } catch (error) {
+        userInfo.innerText = `Ошибка: ${error.message}`;
+        console.error("Ошибка fetch:", error);
+    }
+}
+
 
         // Функция для отображения данных на экране
         function displayUserData() {
@@ -82,51 +89,55 @@
 
         // Обработчик отправки формы
         form.addEventListener("submit", async (event) => {
-            event.preventDefault();
+    event.preventDefault();
 
-            const additionalPoints = parseInt(pointsInput.value, 10);
-            if (isNaN(additionalPoints) || additionalPoints <= 0) {
-                alert("Введите положительное число.");
-                return;
-            }
+    const additionalPoints = parseInt(pointsInput.value, 10);
+    if (isNaN(additionalPoints) || additionalPoints <= 0) {
+        alert("Введите положительное число.");
+        return;
+    }
 
-            // Приводим points к числу
-            userData.points = parseFloat(userData.points) || 0;
+    // Приводим points к числу
+    userData.points = parseFloat(userData.points) || 0;
 
-            const updatedData = {
-                id: userData.id,
-                username: userData.username,
-                points: userData.points + additionalPoints
-            };
+    const updatedData = {
+        id: userData.id,
+        username: userData.username,
+        points: userData.points + additionalPoints
+    };
 
-            try {
-                const response = await fetch(botSendDataUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(updatedData)
-                });
+    console.log("Отправляемые данные:", updatedData);
 
-                if (response.ok) {
-                    const result = await response.json(); // Опционально, если бот возвращает данные
-                    alert("Очки успешно обновлены!");
-
-                    // Обновляем локальные данные и отображаем их
-                    userData.points += additionalPoints;
-                    displayUserData();
-
-                    console.log("Ответ от сервера:", result);
-                } else {
-                    const errorText = await response.text();
-                    alert(`Ошибка при отправке данных: ${errorText}`);
-                }
-            } catch (error) {
-                alert(`Ошибка: ${error.message}`);
-            }
-
-            pointsInput.value = ""; // Очистка поля ввода
+    try {
+        const response = await fetch(botSendDataUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedData)
         });
+
+        console.log("Статус ответа сервера:", response.status);
+
+        if (response.ok) {
+            const result = await response.json();
+            alert("Очки успешно обновлены!");
+            userData.points += additionalPoints;
+            displayUserData();
+            console.log("Ответ сервера:", result);
+        } else {
+            const errorText = await response.text();
+            alert(`Ошибка при отправке данных: ${errorText}`);
+            console.error("Ошибка при отправке:", errorText);
+        }
+    } catch (error) {
+        alert(`Ошибка: ${error.message}`);
+        console.error("Ошибка запроса:", error);
+    }
+
+    pointsInput.value = "";
+});
+
 
         // Загрузка данных при старте
         fetchData();
