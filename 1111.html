@@ -3,78 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Обновление данных пользователя</title>
+    <title>Данные от бота</title>
+</head>
+<body>
+    <h1>Информация о пользователе</h1>
+    <div id="user-info">
+        <p><strong>ID:</strong> <span id="user-id">Загрузка...</span></p>
+        <p><strong>Имя пользователя:</strong> <span id="username">Загрузка...</span></p>
+        <p><strong>Очки:</strong> <span id="points">Загрузка...</span></p>
+    </div>
+
+    <h2>Отправить данные на сервер:</h2>
+    <button onclick="sendDataToServer()">Отправить данные</button>
+
     <script>
-        // Функция для получения данных пользователя от бота (запрос от бота)
+        // Функция для получения данных с сервера
         async function fetchUserData() {
-            // Получаем данные от бота через запрос JSON
-            const response = await fetch('https://yourbotapi.com/get_user_data');
-            const data = await response.json();
-            
-            // Отображаем данные пользователя
-            displayUserData(data);
-        }
-
-        // Функция для отображения данных пользователя на экране
-        function displayUserData(data) {
-            const userDataContainer = document.getElementById('userData');
-            userDataContainer.innerHTML = `
-                <p><strong>ID:</strong> ${data.id}</p>
-                <p><strong>Имя:</strong> ${data.username}</p>
-                <p><strong>Очки:</strong> ${data.points}</p>
-            `;
-            
-            // Устанавливаем поле ввода очков
-            document.getElementById('newPoints').value = data.points; 
-        }
-
-        // Функция для отправки обновленных данных очков на сервер
-        async function updatePoints() {
-            const userId = document.getElementById('userId').value; // Получаем ID пользователя
-            const newPoints = parseInt(document.getElementById('newPoints').value, 10); // Получаем новые очки
-            if (isNaN(newPoints)) {
-                alert('Пожалуйста, введите корректное значение для очков.');
-                return;
+            try {
+                const response = await fetch('http://localhost:5000/get_user_data');
+                const data = await response.json();
+                // Заполняем элементы страницы данными
+                document.getElementById('user-id').textContent = data.id;
+                document.getElementById('username').textContent = data.username;
+                document.getElementById('points').textContent = data.points;
+            } catch (error) {
+                console.error('Ошибка при загрузке данных:', error);
             }
+        }
 
-            const requestData = {
-                id: userId,
-                points: newPoints
+        // Функция для отправки данных на сервер
+        async function sendDataToServer() {
+            const data = {
+                id: 123,  // Пример данных
+                username: "example_user",
+                points: 50
             };
 
             try {
-                const response = await fetch('https://4f52-213-109-225-82.ngrok-free.app/send_data', {
+                const response = await fetch('http://localhost:5000/send_user_data', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(requestData)
+                    body: JSON.stringify(data)
                 });
 
-                if (response.ok) {
-                    alert('Очки обновлены успешно!');
-                    fetchUserData(); // Перезагружаем данные после обновления
-                } else {
-                    alert('Ошибка при обновлении очков.');
-                }
+                const result = await response.json();
+                console.log('Ответ от сервера:', result);
             } catch (error) {
-                console.error('Ошибка выполнения запроса:', error);
-                alert('Произошла ошибка при обновлении данных.');
+                console.error('Ошибка при отправке данных:', error);
             }
         }
+
+        // Загрузка данных при запуске страницы
+        window.onload = fetchUserData;
     </script>
-</head>
-<body onload="fetchUserData()">
-    <h1>Добро пожаловать в личный кабинет</h1>
-
-    <div id="userData">
-        <!-- Данные пользователя будут отображаться здесь -->
-    </div>
-
-    <h2>Изменить очки</h2>
-    <label for="newPoints">Новые очки:</label>
-    <input type="number" id="newPoints" placeholder="Введите новое значение очков">
-    <br>
-    <button onclick="updatePoints()">Обновить очки</button>
 </body>
 </html>
