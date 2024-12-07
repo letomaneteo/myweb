@@ -1,119 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Points Management</title>
+    <title>Приложение</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            padding: 20px;
             background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
         }
         .container {
-            background: #fff;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
             text-align: center;
         }
-        .form-group {
-            margin-bottom: 15px;
+        .user-info {
+            margin-bottom: 20px;
         }
-        input {
-            width: 100%;
+        .user-info p {
+            margin: 5px 0;
+        }
+        .input-group {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .input-group input {
             padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            font-size: 16px;
+            margin-right: 10px;
+            width: 100px;
         }
-        button {
+        .input-group button {
+            padding: 10px 20px;
+            font-size: 16px;
             background-color: #007bff;
-            color: white;
+            color: #fff;
             border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
             cursor: pointer;
         }
-        button:hover {
+        .input-group button:hover {
             background-color: #0056b3;
-        }
-        .error {
-            color: red;
-            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>User Points</h2>
-        <div id="user-data">
-            <!-- User data will be displayed here -->
-        </div>
-        <div class="form-group">
-            <input type="number" id="points" placeholder="Enter new points">
-        </div>
-        <button onclick="updatePoints()">Update Points</button>
-        <div class="error" id="error"></div>
+
+<div class="container">
+    <h1>Информация о пользователе</h1>
+    
+    <div class="user-info">
+        <p><strong>ID:</strong> <span id="user-id"></span></p>
+        <p><strong>Имя пользователя:</strong> <span id="username"></span></p>
+        <p><strong>Очки:</strong> <span id="points"></span></p>
     </div>
 
-    <script>
-        const userId = 123456; // Replace this with the actual user ID
-        const apiUrl = 'https://4f52-213-109-225-82.ngrok-free.app'; // Update this if using a different server
+    <div class="input-group">
+        <input type="number" id="new-points" placeholder="Новые очки">
+        <button onclick="updatePoints()">Обновить очки</button>
+    </div>
+</div>
 
-        async function fetchUserData() {
-            try {
-                const response = await fetch(`${apiUrl}/get_data/${userId}`);
-                if (!response.ok) {
-                    throw new Error("User not found");
-                }
-                const data = await response.json();
-                document.getElementById('user-data').innerHTML = `
-                    <p><strong>Username:</strong> ${data.username}</p>
-                    <p><strong>Points:</strong> ${data.points}</p>
-                `;
-            } catch (error) {
-                document.getElementById('error').textContent = error.message;
-            }
+<script>
+    // Получаем данные пользователя с сервера
+    async function fetchUserData() {
+        const userId = 123;  // Пример ID пользователя
+        const response = await fetch(`http://4f52-213-109-225-82.ngrok-free.app/get_data/${userId}`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById("user-id").innerText = data.id;
+            document.getElementById("username").innerText = data.username;
+            document.getElementById("points").innerText = data.points;
+        } else {
+            alert("Не удалось загрузить данные пользователя.");
+        }
+    }
+
+    // Отправляем обновленные данные на сервер
+    async function updatePoints() {
+        const userId = document.getElementById("user-id").innerText;
+        const newPoints = document.getElementById("new-points").value;
+
+        if (newPoints === "") {
+            alert("Пожалуйста, введите количество очков.");
+            return;
         }
 
-        async function updatePoints() {
-            const points = document.getElementById('points').value;
+        const data = {
+            id: userId,
+            points: parseInt(newPoints)
+        };
 
-            if (!points || isNaN(points)) {
-                document.getElementById('error').textContent = "Please enter a valid number";
-                return;
-            }
+        const response = await fetch('http://4f52-213-109-225-82.ngrok-free.app/send_data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
 
-            try {
-                const response = await fetch(`${apiUrl}/send_data`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ id: userId, points: parseInt(points) })
-                });
-
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    document.getElementById('error').textContent = "";
-                    fetchUserData();
-                } else {
-                    throw new Error(result.message || "Failed to update points");
-                }
-            } catch (error) {
-                document.getElementById('error').textContent = error.message;
-            }
+        if (response.ok) {
+            alert("Очки обновлены успешно!");
+            // Обновляем информацию о пользователе после успешного обновления
+            fetchUserData();
+        } else {
+            alert("Ошибка при обновлении очков.");
         }
+    }
 
-        // Fetch user data on page load
-        fetchUserData();
-    </script>
+    // Загружаем данные о пользователе при загрузке страницы
+    window.onload = fetchUserData;
+</script>
+
 </body>
 </html>
