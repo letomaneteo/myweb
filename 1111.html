@@ -29,6 +29,9 @@
     .error {
       color: red;
     }
+    .success {
+      color: green;
+    }
   </style>
 </head>
 <body>
@@ -43,15 +46,18 @@
       const [message, setMessage] = useState('');
 
       useEffect(() => {
-        // Загружаем список пользователей при загрузке компонента
         async function fetchUsers() {
           try {
             const response = await axios.get('https://0c37-213-109-225-82.ngrok-free.app/get_users');
-            setUsers(response.data);
-            setPoints(response.data.reduce((acc, user) => {
-              acc[user.id] = user.points;
-              return acc;
-            }, {}));
+            if (response && response.data) {
+              setUsers(response.data);
+              setPoints(response.data.reduce((acc, user) => {
+                acc[user.id] = user.points;
+                return acc;
+              }, {}));
+            } else {
+              throw new Error('Ошибка: сервер вернул некорректный ответ');
+            }
           } catch (err) {
             setError('Ошибка при загрузке данных: ' + err.message);
           }
@@ -60,10 +66,9 @@
         fetchUsers();
       }, []);
 
-      // Обработчик обновления очков
       async function updatePoints(userId) {
         try {
-          const newPoints = points[userId];
+          const newPoints = points[userId] || 0;
           await axios.post(`https://0c37-213-109-225-82.ngrok-free.app/edit_points/${userId}`, { points: newPoints });
           setMessage(`Очки пользователя с ID ${userId} успешно обновлены.`);
           setTimeout(() => setMessage(''), 3000);
@@ -94,9 +99,9 @@
                   <td>
                     <input
                       type="number"
-                      value={points[user.id]}
+                      value={points[user.id] || 0}
                       onChange={(e) =>
-                        setPoints({ ...points, [user.id]: parseInt(e.target.value) })
+                        setPoints({ ...points, [user.id]: e.target.value ? parseInt(e.target.value) : 0 })
                       }
                     />
                   </td>
