@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>React Список пользователей</title>
-  <!-- Подключаем React и React DOM из стабильных ссылок -->
+  <!-- Подключаем React и React DOM -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -30,9 +30,6 @@
     .error {
       color: red;
     }
-    .success {
-      color: green;
-    }
   </style>
 </head>
 <body>
@@ -44,28 +41,23 @@
     function UserList() {
       const [users, setUsers] = useState([]);
       const [error, setError] = useState('');
-      const [points, setPoints] = useState({});
-      const [message, setMessage] = useState('');
 
       useEffect(() => {
         async function fetchUsers() {
           try {
+            console.log('Попытка загрузки данных...');
             const response = await axios.get(`${serverUrl}/get_users`);
-            console.log('Ответ сервера:', response);
 
-            if (response.status === 200 && response.data) {
+            console.log('Ответ сервера: ', response); // Проверяем, что сервер возвращает
+            console.log('Response Data: ', response.data);
+
+            if (response.status === 200 && typeof response.data === 'object') {
               setUsers(response.data);
-              setPoints(
-                response.data.reduce((acc, user) => {
-                  acc[user.id] = user.points || 0;
-                  return acc;
-                }, {})
-              );
             } else {
-              throw new Error('Ошибка: неверный ответ от сервера');
+              throw new Error('Ошибка: неверный формат данных');
             }
           } catch (err) {
-            console.error(err);
+            console.error('Ошибка при загрузке данных: ', err);
             setError('Ошибка при загрузке данных');
           }
         }
@@ -91,7 +83,7 @@
                   <tr key={user.id}>
                     <td>{user.id}</td>
                     <td>{user.username}</td>
-                    <td>{user.points || 0}</td>
+                    <td>{user.points}</td>
                   </tr>
                 ))
               ) : (
