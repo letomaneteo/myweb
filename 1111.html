@@ -3,90 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram User Data</title>
+    <title>User Points Manager</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        #userData {
+        .user-info {
             margin-bottom: 20px;
         }
-        input {
-            margin-right: 10px;
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <h1>User Data</h1>
-    <div id="userData">
+    <h1>User Points Manager</h1>
+    <div class="user-info">
         <p><strong>ID:</strong> <span id="userId">Loading...</span></p>
         <p><strong>Username:</strong> <span id="username">Loading...</span></p>
         <p><strong>Points:</strong> <span id="points">Loading...</span></p>
     </div>
-    <div>
-        <h2>Update Points</h2>
-        <input type="number" id="pointsInput" placeholder="Enter new points">
-        <button onclick="updatePoints()">Update</button>
+
+    <div class="update-points">
+        <label for="newPoints">Update Points:</label>
+        <input type="number" id="newPoints" placeholder="Enter new points">
+        <button id="updateButton">Update Points</button>
     </div>
+
     <script>
-        const apiUrl = "https://0c37-213-109-225-82.ngrok-free.app/send_data"; // URL вашего Flask сервера
+        const apiUrl = 'https://0c37-213-109-225-82.ngrok-free.app/send_data'; // Flask-сервер
+        const botUrl = 'https://api.telegram.org/bot<7815366595:AAGA-HPHVPqyTQn579uoeM7yPDRrf-UIdsU>/sendMessage'; // Замените на токен вашего бота
 
-        // Функция для получения данных пользователя
-        async function getUserData() {
+        // Получение данных от бота
+        async function fetchData() {
             try {
-                // Здесь можно указать параметры запроса, если нужно
-                const response = await fetch(apiUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: YOUR_USER_ID }) // Замените на ID текущего пользователя
-                });
-
-                const data = await response.json();
-                if (data.status === "success") {
-                    // Обновляем данные на странице
-                    document.getElementById("userId").textContent = data.updated.id;
-                    document.getElementById("username").textContent = data.updated.username;
-                    document.getElementById("points").textContent = data.updated.points;
-                } else {
-                    console.error("Error fetching user data:", data.message);
+                const response = await fetch(apiUrl, { method: 'POST' });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                const data = await response.json();
+                displayUserData(data);
             } catch (error) {
-                console.error("Failed to fetch user data:", error);
+                console.error('Ошибка при получении данных:', error);
             }
         }
 
-        // Функция для обновления очков
+        // Отображение данных на экране
+        function displayUserData(data) {
+            document.getElementById('userId').innerText = data.id || 'N/A';
+            document.getElementById('username').innerText = data.username || 'N/A';
+            document.getElementById('points').innerText = data.points || 0;
+        }
+
+        // Обновление очков
         async function updatePoints() {
-            const newPoints = parseInt(document.getElementById("pointsInput").value);
-            const userId = document.getElementById("userId").textContent;
+            const userId = document.getElementById('userId').innerText;
+            const username = document.getElementById('username').innerText;
+            const newPoints = parseInt(document.getElementById('newPoints').value, 10);
 
             if (isNaN(newPoints)) {
-                alert("Please enter a valid number for points.");
+                alert('Введите корректное значение очков');
                 return;
             }
 
+            const payload = {
+                id: userId,
+                username: username,
+                points: newPoints,
+            };
+
             try {
                 const response = await fetch(apiUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: userId, points: newPoints })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
                 });
 
-                const data = await response.json();
-                if (data.status === "success") {
-                    alert("Points updated successfully!");
-                    document.getElementById("points").textContent = newPoints; // Обновляем данные на странице
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Очки успешно обновлены!');
+                    document.getElementById('points').innerText = newPoints;
                 } else {
-                    console.error("Error updating points:", data.message);
+                    alert(`Ошибка: ${result.message}`);
                 }
             } catch (error) {
-                console.error("Failed to update points:", error);
+                console.error('Ошибка при обновлении очков:', error);
+                alert('Ошибка при обновлении очков.');
             }
         }
 
-        // Инициализация данных при загрузке страницы
-        getUserData();
+        // Привязка кнопки к функции обновления
+        document.getElementById('updateButton').addEventListener('click', updatePoints);
+
+        // Получаем данные при загрузке страницы
+        fetchData();
     </script>
 </body>
 </html>
