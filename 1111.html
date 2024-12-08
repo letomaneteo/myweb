@@ -3,78 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Список пользователей</title>
+  <title>Добро пожаловать</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    h1 {
+      color: #333;
     }
-    table, th, td {
-      border: 1px solid black;
+    #error {
+      color: red;
     }
-    th, td {
-      padding: 8px;
-      text-align: left;
+    #welcome {
+      margin: 20px 0;
+      font-size: 18px;
     }
-    th {
-      background-color: #f2f2f2;
+    .form-container {
+      margin: 20px 0;
+    }
+    input[type="number"] {
+      margin-right: 10px;
+      padding: 5px;
+      font-size: 14px;
+    }
+    button {
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1>Список пользователей</h1>
-  <div id="error" style="color: red;"></div>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Имя пользователя</th>
-        <th>Очки</th>
-      </tr>
-    </thead>
-    <tbody id="userTable">
-    </tbody>
-  </table>
+  <h1>Добро пожаловать</h1>
+  <div id="error"></div>
+  <div id="welcome"></div>
+  
+  <div class="form-container">
+    <label for="points">Сменить очки: </label>
+    <input type="number" id="points" />
+    <button onclick="updatePoints()">Обновить очки</button>
+  </div>
 
   <script>
-    // Функция для загрузки данных пользователей
-    async function fetchUsers() {
+    let currentUser = {};
+
+    // Получаем текущего пользователя с сервера
+    async function fetchUserData() {
       try {
         const response = await axios.get('http://localhost:8000/get_users');
-        const users = response.data;
+        
+        if (response.status === 200 && response.data.length > 0) {
+          // Предполагаем, что пользователь с ID = 1 — текущий пользователь
+          const userData = response.data.find(user => user.id === 1);
 
-        const userTable = document.getElementById('userTable');
-        userTable.innerHTML = '';
+          if (userData) {
+            currentUser = userData;
 
-        users.forEach(user => {
-          const row = document.createElement('tr');
-
-          const idCell = document.createElement('td');
-          idCell.textContent = user.id;
-          row.appendChild(idCell);
-
-          const usernameCell = document.createElement('td');
-          usernameCell.textContent = user.username;
-          row.appendChild(usernameCell);
-
-          const pointsCell = document.createElement('td');
-          pointsCell.textContent = user.points;
-          row.appendChild(pointsCell);
-
-          userTable.appendChild(row);
-        });
+            // Приветствие
+            const welcomeDiv = document.getElementById('welcome');
+            welcomeDiv.innerHTML = `Добро пожаловать, ${userData.username} (${userData.id}), у вас ${userData.points} очков`;
+          } else {
+            document.getElementById('error').textContent = 'Пользователь не найден!';
+          }
+        }
       } catch (error) {
         document.getElementById('error').textContent = 'Ошибка при загрузке данных: ' + error.message;
       }
     }
 
-    // Загрузка данных при загрузке страницы
-    fetchUsers();
+    async function updatePoints() {
+      try {
+        const pointsInput = document.getElementById('points');
+        const newPoints = parseInt(pointsInput.value, 10);
+
+        if (isNaN(newPoints)) {
+          alert('Пожалуйста, введите корректное число');
+          return;
+        }
+
+        const response = await axios.post('http://localhost:8000/edit_points', {
+          user_id: currentUser.id,
+          points: newPoints
+        });
+
+        if (response.status === 200) {
+          alert('Очки успешно обновлены');
+          // Обновляем приветствие с новыми очками
+          currentUser.points = newPoints;
+          document.getElementById('welcome').innerHTML = `Добро пожаловать, ${currentUser.username} (${currentUser.id}), у вас ${newPoints} очков`;
+        } else {
+          alert('Ошибка при обновлении данных');
+        }
+      } catch (error) {
+        document.getElementById('error').textContent = 'Ошибка при отправке данных: ' + error.message;
+      }
+    }
+
+    // Загружаем пользовательские данные при загрузке страницы
+    fetchUserData();
   </script>
 </body>
 </html>
