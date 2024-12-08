@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>React Список пользователей</title>
-  <!-- Подключаем React и React DOM -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+  <title>Список пользователей</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
     body {
@@ -27,77 +24,57 @@
     th {
       background-color: #f2f2f2;
     }
-    .error {
-      color: red;
-    }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+  <h1>Список пользователей</h1>
+  <div id="error" style="color: red;"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Имя пользователя</th>
+        <th>Очки</th>
+      </tr>
+    </thead>
+    <tbody id="userTable">
+    </tbody>
+  </table>
+
   <script>
-    const { useState, useEffect } = React;
-    const serverUrl = 'https://0c37-213-109-225-82.ngrok-free.app';
+    // Функция для загрузки данных пользователей
+    async function fetchUsers() {
+      try {
+        const response = await axios.get('http://localhost:8000/get_users');
+        const users = response.data;
 
-    function UserList() {
-      const [users, setUsers] = useState([]);
-      const [error, setError] = useState('');
+        const userTable = document.getElementById('userTable');
+        userTable.innerHTML = '';
 
-      useEffect(() => {
-        async function fetchUsers() {
-          try {
-            console.log('Попытка загрузки данных...');
-            const response = await axios.get(`${serverUrl}/get_users`);
+        users.forEach(user => {
+          const row = document.createElement('tr');
 
-            console.log('Ответ сервера: ', response); // Проверяем, что сервер возвращает
-            console.log('Response Data: ', response.data);
+          const idCell = document.createElement('td');
+          idCell.textContent = user.id;
+          row.appendChild(idCell);
 
-            if (response.status === 200 && typeof response.data === 'object') {
-              setUsers(response.data);
-            } else {
-              throw new Error('Ошибка: неверный формат данных');
-            }
-          } catch (err) {
-            console.error('Ошибка при загрузке данных: ', err);
-            setError('Ошибка при загрузке данных');
-          }
-        }
+          const usernameCell = document.createElement('td');
+          usernameCell.textContent = user.username;
+          row.appendChild(usernameCell);
 
-        fetchUsers();
-      }, []);
+          const pointsCell = document.createElement('td');
+          pointsCell.textContent = user.points;
+          row.appendChild(pointsCell);
 
-      return (
-        <div>
-          <h1>Список пользователей</h1>
-          {error && <div className="error">{error}</div>}
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Имя пользователя</th>
-                <th>Очки</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.length > 0 ? (
-                users.map(user => (
-                  <tr key={user.id}>
-                    <td>{user.id}</td>
-                    <td>{user.username}</td>
-                    <td>{user.points}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="3">Нет данных</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      );
+          userTable.appendChild(row);
+        });
+      } catch (error) {
+        document.getElementById('error').textContent = 'Ошибка при загрузке данных: ' + error.message;
+      }
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<UserList />);
+    // Загрузка данных при загрузке страницы
+    fetchUsers();
   </script>
 </body>
 </html>
