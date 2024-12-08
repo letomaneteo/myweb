@@ -3,78 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Список пользователей</title>
+  <title>Приветствие и управление очками</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    table, th, td {
-      border: 1px solid black;
-    }
-    th, td {
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-  </style>
 </head>
 <body>
-  <h1>Список пользователей</h1>
-  <div id="error" style="color: red;"></div>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Имя пользователя</th>
-        <th>Очки</th>
-      </tr>
-    </thead>
-    <tbody id="userTable">
-    </tbody>
-  </table>
-
+  <h1 id="welcomeMessage">Загрузка...</h1>
+  <div>
+    <label for="pointsInput">Введите количество очков:</label>
+    <input type="number" id="pointsInput">
+    <button onclick="updatePoints()">Обновить очки</button>
+  </div>
   <script>
-    // Функция для загрузки данных пользователей
-    async function fetchUsers() {
+    let userId = null;
+    let username = "";
+
+    async function fetchUserData() {
       try {
         const response = await axios.get('http://localhost:8000/get_users');
         const users = response.data;
+        
+        if (users.length > 0) {
+          const user = users[0];
+          userId = user.id;
+          username = user.username;
 
-        const userTable = document.getElementById('userTable');
-        userTable.innerHTML = '';
-
-        users.forEach(user => {
-          const row = document.createElement('tr');
-
-          const idCell = document.createElement('td');
-          idCell.textContent = user.id;
-          row.appendChild(idCell);
-
-          const usernameCell = document.createElement('td');
-          usernameCell.textContent = user.username;
-          row.appendChild(usernameCell);
-
-          const pointsCell = document.createElement('td');
-          pointsCell.textContent = user.points;
-          row.appendChild(pointsCell);
-
-          userTable.appendChild(row);
-        });
+          document.getElementById('welcomeMessage').innerText =
+            `Добро пожаловать, ${username} (ID: ${userId})! У вас ${user.points} очков`;
+        }
       } catch (error) {
-        document.getElementById('error').textContent = 'Ошибка при загрузке данных: ' + error.message;
+        console.error("Ошибка при загрузке данных пользователя:", error);
       }
     }
 
-    // Загрузка данных при загрузке страницы
-    fetchUsers();
+    async function updatePoints() {
+      try {
+        const pointsValue = parseInt(document.getElementById('pointsInput').value, 10);
+
+        if (isNaN(pointsValue)) {
+          alert("Введите корректное количество очков.");
+          return;
+        }
+
+        const response = await axios.post(
+          'http://localhost:8000/edit_points',
+          { user_id: userId, points: pointsValue }
+        );
+
+        if (response.status === 200) {
+          alert("Очки обновлены!");
+          fetchUserData(); // Повторно загружаем данные, чтобы обновить интерфейс
+        } else {
+          alert("Ошибка при обновлении очков");
+        }
+      } catch (error) {
+        console.error("Ошибка при отправке данных:", error);
+      }
+    }
+
+    // Загрузка данных при старте страницы
+    fetchUserData();
   </script>
 </body>
 </html>
