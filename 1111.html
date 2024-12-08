@@ -3,113 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Points Manager</title>
+    <title>Update Points</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        .user-info {
-            margin-bottom: 20px;
+        .form-container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
         }
-        label, input {
+        input, button {
             display: block;
+            width: 100%;
             margin-bottom: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>User Points Manager</h1>
-    <div class="user-info">
-        <p><strong>ID:</strong> <span id="userId">Loading...</span></p>
-        <p><strong>Username:</strong> <span id="username">Loading...</span></p>
-        <p><strong>Points:</strong> <span id="points">Loading...</span></p>
-    </div>
-
-    <div class="update-points">
-        <label for="newPoints">Update Points:</label>
-        <input type="number" id="newPoints" placeholder="Enter new points">
-        <button id="updateButton">Update Points</button>
+    <div class="form-container">
+        <h1>Update Points</h1>
+        <form id="updateForm">
+            <label for="userId">User ID:</label>
+            <input type="number" id="userId" required>
+            <label for="points">New Points:</label>
+            <input type="number" id="points" required>
+            <button type="submit">Update Points</button>
+        </form>
+        <p id="result"></p>
     </div>
 
     <script>
-        const apiUrl = 'http://127.0.0.1:8000/send_data'; // Flask-сервер
+        const form = document.getElementById('updateForm');
+        const result = document.getElementById('result');
 
-        // Получение данных от сервера
-        async function fetchData() {
-            try {
-                const response = await fetch(apiUrl, { method: 'GET' });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                displayUserData(data);
-            } catch (error) {
-                console.error('Ошибка при получении данных:', error);
-            }
-        }
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        // Отображение данных на экране
-        function displayUserData(data) {
-            document.getElementById('userId').innerText = data.id || 'N/A';
-            document.getElementById('username').innerText = data.username || 'N/A';
-            document.getElementById('points').innerText = data.points || 0;
-        }
+            const userId = document.getElementById('userId').value;
+            const points = document.getElementById('points').value;
 
-        // Обновление очков
-        async function updatePoints() {
-            const userId = parseInt(document.getElementById('userId').innerText, 10);
-            const username = document.getElementById('username').innerText;
-            const newPoints = parseInt(document.getElementById('newPoints').value, 10);
-
-            if (isNaN(newPoints)) {
-                alert('Введите корректное значение очков');
-                return;
-            }
-
-            const payload = {
-                id: userId,
-                username: username,
-                points: newPoints,
-            };
+            const updateUrl = `https://0c37-213-109-225-82.ngrok-free.app/edit_points/${userId}`;
 
             try {
-                const response = await fetch(apiUrl, {
+                const response = await fetch(updateUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(payload),
+                    body: JSON.stringify({ points: parseInt(points, 10) }),
                 });
 
-                const result = await response.json();
                 if (response.ok) {
-                    alert('Очки успешно обновлены!');
-                    document.getElementById('points').innerText = newPoints;
+                    const data = await response.json();
+                    result.textContent = `Success: Points updated to ${data.updated.points}`;
                 } else {
-                    alert(`Ошибка: ${result.message}`);
+                    const errorData = await response.json();
+                    result.textContent = `Error: ${errorData.message}`;
                 }
             } catch (error) {
-                console.error('Ошибка при обновлении очков:', error);
-                alert('Ошибка при обновлении очков.');
+                result.textContent = `Error: ${error.message}`;
             }
-        }
-
-        // Привязка кнопки к функции обновления
-        document.getElementById('updateButton').addEventListener('click', updatePoints);
-
-        // Получаем данные при загрузке страницы
-        fetchData();
+        });
     </script>
 </body>
 </html>
+
