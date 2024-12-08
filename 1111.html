@@ -43,13 +43,12 @@
     </div>
 
     <script>
-        const apiUrl = 'https://0c37-213-109-225-82.ngrok-free.app/send_data'; // Flask-сервер
-        const botUrl = 'https://api.telegram.org/bot<7815366595:AAGA-HPHVPqyTQn579uoeM7yPDRrf-UIdsU>/sendMessage'; // Замените на токен вашего бота
+        const apiUrl = 'http://127.0.0.1:8000/send_data'; // Flask-сервер
 
-        // Получение данных от бота
+        // Получение данных от сервера
         async function fetchData() {
             try {
-                const response = await fetch(apiUrl, { method: 'POST' });
+                const response = await fetch(apiUrl, { method: 'GET' });
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -69,7 +68,7 @@
 
         // Обновление очков
         async function updatePoints() {
-            const userId = document.getElementById('userId').innerText;
+            const userId = parseInt(document.getElementById('userId').innerText, 10);
             const username = document.getElementById('username').innerText;
             const newPoints = parseInt(document.getElementById('newPoints').value, 10);
 
