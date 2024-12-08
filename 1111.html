@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>React Список пользователей</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- Подключаем React и React DOM из стабильных ссылок -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
     body {
@@ -38,7 +39,6 @@
   <div id="root"></div>
   <script>
     const { useState, useEffect } = React;
-
     const serverUrl = 'https://0c37-213-109-225-82.ngrok-free.app';
 
     function UserList() {
@@ -47,18 +47,17 @@
       const [points, setPoints] = useState({});
       const [message, setMessage] = useState('');
 
-      // Загружаем данные о пользователях с сервера
       useEffect(() => {
         async function fetchUsers() {
           try {
             const response = await axios.get(`${serverUrl}/get_users`);
-            
-            if (response && response.status === 200) {
-              console.log('Data fetched:', response.data);
+            console.log('Ответ сервера:', response);
+
+            if (response.status === 200 && response.data) {
               setUsers(response.data);
               setPoints(
                 response.data.reduce((acc, user) => {
-                  acc[user.id] = user.points;
+                  acc[user.id] = user.points || 0;
                   return acc;
                 }, {})
               );
@@ -67,38 +66,23 @@
             }
           } catch (err) {
             console.error(err);
-            setError('Ошибка при загрузке данных: ' + err.message);
+            setError('Ошибка при загрузке данных');
           }
         }
 
         fetchUsers();
       }, []);
 
-      // Обновляем данные об очках
-      async function handleUpdatePoints(userId) {
-        try {
-          const newPoints = points[userId] || 0;
-          await axios.post(`${serverUrl}/edit_points/${userId}`, { points: newPoints });
-          setMessage(`Очки обновлены для пользователя ID: ${userId}`);
-          setTimeout(() => setMessage(''), 2000);
-        } catch (err) {
-          console.error(err);
-          setError('Ошибка при обновлении данных');
-        }
-      }
-
       return (
         <div>
           <h1>Список пользователей</h1>
           {error && <div className="error">{error}</div>}
-          {message && <div className="success">{message}</div>}
           <table>
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Имя пользователя</th>
                 <th>Очки</th>
-                <th>Действие</th>
               </tr>
             </thead>
             <tbody>
@@ -107,23 +91,12 @@
                   <tr key={user.id}>
                     <td>{user.id}</td>
                     <td>{user.username}</td>
-                    <td>
-                      <input
-                        type="number"
-                        value={points[user.id] || 0}
-                        onChange={e =>
-                          setPoints({ ...points, [user.id]: parseInt(e.target.value) || 0 })
-                        }
-                      />
-                    </td>
-                    <td>
-                      <button onClick={() => handleUpdatePoints(user.id)}>Обновить</button>
-                    </td>
+                    <td>{user.points || 0}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4">Нет данных о пользователях</td>
+                  <td colSpan="3">Нет данных</td>
                 </tr>
               )}
             </tbody>
