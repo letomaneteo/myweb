@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Список пользователей</title>
+  <title>React Список пользователей</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
     body {
@@ -24,57 +26,92 @@
     th {
       background-color: #f2f2f2;
     }
+    .error {
+      color: red;
+    }
   </style>
 </head>
 <body>
-  <h1>Список пользователей</h1>
-  <div id="error" style="color: red;"></div>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Имя пользователя</th>
-        <th>Очки</th>
-      </tr>
-    </thead>
-    <tbody id="userTable">
-    </tbody>
-  </table>
-
+  <div id="root"></div>
   <script>
-    // Функция для загрузки данных пользователей
-    async function fetchUsers() {
-      try {
-        const response = await axios.get('http://localhost:8000/get_users');
-        const users = response.data;
+    const { useState, useEffect } = React;
 
-        const userTable = document.getElementById('userTable');
-        userTable.innerHTML = '';
+    function UserList() {
+      const [users, setUsers] = useState([]);
+      const [error, setError] = useState('');
+      const [points, setPoints] = useState({});
+      const [message, setMessage] = useState('');
 
-        users.forEach(user => {
-          const row = document.createElement('tr');
+      useEffect(() => {
+        // Загружаем список пользователей при загрузке компонента
+        async function fetchUsers() {
+          try {
+            const response = await axios.get('http://localhost:8000/get_users');
+            setUsers(response.data);
+            setPoints(response.data.reduce((acc, user) => {
+              acc[user.id] = user.points;
+              return acc;
+            }, {}));
+          } catch (err) {
+            setError('Ошибка при загрузке данных: ' + err.message);
+          }
+        }
 
-          const idCell = document.createElement('td');
-          idCell.textContent = user.id;
-          row.appendChild(idCell);
+        fetchUsers();
+      }, []);
 
-          const usernameCell = document.createElement('td');
-          usernameCell.textContent = user.username;
-          row.appendChild(usernameCell);
-
-          const pointsCell = document.createElement('td');
-          pointsCell.textContent = user.points;
-          row.appendChild(pointsCell);
-
-          userTable.appendChild(row);
-        });
-      } catch (error) {
-        document.getElementById('error').textContent = 'Ошибка при загрузке данных: ' + error.message;
+      // Обработчик обновления очков
+      async function updatePoints(userId) {
+        try {
+          const newPoints = points[userId];
+          await axios.post(`http://localhost:8000/edit_points/${userId}`, { points: newPoints });
+          setMessage(`Очки пользователя с ID ${userId} успешно обновлены.`);
+          setTimeout(() => setMessage(''), 3000);
+        } catch (err) {
+          setError('Ошибка при обновлении данных: ' + err.message);
+        }
       }
+
+      return (
+        <div>
+          <h1>Список пользователей</h1>
+          {error && <div className="error">{error}</div>}
+          {message && <div className="success">{message}</div>}
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Имя пользователя</th>
+                <th>Очки</th>
+                <th>Действие</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(user => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.username}</td>
+                  <td>
+                    <input
+                      type="number"
+                      value={points[user.id]}
+                      onChange={(e) =>
+                        setPoints({ ...points, [user.id]: parseInt(e.target.value) })
+                      }
+                    />
+                  </td>
+                  <td>
+                    <button onClick={() => updatePoints(user.id)}>Обновить</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
     }
 
-    // Загрузка данных при загрузке страницы
-    fetchUsers();
+    ReactDOM.createRoot(document.getElementById('root')).render(<UserList />);
   </script>
 </body>
 </html>
