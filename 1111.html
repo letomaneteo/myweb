@@ -46,7 +46,7 @@
         // Загружаем список пользователей при загрузке компонента
         async function fetchUsers() {
           try {
-            const response = await axios.get('http://localhost:8000/get_users');
+            const response = await axios.get('https://0c37-213-109-225-82.ngrok-free.app/get_users');
             setUsers(response.data);
             setPoints(response.data.reduce((acc, user) => {
               acc[user.id] = user.points;
@@ -64,7 +64,7 @@
       async function updatePoints(userId) {
         try {
           const newPoints = points[userId];
-          await axios.post(`http://localhost:8000/edit_points/${userId}`, { points: newPoints });
+          await axios.post(`https://0c37-213-109-225-82.ngrok-free.app/edit_points/${userId}`, { points: newPoints });
           setMessage(`Очки пользователя с ID ${userId} успешно обновлены.`);
           setTimeout(() => setMessage(''), 3000);
         } catch (err) {
