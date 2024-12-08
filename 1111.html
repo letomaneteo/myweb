@@ -19,7 +19,7 @@
 
     async function fetchUserData() {
       try {
-        const response = await axios.get('http://localhost:8000/get_users');
+        const response = await axios.get('https://0c37-213-109-225-82.ngrok-free.app/get_users');
         const users = response.data;
         
         if (users.length > 0) {
@@ -45,7 +45,7 @@
         }
 
         const response = await axios.post(
-          'http://localhost:8000/edit_points',
+          'https://0c37-213-109-225-82.ngrok-free.app/edit_points',
           { user_id: userId, points: pointsValue }
         );
 
