@@ -1,62 +1,92 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Данные от бота</title>
+    <title>Telegram User Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #userData {
+            margin-bottom: 20px;
+        }
+        input {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Информация о пользователе</h1>
-    <div id="user-info">
-        <p><strong>ID:</strong> <span id="user-id">Загрузка...</span></p>
-        <p><strong>Имя пользователя:</strong> <span id="username">Загрузка...</span></p>
-        <p><strong>Очки:</strong> <span id="points">Загрузка...</span></p>
+    <h1>User Data</h1>
+    <div id="userData">
+        <p><strong>ID:</strong> <span id="userId">Loading...</span></p>
+        <p><strong>Username:</strong> <span id="username">Loading...</span></p>
+        <p><strong>Points:</strong> <span id="points">Loading...</span></p>
     </div>
-
-    <h2>Отправить данные на сервер:</h2>
-    <button onclick="sendDataToServer()">Отправить данные</button>
-
+    <div>
+        <h2>Update Points</h2>
+        <input type="number" id="pointsInput" placeholder="Enter new points">
+        <button onclick="updatePoints()">Update</button>
+    </div>
     <script>
-        // Функция для получения данных с сервера
-        async function fetchUserData() {
-            try {
-                const response = await fetch('http://localhost:5000/get_user_data');
-                const data = await response.json();
-                // Заполняем элементы страницы данными
-                document.getElementById('user-id').textContent = data.id;
-                document.getElementById('username').textContent = data.username;
-                document.getElementById('points').textContent = data.points;
-            } catch (error) {
-                console.error('Ошибка при загрузке данных:', error);
-            }
-        }
+        const apiUrl = "https://0c37-213-109-225-82.ngrok-free.app/send_data"; // URL вашего Flask сервера
 
-        // Функция для отправки данных на сервер
-        async function sendDataToServer() {
-            const data = {
-                id: 123,  // Пример данных
-                username: "example_user",
-                points: 50
-            };
-
+        // Функция для получения данных пользователя
+        async function getUserData() {
             try {
-                const response = await fetch('http://localhost:5000/send_user_data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
+                // Здесь можно указать параметры запроса, если нужно
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: YOUR_USER_ID }) // Замените на ID текущего пользователя
                 });
 
-                const result = await response.json();
-                console.log('Ответ от сервера:', result);
+                const data = await response.json();
+                if (data.status === "success") {
+                    // Обновляем данные на странице
+                    document.getElementById("userId").textContent = data.updated.id;
+                    document.getElementById("username").textContent = data.updated.username;
+                    document.getElementById("points").textContent = data.updated.points;
+                } else {
+                    console.error("Error fetching user data:", data.message);
+                }
             } catch (error) {
-                console.error('Ошибка при отправке данных:', error);
+                console.error("Failed to fetch user data:", error);
             }
         }
 
-        // Загрузка данных при запуске страницы
-        window.onload = fetchUserData;
+        // Функция для обновления очков
+        async function updatePoints() {
+            const newPoints = parseInt(document.getElementById("pointsInput").value);
+            const userId = document.getElementById("userId").textContent;
+
+            if (isNaN(newPoints)) {
+                alert("Please enter a valid number for points.");
+                return;
+            }
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: userId, points: newPoints })
+                });
+
+                const data = await response.json();
+                if (data.status === "success") {
+                    alert("Points updated successfully!");
+                    document.getElementById("points").textContent = newPoints; // Обновляем данные на странице
+                } else {
+                    console.error("Error updating points:", data.message);
+                }
+            } catch (error) {
+                console.error("Failed to update points:", error);
+            }
+        }
+
+        // Инициализация данных при загрузке страницы
+        getUserData();
     </script>
 </body>
 </html>
