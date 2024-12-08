@@ -1,75 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Points</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .form-container {
-            max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-        }
-        input, button {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Список пользователей</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
 </head>
 <body>
-    <div class="form-container">
-        <h1>Update Points</h1>
-        <form id="updateForm">
-            <label for="userId">User ID:</label>
-            <input type="number" id="userId" required>
-            <label for="points">New Points:</label>
-            <input type="number" id="points" required>
-            <button type="submit">Update Points</button>
-        </form>
-        <p id="result"></p>
-    </div>
+  <h1>Список пользователей</h1>
+  <div id="error" style="color: red;"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Имя пользователя</th>
+        <th>Очки</th>
+      </tr>
+    </thead>
+    <tbody id="userTable">
+    </tbody>
+  </table>
 
-    <script>
-        const form = document.getElementById('updateForm');
-        const result = document.getElementById('result');
+  <script>
+    // Функция для загрузки данных пользователей
+    async function fetchUsers() {
+      try {
+        const response = await axios.get('http://localhost:8000/get_users');
+        const users = response.data;
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        const userTable = document.getElementById('userTable');
+        userTable.innerHTML = '';
 
-            const userId = document.getElementById('userId').value;
-            const points = document.getElementById('points').value;
+        users.forEach(user => {
+          const row = document.createElement('tr');
 
-            const updateUrl = `https://0c37-213-109-225-82.ngrok-free.app/edit_points/${userId}`;
+          const idCell = document.createElement('td');
+          idCell.textContent = user.id;
+          row.appendChild(idCell);
 
-            try {
-                const response = await fetch(updateUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ points: parseInt(points, 10) }),
-                });
+          const usernameCell = document.createElement('td');
+          usernameCell.textContent = user.username;
+          row.appendChild(usernameCell);
 
-                if (response.ok) {
-                    const data = await response.json();
-                    result.textContent = `Success: Points updated to ${data.updated.points}`;
-                } else {
-                    const errorData = await response.json();
-                    result.textContent = `Error: ${errorData.message}`;
-                }
-            } catch (error) {
-                result.textContent = `Error: ${error.message}`;
-            }
+          const pointsCell = document.createElement('td');
+          pointsCell.textContent = user.points;
+          row.appendChild(pointsCell);
+
+          userTable.appendChild(row);
         });
-    </script>
+      } catch (error) {
+        document.getElementById('error').textContent = 'Ошибка при загрузке данных: ' + error.message;
+      }
+    }
+
+    // Загрузка данных при загрузке страницы
+    fetchUsers();
+  </script>
 </body>
 </html>
-
