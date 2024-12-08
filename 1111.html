@@ -39,26 +39,34 @@
   <script>
     const { useState, useEffect } = React;
 
+    const serverUrl = 'https://0c37-213-109-225-82.ngrok-free.app';
+
     function UserList() {
       const [users, setUsers] = useState([]);
       const [error, setError] = useState('');
       const [points, setPoints] = useState({});
       const [message, setMessage] = useState('');
 
+      // Загружаем данные о пользователях с сервера
       useEffect(() => {
         async function fetchUsers() {
           try {
-            const response = await axios.get('https://0c37-213-109-225-82.ngrok-free.app/get_users');
-            if (response && response.data) {
+            const response = await axios.get(`${serverUrl}/get_users`);
+            
+            if (response && response.status === 200) {
+              console.log('Data fetched:', response.data);
               setUsers(response.data);
-              setPoints(response.data.reduce((acc, user) => {
-                acc[user.id] = user.points;
-                return acc;
-              }, {}));
+              setPoints(
+                response.data.reduce((acc, user) => {
+                  acc[user.id] = user.points;
+                  return acc;
+                }, {})
+              );
             } else {
-              throw new Error('Ошибка: сервер вернул некорректный ответ');
+              throw new Error('Ошибка: неверный ответ от сервера');
             }
           } catch (err) {
+            console.error(err);
             setError('Ошибка при загрузке данных: ' + err.message);
           }
         }
@@ -66,14 +74,16 @@
         fetchUsers();
       }, []);
 
-      async function updatePoints(userId) {
+      // Обновляем данные об очках
+      async function handleUpdatePoints(userId) {
         try {
           const newPoints = points[userId] || 0;
-          await axios.post(`https://0c37-213-109-225-82.ngrok-free.app/edit_points/${userId}`, { points: newPoints });
-          setMessage(`Очки пользователя с ID ${userId} успешно обновлены.`);
-          setTimeout(() => setMessage(''), 3000);
+          await axios.post(`${serverUrl}/edit_points/${userId}`, { points: newPoints });
+          setMessage(`Очки обновлены для пользователя ID: ${userId}`);
+          setTimeout(() => setMessage(''), 2000);
         } catch (err) {
-          setError('Ошибка при обновлении данных: ' + err.message);
+          console.error(err);
+          setError('Ошибка при обновлении данных');
         }
       }
 
@@ -92,24 +102,30 @@
               </tr>
             </thead>
             <tbody>
-              {users.map(user => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.username}</td>
-                  <td>
-                    <input
-                      type="number"
-                      value={points[user.id] || 0}
-                      onChange={(e) =>
-                        setPoints({ ...points, [user.id]: e.target.value ? parseInt(e.target.value) : 0 })
-                      }
-                    />
-                  </td>
-                  <td>
-                    <button onClick={() => updatePoints(user.id)}>Обновить</button>
-                  </td>
+              {users.length > 0 ? (
+                users.map(user => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td>{user.username}</td>
+                    <td>
+                      <input
+                        type="number"
+                        value={points[user.id] || 0}
+                        onChange={e =>
+                          setPoints({ ...points, [user.id]: parseInt(e.target.value) || 0 })
+                        }
+                      />
+                    </td>
+                    <td>
+                      <button onClick={() => handleUpdatePoints(user.id)}>Обновить</button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">Нет данных о пользователях</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
