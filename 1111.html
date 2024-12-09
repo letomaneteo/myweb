@@ -19,7 +19,7 @@
 
     async function fetchUserData() {
       try {
-        const response = await axios.get('https://7b13-213-109-225-82.ngrok-free.app/get_users');
+        const response = await axios.get('https://letomaneteo.github.io/myweb/bot.py/get_users');
         const users = response.data;
         
         if (users.length > 0) {
@@ -45,7 +45,7 @@
         }
 
         const response = await axios.post(
-          'https://7b13-213-109-225-82.ngrok-free.app/edit_points',
+          'https://letomaneteo.github.io/myweb/bot.py/edit_points',
           { user_id: userId, points: pointsValue }
         );
 
