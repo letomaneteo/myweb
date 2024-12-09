@@ -35,30 +35,33 @@
       }
     }
 
-    async function updatePoints() {
-      try {
-        const pointsValue = parseInt(document.getElementById('pointsInput').value, 10);
+   async function updatePoints() {
+  try {
+    const pointsValue = parseInt(document.getElementById('pointsInput').value, 10);
 
-        if (isNaN(pointsValue)) {
-          alert("Введите корректное количество очков.");
-          return;
-        }
-
-        const response = await axios.post(
-          'https://7b13-213-109-225-82.ngrok-free.app/edit_points',
-          { user_id: userId, points: pointsValue }
-        );
-
-        if (response.status === 200) {
-          alert("Очки обновлены!");
-          fetchUserData(); // Повторно загружаем данные, чтобы обновить интерфейс
-        } else {
-          alert("Ошибка при обновлении очков");
-        }
-      } catch (error) {
-        console.error("Ошибка при отправке данных:", error);
-      }
+    if (isNaN(pointsValue)) {
+      alert("Введите корректное количество очков.");
+      return;
     }
+
+    console.log("Отправляемые данные:", { user_id: userId, points: pointsValue });
+
+    const response = await axios.post(
+      'https://7b13-213-109-225-82.ngrok-free.app/edit_points',
+      { user_id: userId, points: pointsValue },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    if (response.status === 200) {
+      alert("Очки обновлены!");
+      fetchUserData();
+    } else {
+      alert("Ошибка при обновлении очков");
+    }
+  } catch (error) {
+    console.error("Ошибка при отправке данных:", error);
+  }
+}
 
     // Загрузка данных при старте страницы
     fetchUserData();
