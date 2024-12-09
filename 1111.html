@@ -3,67 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Приветствие и управление очками</title>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <title>React App</title>
+  <link rel="stylesheet" href="./App.css">
 </head>
 <body>
-  <h1 id="welcomeMessage">Загрузка...</h1>
-  <div>
-    <label for="pointsInput">Введите количество очков:</label>
-    <input type="number" id="pointsInput">
-    <button onclick="updatePoints()">Обновить очки</button>
-  </div>
-  <script>
-    let userId = null;
-    let username = "";
+  <div id="root"></div>
+  <script type="text/babel">
+    import React, { useState, useEffect } from 'react';
+    import axios from 'axios';
 
-    async function fetchUserData() {
-      try {
-        const response = await axios.get('https://7b13-213-109-225-82.ngrok-free.app/get_users');
-        const users = response.data;
-        
-        if (users.length > 0) {
-          const user = users[0];
-          userId = user.id;
-          username = user.username;
+    const App = () => {
+      const [userData, setUserData] = useState(null);
+      const [newPoints, setNewPoints] = useState(0);
 
-          document.getElementById('welcomeMessage').innerText =
-            `Добро пожаловать, ${username} (ID: ${userId})! У вас ${user.points} очков`;
+      // Функция для получения данных пользователей с сервера
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get('https://7b13-213-109-225-82.ngrok-free.app/get_users');
+          const users = response.data;
+          if (users.length > 0) {
+            setUserData(users[0]); // Берем первого пользователя
+          }
+        } catch (error) {
+          console.error('Ошибка при получении данных пользователя:', error);
         }
-      } catch (error) {
-        console.error("Ошибка при загрузке данных пользователя:", error);
-      }
-    }
+      };
 
-    async function updatePoints() {
-      try {
-        const pointsValue = parseInt(document.getElementById('pointsInput').value, 10);
+      // Функция для обновления очков пользователя
+      const updatePoints = async () => {
+        if (!userData) return;
 
-        if (isNaN(pointsValue)) {
-          alert("Введите корректное количество очков.");
-          return;
+        try {
+          const response = await axios.post('https://7b13-213-109-225-82.ngrok-free.app/edit_points', {
+            user_id: userData.id,
+            points: newPoints,
+          });
+
+          if (response.status === 200) {
+            alert('Очки успешно обновлены!');
+            fetchUserData(); // Обновляем данные после изменения
+          } else {
+            alert('Ошибка при обновлении очков.');
+          }
+        } catch (error) {
+          console.error('Ошибка при обновлении очков:', error);
         }
+      };
 
-        const response = await axios.post(
-  'https://7b13-213-109-225-82.ngrok-free.app/edit_points',
-  { user_id: userId, points: pointsValue },  // убедитесь, что userId не равен null
-  { headers: { 'Content-Type': 'application/json' } }
-);
+      // Загрузка данных при старте компонента
+      useEffect(() => {
+        fetchUserData();
+      }, []);
 
+      return (
+        <div className="App">
+          <header className="App-header">
+            <h1>Добро пожаловать в приложение</h1>
+            {userData ? (
+              <div>
+                <p>Имя пользователя: {userData.username}</p>
+                <p>ID: {userData.id}</p>
+                <p>Очки: {userData.points}</p>
+                <div>
+                  <label htmlFor="pointsInput">Введите новое количество очков:</label>
+                  <input
+                    type="number"
+                    id="pointsInput"
+                    value={newPoints}
+                    onChange={(e) => setNewPoints(Number(e.target.value))}
+                  />
+                  <button onClick={updatePoints}>Обновить очки</button>
+                </div>
+              </div>
+            ) : (
+              <p>Загрузка данных...</p>
+            )}
+          </header>
+        </div>
+      );
+    };
 
-        if (response.status === 200) {
-          alert("Очки обновлены!");
-          fetchUserData(); // Повторно загружаем данные, чтобы обновить интерфейс
-        } else {
-          alert("Ошибка при обновлении очков");
-        }
-      } catch (error) {
-        console.error("Ошибка при отправке данных:", error);
-      }
-    }
+    export default App;
 
-    // Загрузка данных при старте страницы
-    fetchUserData();
+    ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>
 </html>
