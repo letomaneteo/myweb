@@ -68,7 +68,7 @@
         fetchUserData();
       }, []);
 
-      return (
+     return (
   <div className="App">
     <header className="App-header">
       <h1>Добро пожаловать в приложение</h1>
@@ -77,7 +77,7 @@
           <p>Имя пользователя: {userData.username}</p>
           <p>ID: {userData.id}</p>
           <p>Очки: {userData.points}</p>
-          <p>Уровень: {userData.level}</p> {/* Добавьте отображение уровня */}
+          <p>Уровень: {userData.level ?? 'Не определен'}</p>
           <div>
             <label htmlFor="pointsInput">Введите новое количество очков:</label>
             <input
@@ -95,6 +95,7 @@
     </header>
   </div>
 );
+
 
 
     const root = createRoot(document.getElementById('root'));
