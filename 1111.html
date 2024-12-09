@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>React App</title>
-  <link rel="stylesheet" href="./App.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.20.12/babel.min.js"></script>
@@ -13,6 +12,7 @@
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect } = React;
+    const { createRoot } = ReactDOM;
 
     const App = () => {
       const [userData, setUserData] = useState(null);
@@ -21,7 +21,7 @@
       // Функция для получения данных пользователей с сервера
       const fetchUserData = async () => {
         try {
-          const response = await fetch('https://7b13-213-109-225-82.ngrok-free.app/get_users');
+          const response = await fetch('http://localhost:8000/get_users');
           const users = await response.json();
           if (users.length > 0) {
             setUserData(users[0]); // Берем первого пользователя
@@ -36,11 +36,9 @@
         if (!userData) return;
 
         try {
-          const response = await fetch('https://7b13-213-109-225-82.ngrok-free.app/edit_points', {
+          const response = await fetch('http://localhost:8000/edit_points', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               user_id: userData.id,
               points: newPoints,
@@ -91,7 +89,8 @@
       );
     };
 
-    ReactDOM.render(<App />, document.getElementById('root'));
+    const root = createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
