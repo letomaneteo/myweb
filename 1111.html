@@ -69,32 +69,33 @@
       }, []);
 
       return (
-        <div className="App">
-          <header className="App-header">
-            <h1>Добро пожаловать в приложение</h1>
-            {userData ? (
-              <div>
-                <p>Имя пользователя: {userData.username}</p>
-                <p>ID: {userData.id}</p>
-                <p>Очки: {userData.points}</p>
-                <div>
-                  <label htmlFor="pointsInput">Введите новое количество очков:</label>
-                  <input
-                    type="number"
-                    id="pointsInput"
-                    value={newPoints}
-                    onChange={(e) => setNewPoints(Number(e.target.value))}
-                  />
-                  <button onClick={updatePoints}>Обновить очки</button>
-                </div>
-              </div>
-            ) : (
-              <p>Загрузка данных...</p>
-            )}
-          </header>
+  <div className="App">
+    <header className="App-header">
+      <h1>Добро пожаловать в приложение</h1>
+      {userData ? (
+        <div>
+          <p>Имя пользователя: {userData.username}</p>
+          <p>ID: {userData.id}</p>
+          <p>Очки: {userData.points}</p>
+          <p>Уровень: {userData.level}</p> {/* Добавьте отображение уровня */}
+          <div>
+            <label htmlFor="pointsInput">Введите новое количество очков:</label>
+            <input
+              type="number"
+              id="pointsInput"
+              value={newPoints}
+              onChange={(e) => setNewPoints(Number(e.target.value))}
+            />
+            <button onClick={updatePoints}>Обновить очки</button>
+          </div>
         </div>
-      );
-    };
+      ) : (
+        <p>Загрузка данных...</p>
+      )}
+    </header>
+  </div>
+);
+
 
     const root = createRoot(document.getElementById('root'));
     root.render(<App />);
