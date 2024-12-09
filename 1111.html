@@ -45,9 +45,11 @@
         }
 
         const response = await axios.post(
-          'https://7b13-213-109-225-82.ngrok-free.app/edit_points',
-          { user_id: userId, points: pointsValue }
-        );
+  'https://7b13-213-109-225-82.ngrok-free.app/edit_points',
+  { user_id: userId, points: pointsValue },  // убедитесь, что userId не равен null
+  { headers: { 'Content-Type': 'application/json' } }
+);
+
 
         if (response.status === 200) {
           alert("Очки обновлены!");
