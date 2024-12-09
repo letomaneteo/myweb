@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>React App</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.min.js"></script>
@@ -10,53 +10,99 @@
 </head>
 <body>
   <div id="root"></div>
-  <script type="text/javascript">
-  const { useState, useEffect } = React;
-  const { createRoot } = ReactDOM;
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { createRoot } = ReactDOM;
 
-  const App = () => {
-    const [userData, setUserData] = useState(null);
-    const [newPoints, setNewPoints] = useState(0);
+    const App = () => {
+      const [userData, setUserData] = useState(null);
+      const [newPoints, setNewPoints] = useState(0);
 
-    const fetchUserData = async () => {
-      const response = await fetch('https://49fb-213-109-225-82.ngrok-free.app/get_users');
-      const users = await response.json();
-      if (users.length) {
-        setUserData(users[0]);
-      }
+      // Получаем данные пользователя
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch('https://49fb-213-109-225-82.ngrok-free.app/get_users', {
+            headers: {
+              'ngrok-skip-browser-warning': 'true',
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Ошибка ${response.status}`);
+          }
+
+          const users = await response.json(); // Попытка преобразовать в JSON
+          console.log('Users data:', users); // Проверяем данные
+          if (users && users.length > 0) {
+            setUserData(users[0]);
+          } else {
+            console.error('Нет данных пользователей');
+          }
+        } catch (error) {
+          console.error('Ошибка при получении данных пользователя:', error);
+        }
+      };
+
+      const updatePoints = async () => {
+        if (!userData) return;
+
+        try {
+          const response = await fetch('https://49fb-213-109-225-82.ngrok-free.app/edit_points', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'ngrok-skip-browser-warning': 'true',
+            },
+            body: JSON.stringify({
+              user_id: userData.id,
+              points: newPoints,
+            }),
+          });
+
+          if (response.ok) {
+            alert('Очки обновлены!');
+            fetchUserData(); // Обновляем после успешного изменения данных
+          } else {
+            alert('Ошибка при обновлении данных');
+          }
+        } catch (error) {
+          console.error('Ошибка при отправке данных:', error);
+        }
+      };
+
+      useEffect(() => {
+        fetchUserData();
+      }, []);
+
+      return (
+        <div className="App">
+          <header className="App-header">
+            <h1>Добро пожаловать!</h1>
+            {userData ? (
+              <div>
+                <p>Имя пользователя: {userData.username}</p>
+                <p>Очки: {userData.points}</p>
+                <div>
+                  <label htmlFor="pointsInput">Введите новое количество очков:</label>
+                  <input
+                    type="number"
+                    id="pointsInput"
+                    value={newPoints}
+                    onChange={(e) => setNewPoints(Number(e.target.value))}
+                  />
+                  <button onClick={updatePoints}>Обновить очки</button>
+                </div>
+              </div>
+            ) : (
+              <p>Загрузка данных...</p>
+            )}
+          </header>
+        </div>
+      );
     };
 
-    useEffect(() => {
-      fetchUserData();
-    }, []);
-
-    return React.createElement('div', { className: 'App' },
-      React.createElement('header', { className: 'App-header' },
-        React.createElement('h1', null, 'Добро пожаловать в приложение'),
-        userData
-          ? React.createElement('div', null,
-            React.createElement('p', null, 'Имя пользователя: ', userData.username),
-            React.createElement('p', null, 'ID: ', userData.id),
-            React.createElement('p', null, 'Очки: ', userData.points),
-            React.createElement('div', null,
-              React.createElement('label', { htmlFor: 'pointsInput' }, 'Введите новое количество очков:'),
-              React.createElement('input', {
-                type: 'number',
-                id: 'pointsInput',
-                value: newPoints,
-                onChange: (e) => setNewPoints(Number(e.target.value))
-              }),
-              React.createElement('button', { onClick: () => alert('Обновлено') }, 'Обновить очки')
-            )
-          )
-          : React.createElement('p', null, 'Загрузка данных...')
-      )
-    )
-  };
-
-  const root = createRoot(document.getElementById('root'));
-  root.render(React.createElement(App));
-</script>
-
+    const root = createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
