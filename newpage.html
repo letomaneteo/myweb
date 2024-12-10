@@ -259,7 +259,7 @@ function sendStatsToServer(winCount, lossCount) {
         losses: lossCount
     };
 
-    const serverUrl = "http://localhost:8080/update_user_data";
+    const serverUrl = "https://0457-213-109-225-82.ngrok-free.app/update_user_data";
 
     fetch(serverUrl, {
         method: "POST",
