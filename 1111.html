@@ -17,6 +17,7 @@
     const App = () => {
       const [userData, setUserData] = useState(null);
       const [newPoints, setNewPoints] = useState(0);
+      const [newLevel, setNewLevel] = useState(0);
 
       // Получаем данные пользователя
       const fetchUserData = async () => {
@@ -31,10 +32,9 @@
             throw new Error(`Ошибка ${response.status}`);
           }
 
-          const users = await response.json(); // Попытка преобразовать в JSON
-          console.log('Users data:', users); // Проверяем данные
+          const users = await response.json();
           if (users && users.length > 0) {
-            setUserData(users[0]);
+            setUserData(users[0]); // Берем первого пользователя
           } else {
             console.error('Нет данных пользователей');
           }
@@ -43,13 +43,14 @@
         }
       };
 
+      // Обновляем очки
       const updatePoints = async () => {
         if (!userData) return;
 
         try {
           const response = await fetch('https://0457-213-109-225-82.ngrok-free.app/edit_points', {
             method: 'POST',
-            headers: { 
+            headers: {
               'Content-Type': 'application/json',
               'ngrok-skip-browser-warning': 'true',
             },
@@ -61,7 +62,35 @@
 
           if (response.ok) {
             alert('Очки обновлены!');
-            fetchUserData(); // Обновляем после успешного изменения данных
+            fetchUserData();
+          } else {
+            alert('Ошибка при обновлении данных');
+          }
+        } catch (error) {
+          console.error('Ошибка при отправке данных:', error);
+        }
+      };
+
+      // Обновляем уровень
+      const updateLevel = async () => {
+        if (!userData) return;
+
+        try {
+          const response = await fetch('https://0457-213-109-225-82.ngrok-free.app/edit_level', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'ngrok-skip-browser-warning': 'true',
+            },
+            body: JSON.stringify({
+              user_id: userData.id,
+              level: newLevel,
+            }),
+          });
+
+          if (response.ok) {
+            alert('Уровень обновлен!');
+            fetchUserData();
           } else {
             alert('Ошибка при обновлении данных');
           }
@@ -80,8 +109,10 @@
             <h1>Добро пожаловать!</h1>
             {userData ? (
               <div>
+                <p>ID: {userData.id}</p>
                 <p>Имя пользователя: {userData.username}</p>
                 <p>Очки: {userData.points}</p>
+                <p>Уровень: {userData.level || 1}</p>
                 <div>
                   <label htmlFor="pointsInput">Введите новое количество очков:</label>
                   <input
@@ -91,6 +122,16 @@
                     onChange={(e) => setNewPoints(Number(e.target.value))}
                   />
                   <button onClick={updatePoints}>Обновить очки</button>
+                </div>
+                <div>
+                  <label htmlFor="levelInput">Введите новый уровень:</label>
+                  <input
+                    type="number"
+                    id="levelInput"
+                    value={newLevel}
+                    onChange={(e) => setNewLevel(Number(e.target.value))}
+                  />
+                  <button onClick={updateLevel}>Обновить уровень</button>
                 </div>
               </div>
             ) : (
