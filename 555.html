@@ -15,98 +15,84 @@
     const { createRoot } = ReactDOM;
 
     const App = () => {
-      const [userData, setUserData] = useState(null);
-      const [points, setPoints] = useState(0);
-      const [level, setLevel] = useState(1);
-      const [victoryCount, setVictoryCount] = useState(0);
+      const [score, setScore] = useState(30);
+      const [clickCount, setClickCount] = useState(0);
+      const [winCount, setWinCount] = useState(0);
+      const [lossCount, setLossCount] = useState(0);
+      const [userScore, setUserScore] = useState(0);
+      const [userLevel, setUserLevel] = useState(1);
+      const [gameMessage, setGameMessage] = useState('');
       const [loading, setLoading] = useState(true);
-      const [error, setError] = useState(null);
 
-      const getUserIdFromUrl = () => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('user_id');
-      };
+      const telegramId = new URLSearchParams(window.location.search).get('telegram_id');
+      const username = new URLSearchParams(window.location.search).get('username');
 
-      // Получение данных пользователя с сервера
-      const fetchUserData = async (userId) => {
-        setLoading(true);
-        setError(null);
+      useEffect(() => {
+        if (telegramId && username) {
+          const greeting = `Здравствуйте, ${username} (${telegramId})`;
+          console.log(greeting);
+          fetchUserStats();
+        }
+      }, [telegramId, username]);
 
+      const fetchUserStats = async () => {
         try {
-          const response = await fetch(`https://dbf3-213-109-225-82.ngrok-free.app/get_user?user_id=${userId}`);
-          if (!response.ok) throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
-
-          const user = await response.json();
-          setUserData(user);
-          setPoints(user.points);
-          setLevel(user.level || 1);
-        } catch (err) {
-          setError(err.message || 'Ошибка загрузки данных.');
-        } finally {
+          const response = await fetch(`https://dbf3-213-109-225-82.ngrok-free.app/get_user?user_id=${telegramId}`);
+          const data = await response.json();
+          setUserScore(data.score);
+          setUserLevel(data.level || 1);
           setLoading(false);
+        } catch (err) {
+          console.error('Ошибка при загрузке данных:', err);
         }
       };
 
-      // Обновление данных на сервере
-      const updateServer = async () => {
-        if (!userData) return;
+      const sendStatsToServer = async () => {
+        const payload = {
+          user_id: telegramId,
+          wins: winCount,
+          losses: lossCount
+        };
 
         try {
-          await fetch('https://dbf3-213-109-225-82.ngrok-free.app/edit_points', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userData.id, points }),
+          const response = await fetch("https://dbf3-213-109-225-82.ngrok-free.app/update_user_data", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
           });
-
-          await fetch('https://dbf3-213-109-225-82.ngrok-free.app/edit_level', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userData.id, level }),
-          });
-
-          alert('Данные успешно обновлены!');
-        } catch (err) {
-          alert('Ошибка при обновлении данных: ' + err.message);
+          const data = await response.json();
+          setUserScore(data.score);
+          setUserLevel(data.level);
+          console.log('Данные пользователя обновлены:', data);
+        } catch (error) {
+          console.error('Ошибка при отправке данных на сервер:', error);
         }
       };
 
-      // Логика победы
-      const handleVictory = () => {
-        setPoints(points + 10);
-        setVictoryCount(victoryCount + 1);
-
-        if ((victoryCount + 1) % 3 === 0) {
-          setLevel(level + 1);
+      const playGame = () => {
+        setClickCount(clickCount + 1);
+        setScore(score + Math.floor(Math.random() * 10) - 5); // Пример для случайного изменения очков
+        if (score >= 200) {
+          setWinCount(winCount + 1);
+          setGameMessage('Вы выиграли!');
+          sendStatsToServer();
+        } else if (clickCount >= 22) {
+          setLossCount(lossCount + 1);
+          setGameMessage('Вы проиграли!');
+          sendStatsToServer();
         }
       };
-
-      // Логика поражения
-      const handleDefeat = () => {
-        setPoints(points - 10);
-      };
-
-      useEffect(() => {
-        const userId = getUserIdFromUrl();
-        if (userId) fetchUserData(userId);
-        else setError('Пользователь не идентифицирован. Проверьте ссылку.');
-      }, []);
-
-      useEffect(() => {
-        if (userData) updateServer();
-      }, [points, level]);
-
-      if (loading) return <p>Загрузка данных...</p>;
-      if (error) return <p>Ошибка: {error}</p>;
 
       return (
         <div className="App">
-          <header className="App-header">
-            <h1>Добро пожаловать, {userData.username}!</h1>
-            <p>Очки: {points}</p>
-            <p>Уровень: {level}</p>
-            <button onClick={handleVictory}>Победа (+10 очков)</button>
-            <button onClick={handleDefeat}>Поражение (-10 очков)</button>
-          </header>
+          <h1>Добро пожаловать, {username}!</h1>
+          <p>Ваши очки: {userScore}</p>
+          <p>Ваш уровень: {userLevel}</p>
+          <p>Победы: {winCount}</p>
+          <p>Поражения: {lossCount}</p>
+          <p>{gameMessage}</p>
+          <button onClick={playGame}>Играть</button>
+          <button onClick={sendStatsToServer}>Обновить данные</button>
         </div>
       );
     };
