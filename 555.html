@@ -22,7 +22,6 @@
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
 
-      // Получение user_id из URL
       const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
         return params.get('user_id');
