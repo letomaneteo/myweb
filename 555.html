@@ -19,16 +19,15 @@
       const [points, setPoints] = useState(0);
       const [level, setLevel] = useState(1);
       const [victoryCount, setVictoryCount] = useState(0);
+      const [defeatCount, setDefeatCount] = useState(0);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
 
-      // Функция для получения user_id из URL
       const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
         return params.get('user_id');
       };
 
-      // Получение данных пользователя с сервера
       const fetchUserData = async (userId) => {
         setLoading(true);
         setError(null);
@@ -51,7 +50,6 @@
         }
       };
 
-      // Функция для обновления данных на сервере
       const updateServer = async () => {
         if (!userData) return;
 
@@ -74,7 +72,6 @@
         }
       };
 
-      // Функция победы
       const handleVictory = () => {
         setPoints(points + 10);
         setVictoryCount(victoryCount + 1);
@@ -84,22 +81,19 @@
         }
       };
 
-      // Функция поражения
       const handleDefeat = () => {
         setPoints(points - 10);
+        setDefeatCount(defeatCount + 1);
       };
 
-      // Эмуляция игры, которая может автоматически вызвать победу или поражение
-      useEffect(() => {
-        // Имитируем результат игры: Победа (1) или Поражение (0)
-        const gameResult = Math.random() > 0.5 ? 1 : 0;  // 50% шанс на победу или поражение
-
-        if (gameResult === 1) {
+      const triggerRandomEvent = () => {
+        const isVictory = Math.random() < 0.5;
+        if (isVictory) {
           handleVictory();
         } else {
           handleDefeat();
         }
-      }, [victoryCount, points, level]);  // Зависимости для перезапуска
+      };
 
       useEffect(() => {
         const userId = getUserIdFromUrl();
@@ -122,9 +116,9 @@
             <p>Имя пользователя: {userData.username}</p>
             <p>Очки: {points}</p>
             <p>Уровень: {level}</p>
-            {/* Кнопки, которые могут быть нажаты автоматически */}
-            <button onClick={handleVictory}>Победа (+10 очков)</button>
-            <button onClick={handleDefeat}>Поражение (-10 очков)</button>
+            <p>Победы: {victoryCount}</p>
+            <p>Поражения: {defeatCount}</p>
+            <button onClick={triggerRandomEvent}>Случайное событие</button>
           </header>
         </div>
       );
