@@ -16,33 +16,32 @@
 
     const App = () => {
       const [userData, setUserData] = useState(null);
+      const [points, setPoints] = useState(0);
+      const [level, setLevel] = useState(1);
+      const [victoryCount, setVictoryCount] = useState(0);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
 
-      // Получаем user_id из URL
       const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
         return params.get('user_id');
       };
 
-      // Загружаем данные пользователя
       const fetchUserData = async (userId) => {
         setLoading(true);
         setError(null);
 
         try {
           const response = await fetch(`https://dbf3-213-109-225-82.ngrok-free.app/get_user?user_id=${userId}`, {
-            headers: {
-              'ngrok-skip-browser-warning': 'true',
-            },
+            headers: { 'ngrok-skip-browser-warning': 'true' },
           });
 
-          if (!response.ok) {
-            throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
-          }
+          if (!response.ok) throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
 
           const user = await response.json();
           setUserData(user);
+          setPoints(user.points);
+          setLevel(user.level || 1);
         } catch (err) {
           setError(err.message || 'Ошибка загрузки данных.');
         } finally {
@@ -50,91 +49,64 @@
         }
       };
 
-      // Обновляем данные пользователя
-      const updateUserData = async (updatedData) => {
+      const updateServer = async () => {
         if (!userData) return;
 
         try {
-          const response = await fetch('https://dbf3-213-109-225-82.ngrok-free.app/edit_user', {
+          await fetch('https://dbf3-213-109-225-82.ngrok-free.app/edit_points', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'ngrok-skip-browser-warning': 'true',
-            },
-            body: JSON.stringify({
-              user_id: userData.id,
-              ...updatedData,
-            }),
+            headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+            body: JSON.stringify({ user_id: userData.id, points }),
           });
 
-          if (!response.ok) {
-            throw new Error('Ошибка обновления данных.');
-          }
+          await fetch('https://0457-213-109-225-82.ngrok-free.app/edit_level', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+            body: JSON.stringify({ user_id: userData.id, level }),
+          });
 
-          fetchUserData(userData.id); // Обновляем данные после изменения
-        } catch (error) {
-          alert('Ошибка при обновлении данных: ' + error.message);
+          alert('Данные успешно обновлены!');
+        } catch (err) {
+          alert('Ошибка при обновлении данных: ' + err.message);
         }
       };
 
-      // Обработчики для кнопок
-      const handleWin = () => {
-        const updatedPoints = userData.points + 10;
-        const updatedLevel = Math.floor((userData.wins + 1) / 3) + 1;
-        updateUserData({
-          points: updatedPoints,
-          level: updatedLevel,
-          wins: userData.wins + 1,
-        });
+      const handleVictory = () => {
+        setPoints(points + 10);
+        setVictoryCount(victoryCount + 1);
+
+        if ((victoryCount + 1) % 3 === 0) {
+          setLevel(level + 1);
+        }
       };
 
-      const handleLoss = () => {
-        const updatedPoints = Math.max(0, userData.points - 10);
-        updateUserData({
-          points: updatedPoints,
-          losses: userData.losses + 1,
-        });
+      const handleDefeat = () => {
+        setPoints(points - 10);
       };
 
       useEffect(() => {
         const userId = getUserIdFromUrl();
-        if (userId) {
-          fetchUserData(userId);
-        } else {
-          setError('Пользователь не идентифицирован. Проверьте ссылку.');
-        }
+        if (userId) fetchUserData(userId);
+        else setError('Пользователь не идентифицирован. Проверьте ссылку.');
       }, []);
 
-      if (loading) {
-        return <p>Загрузка данных...</p>;
-      }
+      useEffect(() => {
+        if (userData) updateServer();
+      }, [points, level]);
 
-      if (error) {
-        return <p>Ошибка: {error}</p>;
-      }
+      if (loading) return <p>Загрузка данных...</p>;
+      if (error) return <p>Ошибка: {error}</p>;
 
       return (
         <div className="App">
           <header className="App-header">
             <h1>Добро пожаловать!</h1>
-            {userData ? (
-              <div>
-                <p>ID: {userData.id}</p>
-                <p>Имя пользователя: {userData.username}</p>
-                <p>Очки: {userData.points}</p>
-                <p>Уровень: {userData.level || 1}</p>
-                <p>Победы: {userData.wins || 0}</p>
-                <p>Поражения: {userData.losses || 0}</p>
-                <div>
-                  <button onClick={handleWin}>Добавить победу</button>
-                </div>
-                <div>
-                  <button onClick={handleLoss}>Добавить поражение</button>
-                </div>
-              </div>
-            ) : (
-              <p>Данные пользователя не найдены.</p>
-            )}
+            <p>ID: {userData.id}</p>
+            <p>Имя пользователя: {userData.username}</p>
+            <p>Очки: {points}</p>
+            <p>Уровень: {level}</p>
+            <button onClick={handleVictory}>Победа (+10 очков)</button>
+            <button onClick={handleDefeat}>Поражение (-10 очков)</button>
           </header>
         </div>
       );
