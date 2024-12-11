@@ -67,15 +67,32 @@
       }, []);
 
       const updatePoints = (newPoints) => {
-        fetch(`${SERVER_URL}/edit_points`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userData.id, points: newPoints }),
-        })
-          .then((res) => res.json())
-          .then((data) => console.log("Очки обновлены:", data))
-          .catch((err) => console.error("Ошибка обновления очков:", err));
-      };
+  if (!userData.id || isNaN(newPoints)) {
+    console.error("Некорректные данные для отправки:", { user_id: userData.id, points: newPoints });
+    return;
+  }
+
+  fetch(`${SERVER_URL}/edit_points`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userData.id, points: newPoints }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`Ошибка сервера: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then((data) => {
+      if (data.status === "error") {
+        console.error("Сервер вернул ошибку:", data.message);
+      } else {
+        console.log("Очки успешно обновлены:", data);
+      }
+    })
+    .catch((err) => console.error("Ошибка обновления очков:", err));
+};
+
 
       const updateLevel = (newLevel) => {
         fetch(`${SERVER_URL}/edit_level`, {
