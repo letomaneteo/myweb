@@ -277,35 +277,37 @@ function updateUserStats() {
     sendStatsToServer(userScore, userLevel);
 }
 
-function sendStatsToServer(score, level) {
+function sendStatsToServer() {
     const payload = {
         user_id: telegramId, // ID пользователя
-        score: score,
-        level: level,
-        wins: winCount,
-        losses: lossCount,
+        score: userScore, // Очки
+        level: userLevel, // Уровень
     };
 
-    const serverUrl = "https://dbf3-213-109-225-82.ngrok-free.app/update_user_data";
+    const serverUrl = "https://dbf3-213-109-225-82.ngrok-free.app/update_user_data"; // Ваш URL сервера
 
     fetch(serverUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
     })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Ошибка при отправке данных на сервер");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log("Обновленные данные пользователя:", data);
-        })
-        .catch((error) => {
-            console.error("Ошибка отправки данных:", error);
-        });
+    .then(response => response.json())
+    .then(data => {
+        // Обновляем локальные значения
+        userScore = data.score; 
+        userLevel = data.level;
+
+        document.getElementById('userScore').textContent = userScore;
+document.getElementById('userLevel').textContent = userLevel;
+
+
+        console.log("Обновлённые данные пользователя:", data);
+    })
+    .catch(error => {
+        console.error("Ошибка отправки данных:", error);
+    });
 }
+
 
 
 // Увеличение побед
