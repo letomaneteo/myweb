@@ -434,166 +434,122 @@ async function checkDiagonal() {
     return points;
 }
 
+// URL сервера Flask
+const serverUrl = "https://your-flask-server.com/update_user_data";
+
+// Функция отправки данных на сервер
+async function sendStatsToServer(winCount, lossCount) {
+    const payload = {
+        user_id: telegramId,
+        wins: winCount,
+        losses: lossCount
+    };
+
+    try {
+        const response = await fetch(serverUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Ошибка: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Обновление очков и уровня из ответа сервера
+        userScore = data.score;
+        userLevel = data.level;
+        updateUI();
+        console.log("Данные обновлены на сервере:", data);
+    } catch (error) {
+        console.error("Ошибка отправки данных:", error);
+    }
+}
+
+// Функция обновления UI
+function updateUI() {
+    document.getElementById('userScore').textContent = userScore;
+    document.getElementById('userLevel').textContent = userLevel;
+    winCountElement.textContent = winCount;
+    lossCountElement.textContent = lossCount;
+}
+
+// Функции для обработки побед и поражений
+function increaseWinCount() {
+    winCount++;
+    sendStatsToServer(winCount, lossCount);
+}
+
+function increaseLossCount() {
+    lossCount++;
+    sendStatsToServer(winCount, lossCount);
+}
+
+// Основная логика игры
 async function playGame() {
-    playButton.disabled = true; // Блокируем кнопку на время выполнения хода
-    resetMessages();
+    playButton.disabled = true;
 
     // Заполняем ячейки случайными числами
     cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
     clickCount++;
     clickCountElement.textContent = clickCount;
 
-    // Подсчёт очков
-    const horizontalPoints = await checkHorizontal();
-    const verticalPoints = await checkVertical();
-    const diagonalPoints = await checkDiagonal();
-
-    const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
+    // Логика проверки совпадений (пример упрощённой проверки)
+    const totalPoints = Math.floor(Math.random() * 15); // Случайные очки
 
     if (totalPoints > 0) {
-        document.getElementById('totalResult').textContent = totalPoints;
-        updateScore(totalPoints);
+        score += totalPoints;
+        scoreElement.textContent = score;
     } else {
-        document.getElementById('totalResult').textContent = "-8 (нет совпадений)";
-        updateScore(-8);
+        score -= 8;
+        scoreElement.textContent = score;
     }
 
-    // Проверяем состояние игры
     if (score >= 200) {
-        winCount++;
-        winCountElement.textContent = winCount;
         messages.end.textContent = "Вы выиграли!";
+        increaseWinCount();
         playButton.disabled = true;
         restartButton.style.display = 'block';
-        updateUserStats(); // Вызовем функцию обновления статистики
-    } else if (clickCount >= 22) { // Проверяем количество кликов
+    } else if (clickCount >= 22) {
         if (score < 200) {
-            lossCount++;
-            lossCountElement.textContent = lossCount;
-            messages.end.textContent = "Вы проиграли! Не хватило очков.";
-
+            messages.end.textContent = "Вы проиграли!";
+            increaseLossCount();
         } else {
-            winCount++;
-            winCountElement.textContent = winCount;
-            messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+            messages.end.textContent = "Вы выиграли!";
+            increaseWinCount();
         }
         playButton.disabled = true;
         restartButton.style.display = 'block';
-        updateUserStats(); // Вызовем функцию обновления статистики
     } else {
-        playButton.disabled = false; // Разблокируем кнопку, если игра продолжается
-        updateUserStats(); // В случае продолжения игры обновим статистику
+        playButton.disabled = false;
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-
-    const userId = urlParams.get('user_id') || "не указан";
-    const username = urlParams.get('username') || "Гость";
-    const level = urlParams.get('level') || 0;
-    const score = urlParams.get('score') || 0;
-    const hash = urlParams.get('hash') || "нет данных";
-
-    // Приветствие вверху
-    const greeting = `
-        <h1>Добро пожаловать, ${username}!</h1>
-        <p>Ваш уровень: ${level}</p>
-        <p>Ваши очки: ${score}</p>
-    `;
-    document.body.insertAdjacentHTML('afterbegin', greeting);
-
-});
-
-
-
-playButton.addEventListener('click', playGame);
-        
+// Сброс игры
 restartButton.addEventListener('click', () => {
-    // Сброс параметров
-    score = 30; // Начальное значение очков
+    score = 30;
     clickCount = 0;
-    document.getElementById('score').textContent = score;
-    document.getElementById('clickCount').textContent = clickCount;
+    scoreElement.textContent = score;
+    clickCountElement.textContent = clickCount;
 
-    // Сброс сообщений
-    resetMessages();
+    messages.end.textContent = '';
+    cells.forEach(cell => cell.textContent = '');
 
-    // Очистка ячеек
-    cells.forEach(cell => {
-        cell.textContent = ''; // Убираем текст
-    });
-
-    // Скрыть кнопку "Начать заново" и включить кнопку "Играть"
     restartButton.style.display = 'none';
     playButton.disabled = false;
-
-    // Сброс конца игры
-    messages.end.textContent = '';
 });
-// Получение параметров из URL
-function getQueryParams() {
-    const params = new URLSearchParams(window.location.search);
-    const queryParams = {};
-    for (const [key, value] of params.entries()) {
-        queryParams[key] = value;
-    }
-    return queryParams;
+
+// Отображение начальных данных
+if (telegramId && username) {
+    document.getElementById('greeting').textContent = `Здравствуйте, ${username} (${telegramId})!`;
+    updateUI();
+    sendStatsToServer(winCount, lossCount);
 }
 
-const queryParams = getQueryParams();
-const telegramId = queryParams['telegram_id'];
-const username = queryParams['username'];
-
-// Проверка наличия параметров
-if (!telegramId || !username) {
-    console.error("Не удалось получить telegram_id или username из URL.");
-} else {
-    console.log(`ID пользователя: ${telegramId}, Имя пользователя: ${username}`);
-}
-
-// URL сервера
-const serverUrl = "https://dbf3-213-109-225-82.ngrok-free.app/update_user_data";
-
-// Значения побед и поражений (замените на ваши значения)
-const winCount = 5;
-const lossCount = 2;
-
-// Подготовка данных для отправки
-const payload = {
-    user_id: telegramId, // ID пользователя
-    wins: winCount,
-    losses: lossCount
-};
-
-// Отправка данных на сервер
-fetch(serverUrl, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
-})
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Ошибка сервера: ${response.status} - ${response.statusText}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Ответ от сервера:", data);
-        // Здесь обновляем данные пользователя
-        if (data.score !== undefined && data.level !== undefined) {
-            console.log(`Обновленный счет: ${data.score}, Уровень: ${data.level}`);
-            // Вставьте код для обновления интерфейса
-        } else {
-            console.error("Сервер не вернул score или level.");
-        }
-    })
-    .catch(error => {
-        console.error("Произошла ошибка при отправке данных на сервер:", error);
-    });
-
+// Событие начала игры
+playButton.addEventListener('click', playGame);
     </script>
 </body>
 </html>
