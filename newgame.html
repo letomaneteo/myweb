@@ -529,6 +529,98 @@ restartButton.addEventListener('click', () => {
     // Сброс конца игры
     messages.end.textContent = '';
 });
+import React, { useState, useEffect } from "react";
+
+const GameApp = () => {
+    const [userId, setUserId] = useState(null);
+    const [username, setUsername] = useState("");
+    const [userScore, setUserScore] = useState(0);
+    const [userLevel, setUserLevel] = useState(1);
+    const [winCount, setWinCount] = useState(0);
+    const [lossCount, setLossCount] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const serverUrl = "https://your-flask-server-url/api"; // Замените на URL вашего сервера
+
+    // Получение данных пользователя при загрузке
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch(`${serverUrl}/get_user_data`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: "example_telegram_id" }) // Замените на реальный ID пользователя
+                });
+                if (!response.ok) throw new Error("Ошибка загрузки данных");
+                const data = await response.json();
+                setUserId(data.user_id);
+                setUsername(data.username);
+                setUserScore(data.score);
+                setUserLevel(data.level);
+                setLoading(false);
+            } catch (err) {
+                setError(err.message);
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    // Отправка обновленных данных
+    const updateUserData = async () => {
+        try {
+            const payload = {
+                user_id: userId,
+                username: username,
+                score: userScore,
+                level: userLevel,
+                wins: winCount,
+                losses: lossCount,
+            };
+
+            const response = await fetch(`${serverUrl}/update_user_data`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            if (!response.ok) throw new Error("Ошибка обновления данных");
+        } catch (err) {
+            console.error("Ошибка отправки данных на сервер:", err.message);
+        }
+    };
+
+    const handleWin = () => {
+        setWinCount(prev => prev + 1);
+        setUserScore(prev => prev + 10);
+        if ((winCount + 1) % 3 === 0) setUserLevel(prev => prev + 1);
+        updateUserData();
+    };
+
+    const handleLoss = () => {
+        setLossCount(prev => prev + 1);
+        setUserScore(prev => prev - 10);
+        updateUserData();
+    };
+
+    if (loading) return <p>Загрузка...</p>;
+    if (error) return <p>Ошибка: {error}</p>;
+
+    return (
+        <div>
+            <div id="greeting">Здравствуйте, {username} ({userId})</div>
+            <h1>Очки: <span id="userScore">{userScore}</span></h1>
+            <h2>Уровень: <span id="userLevel">{userLevel}</span></h2>
+            <h3>Победы: <span id="winCount">{winCount}</span></h3>
+            <h3>Поражения: <span id="lossCount">{lossCount}</span></h3>
+            <button onClick={handleWin}>Победа</button>
+            <button onClick={handleLoss}>Поражение</button>
+        </div>
+    );
+};
+
+export default GameApp;
 
     </script>
 </body>
