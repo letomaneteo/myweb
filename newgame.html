@@ -498,6 +498,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Приветствие вверху
     const greeting = `
         <h1>Добро пожаловать, ${username}!</h1>
+        <p>Ваш уровень: ${level}</p>
+        <p>Ваши очки: ${score}</p>
     `;
     document.body.insertAdjacentHTML('afterbegin', greeting);
 
@@ -529,108 +531,68 @@ restartButton.addEventListener('click', () => {
     // Сброс конца игры
     messages.end.textContent = '';
 });
-import React, { useState, useEffect } from "react";
+// Получение параметров из URL
+function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    const queryParams = {};
+    for (const [key, value] of params.entries()) {
+        queryParams[key] = value;
+    }
+    return queryParams;
+}
 
-const GameApp = () => {
-    const [userId, setUserId] = useState(null);
-    const [username, setUsername] = useState("");
-    const [userScore, setUserScore] = useState(0);
-    const [userLevel, setUserLevel] = useState(1);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const queryParams = getQueryParams();
+const telegramId = queryParams['telegram_id'];
+const username = queryParams['username'];
 
-    const serverUrl = "https://dbf3-213-109-225-82.ngrok-free.app"; // Укажите ваш серверный адрес
+// Проверка наличия параметров
+if (!telegramId || !username) {
+    console.error("Не удалось получить telegram_id или username из URL.");
+} else {
+    console.log(`ID пользователя: ${telegramId}, Имя пользователя: ${username}`);
+}
 
-    // Получение данных пользователя
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const userIdFromUrl = urlParams.get("user_id");
+// URL сервера
+const serverUrl = "https://dbf3-213-109-225-82.ngrok-free.app/update_user_data";
 
-        if (!userIdFromUrl) {
-            setError("Отсутствует user_id в параметрах URL");
-            setLoading(false);
-            return;
-        }
+// Значения побед и поражений (замените на ваши значения)
+const winCount = 5;
+const lossCount = 2;
 
-        setUserId(userIdFromUrl);
-
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch(`${serverUrl}/get_user?user_id=${userIdFromUrl}`);
-                if (!response.ok) throw new Error("Ошибка загрузки данных пользователя");
-                const data = await response.json();
-                setUsername(data.username);
-                setUserScore(data.points);
-                setUserLevel(data.level);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
-
-        fetchUserData();
-    }, []);
-
-    // Обновление очков пользователя
-    const updateUserPoints = async (newPoints) => {
-        try {
-            const response = await fetch(`${serverUrl}/edit_points`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: userId, points: newPoints }),
-            });
-            if (!response.ok) throw new Error("Ошибка обновления очков");
-        } catch (err) {
-            console.error("Ошибка обновления очков:", err.message);
-        }
-    };
-
-    // Обновление уровня пользователя
-    const updateUserLevel = async (newLevel) => {
-        try {
-            const response = await fetch(`${serverUrl}/edit_level`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: userId, level: newLevel }),
-            });
-            if (!response.ok) throw new Error("Ошибка обновления уровня");
-        } catch (err) {
-            console.error("Ошибка обновления уровня:", err.message);
-        }
-    };
-
-    const handleWin = () => {
-        const newPoints = userScore + 10;
-        const newLevel = Math.floor((newPoints / 30) + 1); // Логика повышения уровня
-        setUserScore(newPoints);
-        setUserLevel(newLevel);
-        updateUserPoints(newPoints);
-        updateUserLevel(newLevel);
-    };
-
-    const handleLoss = () => {
-        const newPoints = userScore - 10;
-        setUserScore(newPoints);
-        updateUserPoints(newPoints);
-    };
-
-    if (loading) return <p>Загрузка...</p>;
-    if (error) return <p>Ошибка: {error}</p>;
-
-    return (
-        <div>
-            <h1>Привет, {username}!</h1>
-            <h2>Очки: {userScore}</h2>
-            <h3>Уровень: {userLevel}</h3>
-            <button onClick={handleWin}>Победа</button>
-            <button onClick={handleLoss}>Поражение</button>
-        </div>
-    );
+// Подготовка данных для отправки
+const payload = {
+    user_id: telegramId, // ID пользователя
+    wins: winCount,
+    losses: lossCount
 };
 
-export default GameApp;
-
+// Отправка данных на сервер
+fetch(serverUrl, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера: ${response.status} - ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Ответ от сервера:", data);
+        // Здесь обновляем данные пользователя
+        if (data.score !== undefined && data.level !== undefined) {
+            console.log(`Обновленный счет: ${data.score}, Уровень: ${data.level}`);
+            // Вставьте код для обновления интерфейса
+        } else {
+            console.error("Сервер не вернул score или level.");
+        }
+    })
+    .catch(error => {
+        console.error("Произошла ошибка при отправке данных на сервер:", error);
+    });
 
     </script>
 </body>
