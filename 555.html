@@ -182,92 +182,288 @@ margin-top: 10px;
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
 
     <script>
-      import React, { useState, useEffect } from "react";
+     import React, { useState, useEffect } from 'react';
 
 const Game = () => {
+  // Инициализация состояния
+  const [cells, setCells] = useState(Array(9).fill(''));
   const [score, setScore] = useState(30);
   const [clickCount, setClickCount] = useState(0);
   const [winCount, setWinCount] = useState(0);
   const [lossCount, setLossCount] = useState(0);
-  const [message, setMessage] = useState("");
-  const [isGameOver, setIsGameOver] = useState(false);
+  const [userScore, setUserScore] = useState(0);
+  const [userLevel, setUserLevel] = useState(1);
+  const [messages, setMessages] = useState({
+    horizontal: '',
+    vertical: '',
+    diagonal: '',
+    total: '',
+    end: ''
+  });
+  const [telegramId, setTelegramId] = useState('');
+  const [username, setUsername] = useState('');
 
-  const userId = new URLSearchParams(window.location.search).get("user_id");
-  const username = new URLSearchParams(window.location.search).get("username");
+  // Получение параметров из URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('telegram_id') || '';
+    const name = urlParams.get('username') || 'Гость';
+    setTelegramId(id);
+    setUsername(name);
 
-  // Функция для отправки статистики на сервер
-  const sendStatsToServer = async (score, level, wins, losses) => {
+    // Инициализация пользователя с сервером (если ID есть)
+    if (id) {
+      fetchUserData(id);
+    }
+  }, []);
+
+  // Получение данных пользователя с сервера
+  const fetchUserData = (id) => {
+    fetch(`https://dbf3-213-109-225-82.ngrok-free.app/get_user_data?telegram_id=${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          setUserScore(data.score || 0);
+          setUserLevel(data.level || 1);
+        }
+      })
+      .catch((error) => {
+        console.error('Ошибка при получении данных пользователя:', error);
+      });
+  };
+
+  // Отправка статистики (только очки и уровень) на сервер
+  const sendStatsToServer = () => {
     const payload = {
-      user_id: userId,
-      score,
-      level,
-      wins,
-      losses,
+      user_id: telegramId,
+      score: userScore,
+      level: userLevel
     };
 
-    try {
-      const response = await fetch("https://dbf3-213-109-225-82.ngrok-free.app/update_user_data", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+    fetch('https://dbf3-213-109-225-82.ngrok-free.app/update_user_data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then((response) => {
+        if (response.ok) return response.json();
+        throw new Error('Ошибка при отправке данных на сервер');
+      })
+      .then((data) => {
+        setUserScore(data.score); // Обновляем очки
+        setUserLevel(data.level); // Обновляем уровень
+      })
+      .catch((error) => {
+        console.error('Ошибка отправки данных:', error);
       });
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Обновлённые данные пользователя:", data);
-        return data;
+  };
+
+  // Функция обновления очков
+  const updateScore = (points) => {
+    setScore(score + points);
+  };
+
+  // Обновление статистики пользователя
+  const updateUserStats = () => {
+    if (messages.end.includes('Вы выиграли')) {
+      setUserScore(userScore + 10);
+    } else if (messages.end.includes('Вы проиграли')) {
+      setUserScore(userScore - 10);
+    }
+
+    if (winCount % 3 === 0 && winCount > 0) {
+      setUserLevel(userLevel + 1);
+    }
+
+    sendStatsToServer(); // Отправляем только очки и уровень на сервер
+  };
+
+  // Обработка победы
+  const increaseWinCount = () => {
+    setWinCount(winCount + 1);
+  };
+
+  // Обработка поражения
+  const increaseLossCount = () => {
+    setLossCount(lossCount + 1);
+  };
+
+  // Обновление состояния ячеек
+  const flashCells = (cellsToFlash, colorClass, delay = 0) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        cellsToFlash.forEach((cell) => {
+          // logic to highlight cells
+        });
+      }, delay);
+
+      setTimeout(() => {
+        cellsToFlash.forEach((cell) => {
+          // logic to remove highlight
+        });
+        resolve();
+      }, delay + 300);
+    });
+  };
+
+  // Логика проверки горизонтальных линий
+  const checkHorizontal = async () => {
+    let points = 0;
+    let matchInfo = [];
+    for (let i = 0; i < 9; i += 3) {
+      const row = [cells[i], cells[i + 1], cells[i + 2]];
+      const values = row.map((cell) => cell);
+      const counts = {};
+
+      values.forEach((value) => {
+        counts[value] = (counts[value] || 0) + 1;
+      });
+
+      if (Object.values(counts).includes(3)) {
+        points += 5;
+        await flashCells(row, 'highlight-green');
+        matchInfo.push('+5');
+      } else if (Object.values(counts).includes(2)) {
+        points += 3;
+        await flashCells(row.filter((cell) => counts[cell] === 2), 'highlight-green');
+        matchInfo.push('+3');
       } else {
-        throw new Error("Ошибка при отправке данных на сервер");
+        matchInfo.push('0');
       }
-    } catch (error) {
-      console.error("Ошибка отправки данных:", error);
+    }
+
+    setMessages((prevMessages) => ({ ...prevMessages, horizontal: matchInfo.join(', ') }));
+    return points;
+  };
+
+  // Логика проверки вертикальных линий
+  const checkVertical = async () => {
+    let points = 0;
+    let matchInfo = [];
+    for (let i = 0; i < 3; i++) {
+      const column = [cells[i], cells[i + 3], cells[i + 6]];
+      const values = column.map((cell) => cell);
+      const counts = {};
+
+      values.forEach((value) => {
+        counts[value] = (counts[value] || 0) + 1;
+      });
+
+      if (Object.values(counts).includes(3)) {
+        points += 5;
+        await flashCells(column, 'highlight-blue', 300);
+        matchInfo.push('+5');
+      } else if (Object.values(counts).includes(2)) {
+        points += 3;
+        await flashCells(column.filter((cell) => counts[cell] === 2), 'highlight-blue', 300);
+        matchInfo.push('+3');
+      } else {
+        matchInfo.push('0');
+      }
+    }
+
+    setMessages((prevMessages) => ({ ...prevMessages, vertical: matchInfo.join(', ') }));
+    return points;
+  };
+
+  // Логика проверки диагоналей
+  const checkDiagonal = async () => {
+    let points = 0;
+    const mainDiagonal = [cells[0], cells[4], cells[8]];
+    const antiDiagonal = [cells[2], cells[4], cells[6]];
+    const diagonals = [mainDiagonal, antiDiagonal];
+    let matchInfo = [];
+
+    for (const diagonal of diagonals) {
+      const values = diagonal.map((cell) => cell);
+      const counts = {};
+
+      values.forEach((value) => {
+        counts[value] = (counts[value] || 0) + 1;
+      });
+
+      if (Object.values(counts).includes(3)) {
+        points += 6;
+        await flashCells(diagonal, 'highlight-yellow', 300);
+        matchInfo.push('+6');
+      } else if (Object.values(counts).includes(2)) {
+        points += 4;
+        await flashCells(diagonal.filter((cell) => counts[cell] === 2), 'highlight-yellow', 300);
+        matchInfo.push('+4');
+      } else {
+        matchInfo.push('0');
+      }
+    }
+
+    setMessages((prevMessages) => ({ ...prevMessages, diagonal: matchInfo.join(', ') }));
+    return points;
+  };
+
+  // Логика игры
+  const playGame = async () => {
+    // Сброс сообщений и увеличение кликов
+    setMessages({ horizontal: '', vertical: '', diagonal: '', total: '', end: '' });
+    setClickCount(clickCount + 1);
+
+    // Заполнение ячеек случайными числами
+    const newCells = cells.map(() => Math.floor(Math.random() * 10));
+    setCells(newCells);
+
+    // Подсчёт очков
+    const horizontalPoints = await checkHorizontal();
+    const verticalPoints = await checkVertical();
+    const diagonalPoints = await checkDiagonal();
+
+    const totalPoints = horizontalPoints + verticalPoints + diagonalPoints;
+
+    if (totalPoints > 0) {
+      setMessages((prevMessages) => ({ ...prevMessages, total: `${totalPoints}` }));
+      updateScore(totalPoints);
+    } else {
+      setMessages((prevMessages) => ({ ...prevMessages, total: '-8 (нет совпадений)' }));
+      updateScore(-8);
+    }
+
+    // Проверка на победу или поражение
+    if (score >= 200) {
+      setMessages((prevMessages) => ({ ...prevMessages, end: 'Вы выиграли!' }));
+      updateUserStats();
+    } else if (clickCount >= 22) {
+      setMessages((prevMessages) => ({ ...prevMessages, end: score < 200 ? 'Вы проиграли! Не хватило очков.' : 'Вы выиграли! Набрано 200 очков.' }));
+      updateUserStats();
     }
   };
 
-  const resetGame = () => {
+  // Обработчики событий
+  const handlePlayClick = () => {
+    playGame();
+  };
+
+  const handleRestartClick = () => {
     setScore(30);
     setClickCount(0);
-    setMessage("");
-    setIsGameOver(false);
-  };
-
-  const handlePlay = async () => {
-    if (isGameOver) return;
-
-    // Игровая логика
-    setClickCount(prev => prev + 1);
-
-    const randomScore = Math.floor(Math.random() * 15) - 5; // Рандомные очки (-5 до +15)
-    setScore(prev => prev + randomScore);
-
-    // Определяем выигрыш или поражение
-    if (score >= 200) {
-      setWinCount(prev => prev + 1);
-      setMessage("Вы выиграли!");
-      setIsGameOver(true);
-    } else if (clickCount >= 22) {
-      setLossCount(prev => prev + 1);
-      setMessage("Вы проиграли!");
-      setIsGameOver(true);
-    }
-
-    // Обновляем статистику на сервере
-    await sendStatsToServer(score, Math.floor(score / 100) + 1, winCount, lossCount);
+    setMessages({ horizontal: '', vertical: '', diagonal: '', total: '', end: '' });
+    setCells(Array(9).fill(''));
   };
 
   return (
     <div>
       <h1>Добро пожаловать, {username}!</h1>
-      <p>Ваши очки: {score}</p>
-      <p>Количество кликов: {clickCount}</p>
-      <p>Победы: {winCount}</p>
-      <p>Поражения: {lossCount}</p>
-      <p>{message}</p>
-      <button onClick={handlePlay} disabled={isGameOver}>
-        Играть
-      </button>
-      {isGameOver && (
-        <button onClick={resetGame}>Начать заново</button>
-      )}
+      <p>Ваш уровень: {userLevel}</p>
+      <p>Ваши очки: {userScore}</p>
+
+      <div>
+        <button onClick={handlePlayClick}>Играть</button>
+        <button onClick={handleRestartClick}>Начать заново</button>
+      </div>
+
+      <div>
+        <p>{messages.end}</p>
+        <p>Горизонтальные линии: {messages.horizontal}</p>
+        <p>Вертикальные линии: {messages.vertical}</p>
+        <p>Диагонали: {messages.diagonal}</p>
+        <p>Общие очки: {messages.total}</p>
+      </div>
     </div>
   );
 };
