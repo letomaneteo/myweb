@@ -11,126 +11,45 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState } = React;
     const { createRoot } = ReactDOM;
 
     const App = () => {
-      const [userData, setUserData] = useState(null);
-      const [newPoints, setNewPoints] = useState(0);
-      const [newLevel, setNewLevel] = useState(0);
-      const [loading, setLoading] = useState(true);
-      const [error, setError] = useState(null);
+      const [wins, setWins] = useState(0);
+      const [losses, setLosses] = useState(0);
+      const [points, setPoints] = useState(0);
+      const [level, setLevel] = useState(1);
 
-      // Получаем user_id из URL
-      const getUserIdFromUrl = () => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('user_id');
-      };
-
-      // Загружаем данные пользователя
-      const fetchUserData = async (userId) => {
-        setLoading(true);
-        setError(null);
-
-        try {
-          const response = await fetch(`https://dbf3-213-109-225-82.ngrok-free.app/get_user?user_id=${userId}`, {
-            headers: {
-              'ngrok-skip-browser-warning': 'true',
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
-          }
-
-          const user = await response.json();
-          setUserData(user);
-        } catch (err) {
-          setError(err.message || 'Ошибка загрузки данных.');
-        } finally {
-          setLoading(false);
+      const handleWin = () => {
+        const newWins = wins + 1;
+        setWins(newWins);
+        setPoints(points + 10);
+        if (newWins % 3 === 0) {
+          setLevel(level + 1);
         }
       };
 
-      // Обновляем очки и уровень
-      const updateUserData = async () => {
-        if (!userData) return;
-
-        try {
-          const response = await fetch('https://dbf3-213-109-225-82.ngrok-free.app/update_points_and_level', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'ngrok-skip-browser-warning': 'true',
-            },
-            body: JSON.stringify({
-              user_id: userData.id,
-              points: userData.points + newPoints,
-              level: userData.level + newLevel,
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Ошибка обновления данных.');
-          }
-
-          alert('Очки и уровень успешно обновлены!');
-          fetchUserData(userData.id); // Обновляем данные пользователя
-        } catch (error) {
-          alert('Ошибка при обновлении данных: ' + error.message);
-        }
+      const handleLoss = () => {
+        setLosses(losses + 1);
+        setPoints(points > 0 ? points - 10 : 0);
       };
-
-      useEffect(() => {
-        const userId = getUserIdFromUrl();
-        if (userId) {
-          fetchUserData(userId);
-        } else {
-          setError('Пользователь не идентифицирован. Проверьте ссылку.');
-        }
-      }, []);
-
-      if (loading) {
-        return <p>Загрузка данных...</p>;
-      }
-
-      if (error) {
-        return <p>Ошибка: {error}</p>;
-      }
 
       return (
         <div className="App">
           <header className="App-header">
             <h1>Добро пожаловать!</h1>
-            {userData ? (
-              <div>
-                <p>ID: {userData.id}</p>
-                <p>Имя пользователя: {userData.username}</p>
-                <p>Очки: {userData.points}</p>
-                <p>Уровень: {userData.level || 1}</p>
-                <div>
-                  <label htmlFor="pointsInput">Введите количество очков для добавления:</label>
-                  <input
-                    type="number"
-                    id="pointsInput"
-                    value={newPoints}
-                    onChange={(e) => setNewPoints(Number(e.target.value))}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="levelInput">Введите количество уровней для добавления:</label>
-                  <input
-                    type="number"
-                    id="levelInput"
-                    value={newLevel}
-                    onChange={(e) => setNewLevel(Number(e.target.value))}
-                  />
-                </div>
-                <button onClick={updateUserData}>Обновить очки и уровень</button>
-              </div>
-            ) : (
-              <p>Данные пользователя не найдены.</p>
-            )}
+            <div>
+              <p>Победы: {wins}</p>
+              <button onClick={handleWin}>Добавить победу</button>
+            </div>
+            <div>
+              <p>Поражения: {losses}</p>
+              <button onClick={handleLoss}>Добавить поражение</button>
+            </div>
+            <div>
+              <p>Очки: {points}</p>
+              <p>Уровень: {level}</p>
+            </div>
           </header>
         </div>
       );
@@ -141,4 +60,3 @@
   </script>
 </body>
 </html>
-
