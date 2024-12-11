@@ -183,6 +183,7 @@ margin-top: 10px;
 
     <script>
        // Основные переменные
+// Основные переменные
 const cells = Array.from(document.querySelectorAll('.cell'));
 const scoreElement = document.getElementById('score');
 const clickCountElement = document.getElementById('clickCount');
@@ -254,6 +255,20 @@ function updateUI() {
     lossCountElement.textContent = lossCount;
 }
 
+// Функция обновления статистики игрока
+function updateUserStats() {
+    if (messages.end.textContent === "Вы выиграли!") {
+        userScore += 10;
+        if (winCount > 0 && winCount % 3 === 0) {
+            userLevel += 1;
+        }
+    } else if (messages.end.textContent === "Вы проиграли!") {
+        userScore = Math.max(0, userScore - 10);
+    }
+
+    sendStatsToServer(userScore, userLevel);
+}
+
 // Основная логика игры
 async function playGame() {
     playButton.disabled = true;
@@ -277,7 +292,7 @@ async function playGame() {
     if (score >= 200) {
         messages.end.textContent = "Вы выиграли!";
         winCount++;
-        sendStatsToServer(score, userLevel);
+        updateUserStats();
         playButton.disabled = true;
         restartButton.style.display = 'block';
     } else if (clickCount >= 22) {
@@ -288,7 +303,7 @@ async function playGame() {
             messages.end.textContent = "Вы выиграли!";
             winCount++;
         }
-        sendStatsToServer(score, userLevel);
+        updateUserStats();
         playButton.disabled = true;
         restartButton.style.display = 'block';
     } else {
@@ -314,11 +329,12 @@ restartButton.addEventListener('click', () => {
 if (telegramId && username) {
     document.getElementById('greeting').textContent = `Здравствуйте, ${username} (${telegramId})!`;
     updateUI();
-    sendStatsToServer(score, userLevel);
+    sendStatsToServer(userScore, userLevel);
 }
 
 // Событие начала игры
 playButton.addEventListener('click', playGame);
+
     </script>
 </body>
 </html>
