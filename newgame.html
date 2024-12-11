@@ -1,45 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Игра React с сервером</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React App</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.20.12/babel.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 20px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 80px);
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .cell {
-      width: 80px;
-      height: 80px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 2px solid #333;
-      background-color: #f0f0f0;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
 </head>
 <body>
   <div id="root"></div>
@@ -47,112 +14,131 @@
     const { useState, useEffect } = React;
     const { createRoot } = ReactDOM;
 
-    const SERVER_URL = "https://dbf3-213-109-225-82.ngrok-free.app";
-
     const App = () => {
-      const [userData, setUserData] = useState({ id: "", username: "", points: 0, level: 1 });
-      const [grid, setGrid] = useState(Array(9).fill(""));
-      const [clickCount, setClickCount] = useState(0);
+      const [userData, setUserData] = useState(null);
+      const [newPoints, setNewPoints] = useState(0);
+      const [newLevel, setNewLevel] = useState(0);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
 
-      // Получение данных пользователя
-      useEffect(() => {
+      // Получаем user_id из URL
+      const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
-        const userId = params.get("user_id");
+        return params.get('user_id');
+      };
+
+      // Загружаем данные пользователя
+      const fetchUserData = async (userId) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+          const response = await fetch(`https://dbf3-213-109-225-82.ngrok-free.app/get_user?user_id=${userId}`, {
+            headers: {
+              'ngrok-skip-browser-warning': 'true',
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+          }
+
+          const user = await response.json();
+          setUserData(user);
+        } catch (err) {
+          setError(err.message || 'Ошибка загрузки данных.');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      // Обновляем очки и уровень
+      const updateUserData = async () => {
+        if (!userData) return;
+
+        try {
+          const response = await fetch('https://dbf3-213-109-225-82.ngrok-free.app/update_points_and_level', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'ngrok-skip-browser-warning': 'true',
+            },
+            body: JSON.stringify({
+              user_id: userData.id,
+              points: userData.points + newPoints,
+              level: userData.level + newLevel,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Ошибка обновления данных.');
+          }
+
+          alert('Очки и уровень успешно обновлены!');
+          fetchUserData(userData.id); // Обновляем данные пользователя
+        } catch (error) {
+          alert('Ошибка при обновлении данных: ' + error.message);
+        }
+      };
+
+      useEffect(() => {
+        const userId = getUserIdFromUrl();
         if (userId) {
-          fetch(`${SERVER_URL}/get_user?user_id=${userId}`)
-            .then((res) => res.json())
-            .then((data) => setUserData(data))
-            .catch((err) => console.error("Ошибка загрузки данных пользователя:", err));
+          fetchUserData(userId);
+        } else {
+          setError('Пользователь не идентифицирован. Проверьте ссылку.');
         }
       }, []);
 
-      const updatePoints = (newPoints) => {
-  if (!userData.id || isNaN(newPoints)) {
-    console.error("Некорректные данные для отправки:", { user_id: userData.id, points: newPoints });
-    return;
-  }
-
-  fetch(`${SERVER_URL}/edit_points`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: userData.id, points: newPoints }),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error(`Ошибка сервера: ${res.status}`);
+      if (loading) {
+        return <p>Загрузка данных...</p>;
       }
-      return res.json();
-    })
-    .then((data) => {
-      if (data.status === "error") {
-        console.error("Сервер вернул ошибку:", data.message);
-      } else {
-        console.log("Очки успешно обновлены:", data);
+
+      if (error) {
+        return <p>Ошибка: {error}</p>;
       }
-    })
-    .catch((err) => console.error("Ошибка обновления очков:", err));
-};
-
-
-      const updateLevel = (newLevel) => {
-        fetch(`${SERVER_URL}/edit_level`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userData.id, level: newLevel }),
-        })
-          .then((res) => res.json())
-          .then((data) => console.log("Уровень обновлен:", data))
-          .catch((err) => console.error("Ошибка обновления уровня:", err));
-      };
-
-      const playGame = () => {
-        const newGrid = Array(9)
-          .fill("")
-          .map(() => Math.floor(Math.random() * 10).toString());
-        setGrid(newGrid);
-
-        // Логика подсчета очков
-        const points = calculatePoints(newGrid);
-        const newPoints = userData.points + points;
-        const newLevel = points >= 100 ? userData.level + 1 : userData.level;
-
-        setClickCount((prev) => prev + 1);
-        setUserData((prev) => ({ ...prev, points: newPoints, level: newLevel }));
-
-        updatePoints(newPoints);
-        if (newLevel !== userData.level) {
-          updateLevel(newLevel);
-        }
-      };
-
-      const calculatePoints = (grid) => {
-        const uniqueNumbers = new Set(grid).size;
-        return uniqueNumbers === 1 ? 10 : -5;
-      };
 
       return (
-        <div>
-          <h1>Игра</h1>
-          <p>Игрок: {userData.username || "Гость"}</p>
-          <p>Очки: {userData.points} | Уровень: {userData.level}</p>
-          <p>Клики: {clickCount}/22</p>
-
-          <div className="grid">
-            {grid.map((value, index) => (
-              <div key={index} className="cell">
-                {value}
+        <div className="App">
+          <header className="App-header">
+            <h1>Добро пожаловать!</h1>
+            {userData ? (
+              <div>
+                <p>ID: {userData.id}</p>
+                <p>Имя пользователя: {userData.username}</p>
+                <p>Очки: {userData.points}</p>
+                <p>Уровень: {userData.level || 1}</p>
+                <div>
+                  <label htmlFor="pointsInput">Введите количество очков для добавления:</label>
+                  <input
+                    type="number"
+                    id="pointsInput"
+                    value={newPoints}
+                    onChange={(e) => setNewPoints(Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="levelInput">Введите количество уровней для добавления:</label>
+                  <input
+                    type="number"
+                    id="levelInput"
+                    value={newLevel}
+                    onChange={(e) => setNewLevel(Number(e.target.value))}
+                  />
+                </div>
+                <button onClick={updateUserData}>Обновить очки и уровень</button>
               </div>
-            ))}
-          </div>
-
-          <button onClick={playGame} disabled={clickCount >= 22}>
-            Играть
-          </button>
+            ) : (
+              <p>Данные пользователя не найдены.</p>
+            )}
+          </header>
         </div>
       );
     };
 
-    createRoot(document.getElementById("root")).render(<App />);
+    const root = createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
+
