@@ -1,4 +1,187 @@
-<script>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра</title>
+    <style>
+       body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-image: url('https://i.imgur.com/mCPYCHo.jpeg'); /* Замените на путь к вашей картинке */
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+background-position: center center;
+        font-family: Arial, sans-serif;
+        padding: 10px;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 80px);
+        grid-gap: 10px;
+        margin: 20px;
+    }
+    .cell {
+        width: 80px;
+        height: 80px;
+        border: 3px solid #6D8C00;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        transition: background-color 0.3s;
+    }
+    /* Медиазапросы для мобильных */
+    @media (max-width: 600px) {
+        .grid {
+            grid-template-columns: repeat(3, 60px);
+            grid-gap: 8px;
+margin: 10px 0;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            font-size: 18px;
+        }
+        h1, h2, h3 {
+            font-size: 16px;
+ margin: 2px 0;
+        }
+        .game-title {
+            font-size: 20px;
+        }
+        .game-rules {
+            font-size: 14px;
+        }
+        .play-button, .restart-button {
+            font-size: 14px;
+            padding: 10px 20px;
+margin-top: 10px;
+        }
+        .messages .message {
+            font-size: 14px;
+margin-top: 10px;
+        }
+ body {
+        background-attachment: scroll; /* Позволяет фону прокручиваться на мобильных устройствах */
+    }
+}
+  
+        .scoreboard, .messages {
+            margin-top: 20px;
+            color: black;
+            text-align: center;
+        }
+       
+        .highlight-green { background-color: lightgreen; }
+        .highlight-blue { background-color: lightblue; }
+        .highlight-yellow { background-color: #EC9704; }
+        .play-button, .restart-button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .play-button:hover, .restart-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .play-button[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #ccc;
+        }
+
+        .message {
+            margin-top: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .green { color: green; }
+        .blue { color: blue; }
+        .yellow { color: #EC9704; }
+        .black { color: black; }
+
+        /* Добавим стиль для названия и правил */
+        .game-title {
+            font-size: 36px;
+            color: #583E26;
+            margin-top: 20px;
+        }
+        .game-rules {
+    font-size: 14px; /* Уменьшенный размер текста правил */
+    margin: 5px 0; /* Вертикальные отступы уменьшены */
+    line-height: 1.4; /* Меньшее расстояние между строками */
+    padding: 0; /* Убираем внутренние отступы */
+    max-width: 90%; /* Сужение блока для мобильных */
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+    <div id="greeting"></div>  <!-- Приветственное сообщение -->
+<!-- Добавьте блоки для отображения очков и уровня -->
+<h1>Очки: <span id="userScore">0</span></h1>
+<h2>Уровень: <span id="userLevel">1</span></h2>
+
+    <!-- Название игры -->
+    <div class="game-title">22 КЛИКА</div>
+
+    <!-- Правила игры -->
+    <div class="game-rules">
+        <p>Наберите 200 очков за 22 клика, чтобы победить</p>
+        <p>-8 очков за все разные</p>
+       
+    </div>
+
+    <h1>Счет: <span id="score">30</span></h1>
+    <h2>Счетчик кликов: <span id="clickCount">0</span></h2>
+    <h3>Победы: <span id="winCount">0</span> Поражения: <span id="lossCount">0</span></h3>
+
+    <div class="grid">
+        <div class="cell" id="cell-0"></div>
+        <div class="cell" id="cell-1"></div>
+        <div class="cell" id="cell-2"></div>
+        <div class="cell" id="cell-3"></div>
+        <div class="cell" id="cell-4"></div>
+        <div class="cell" id="cell-5"></div>
+        <div class="cell" id="cell-6"></div>
+        <div class="cell" id="cell-7"></div>
+        <div class="cell" id="cell-8"></div>
+    </div>
+
+    <button class="play-button" id="playButton">Играть</button>
+
+    <div class="messages">
+    <div class="message green" id="horizontalMessage">
+        По горизонтали: <span id="horizontalResult"></span>
+    </div>
+    <div class="message blue" id="verticalMessage">
+        По вертикали: <span id="verticalResult"></span>
+    </div>
+    <div class="message yellow" id="diagonalMessage">
+        По диагонали: <span id="diagonalResult"></span>
+    </div>
+    <div class="message black" id="totalPointsMessage">
+        Сумма всех рядов: <span id="totalResult"></span>
+    </div>
+    <div class="message" id="endMessage"></div>
+</div>
+
+    <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
+
+  <script>
     const cells = Array.from(document.querySelectorAll('.cell'));
     const scoreElement = document.getElementById('score');
     const clickCountElement = document.getElementById('clickCount');
@@ -203,3 +386,6 @@
         messages.end.textContent = '';
     });
 </script>
+
+</body>
+</html>
