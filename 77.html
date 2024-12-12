@@ -24,6 +24,8 @@
       const [message, setMessage] = useState("");
       const [victories, setVictories] = useState(0);
       const [defeats, setDefeats] = useState(0);
+      const [gamePoints, setGamePoints] = useState(15);
+      const [clicks, setClicks] = useState(0);
 
       const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
@@ -77,23 +79,36 @@
       const playGame = () => {
         const newNumbers = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10));
         setNumbers(newNumbers);
+        setClicks((prevClicks) => prevClicks + 1);
 
         const uniqueNumbers = new Set(newNumbers);
         if (uniqueNumbers.size === 1) {
           setMessage("Победа! Все три числа совпадают.");
-          setPoints(points + 10);
-          setVictories(victories + 1);
-        } else if (uniqueNumbers.size === 3) {
-          setMessage("Поражение! Все три числа разные.");
-          setPoints(points - 5);
-          setDefeats(defeats + 1);
+          setGamePoints((prevGamePoints) => prevGamePoints + 4);
+          setVictories((prevVictories) => prevVictories + 1);
+        } else if (uniqueNumbers.size === 2) {
+          setMessage("Две цифры совпадают. Вы получаете +2 балла.");
+          setGamePoints((prevGamePoints) => prevGamePoints + 2);
         } else {
-          setMessage("Попробуйте снова!");
+          setMessage("Все три числа разные. Вы теряете 2 балла.");
+          setGamePoints((prevGamePoints) => prevGamePoints - 2);
+          setDefeats((prevDefeats) => prevDefeats + 1);
         }
 
-        if (points >= 50) {
-          setLevel(level + 1);
-          setPoints(0);
+        if (gamePoints >= 30 || clicks >= 40) {
+          if (gamePoints >= 30) {
+            setMessage("Поздравляем! Вы выиграли игру.");
+          } else {
+            setMessage("Игра окончена. Вы проиграли.");
+          }
+          setClicks(0);
+          setGamePoints(15);
+        }
+
+        if (gamePoints <= 0) {
+          setMessage("Игра окончена. Вы проиграли.");
+          setClicks(0);
+          setGamePoints(15);
         }
       };
 
@@ -120,6 +135,8 @@
             <p>Уровень: {level}</p>
             <p>Победы: {victories}</p>
             <p>Поражения: {defeats}</p>
+            <p>Игровые баллы: {gamePoints}</p>
+            <p>Количество кликов: {clicks}</p>
             <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
               {numbers.map((num, index) => (
                 <div
