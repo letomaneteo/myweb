@@ -182,87 +182,6 @@ margin-top: 10px;
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
 
     <script>
-      // App.js
-import React, { useEffect, useState } from "react";
-
-function App() {
-  const [userData, setUserData] = useState({
-    id: "",
-    username: "Гость",
-    score: 0,
-    level: 1,
-  });
-
-  useEffect(() => {
-    // Замените URL на ваш сервер Flask
-    const serverUrl = "https://29d2-213-109-225-82.ngrok-free.app/get_user_data";
-
-    fetch(serverUrl)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Ошибка получения данных от сервера");
-        }
-      })
-      .then((data) => {
-        setUserData({
-          id: data.id,
-          username: data.username,
-          score: data.score,
-          level: data.level,
-        });
-      })
-      .catch((error) => console.error("Ошибка загрузки данных:", error));
-  }, []);
-
-  return (
-    <div>
-      <div id="greeting">
-        Здравствуйте, {userData.username} (ID: {userData.id})
-      </div>
-      <h1>Очки: <span id="userScore">{userData.score}</span></h1>
-      <h2>Уровень: <span id="userLevel">{userData.level}</span></h2>
-
-      {/* Ваш HTML-код игры */}
-      <div className="game-title">22 КЛИКА</div>
-      <div className="game-rules">
-        <p>Наберите 200 очков за 22 клика, чтобы победить</p>
-        <p>-8 очков за все разные</p>
-      </div>
-      <h1>Счет: <span id="score">30</span></h1>
-      <h2>Счетчик кликов: <span id="clickCount">0</span></h2>
-      <h3>Победы: <span id="winCount">0</span> Поражения: <span id="lossCount">0</span></h3>
-      <div className="grid">
-        {[...Array(9)].map((_, i) => (
-          <div className="cell" id={`cell-${i}`} key={i}></div>
-        ))}
-      </div>
-      <button className="play-button" id="playButton">Играть</button>
-      <div className="messages">
-        <div className="message green" id="horizontalMessage">
-          По горизонтали: <span id="horizontalResult"></span>
-        </div>
-        <div className="message blue" id="verticalMessage">
-          По вертикали: <span id="verticalResult"></span>
-        </div>
-        <div className="message yellow" id="diagonalMessage">
-          По диагонали: <span id="diagonalResult"></span>
-        </div>
-        <div className="message black" id="totalPointsMessage">
-          Сумма всех рядов: <span id="totalResult"></span>
-        </div>
-        <div className="message" id="endMessage"></div>
-      </div>
-      <button className="restart-button" id="restartButton" style={{ display: "none" }}>
-        Начать заново
-      </button>
-    </div>
-  );
-}
-
-export default App;
-
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
         const clickCountElement = document.getElementById('clickCount');
@@ -333,14 +252,15 @@ let userLevel = parseInt(queryParams['level']) || 1;  // То же для уро
 
 
 
-function sendStatsToServer(winCount, lossCount) {
+function sendStatsToServer(userScore, userLevel) {
     const payload = {
         user_id: telegramId, // ID пользователя
-        wins: winCount,
-        losses: lossCount
+        username: username, // Имя пользователя
+        score: userScore,
+        level: userLevel
     };
 
-    const serverUrl = "https://29d2-213-109-225-82.ngrok-free.app/update_user_data";
+    const serverUrl = "https://29d2-213-109-225-82.ngrok-free.app/update_user_data"; // Замените на ваш URL
 
     fetch(serverUrl, {
         method: "POST",
@@ -355,18 +275,13 @@ function sendStatsToServer(winCount, lossCount) {
         }
     })
     .then(data => {
-        userScore = data.score; // Обновляем очки
-        userLevel = data.level; // Обновляем уровень
-
-        document.getElementById('userScore').textContent = userScore;
-        document.getElementById('userLevel').textContent = userLevel;
-
-        console.log("Обновлённые данные пользователя:", data);
+        console.log("Данные успешно отправлены:", data);
     })
     .catch(error => {
         console.error("Ошибка отправки данных:", error);
     });
 }
+
 
 // Увеличение побед
 function increaseWinCount() {
