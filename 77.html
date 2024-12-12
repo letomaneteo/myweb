@@ -22,20 +22,30 @@
       const [level, setLevel] = useState(1);
       const [numbers, setNumbers] = useState([0, 0, 0]);
 
-      useEffect(() => {
-        const updateServer = async () => {
-          try {
-            await fetch('https://a6e3-213-109-225-194.ngrok-free.app/update_game', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-              body: JSON.stringify({ points, clicks, wins, losses, level }),
-            });
-          } catch (err) {
-            console.error('Ошибка обновления данных на сервере:', err);
-          }
+      const updateServer = async (field, value) => {
+        const endpointMap = {
+          points: 'edit_points',
+          level: 'edit_level',
         };
-        updateServer();
-      }, [points, clicks, wins, losses, level]);
+
+        const endpoint = endpointMap[field];
+        if (!endpoint) return;
+
+        try {
+          await fetch(`https://a6e3-213-109-225-194.ngrok-free.app/${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+            body: JSON.stringify({ user_id: 1, [field]: value }),
+          });
+        } catch (err) {
+          console.error(`Ошибка обновления ${field} на сервере:`, err);
+        }
+      };
+
+      useEffect(() => {
+        updateServer('points', points);
+        updateServer('level', level);
+      }, [points, level]);
 
       const playGame = () => {
         const newNumbers = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10));
