@@ -16,16 +16,17 @@
 
     const App = () => {
       const [userData, setUserData] = useState(null);
-      const [points, setPoints] = useState(0);
-      const [level, setLevel] = useState(1);
+      const [points, setPoints] = useState(50);
+      const [level, setLevel] = useState(0);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
       const [numbers, setNumbers] = useState([0, 0, 0]);
       const [message, setMessage] = useState("");
       const [victories, setVictories] = useState(0);
       const [defeats, setDefeats] = useState(0);
-      const [gamePoints, setGamePoints] = useState(15);
+      const [gamePoints, setGamePoints] = useState(50);
       const [clicks, setClicks] = useState(0);
+      const [gameOver, setGameOver] = useState(false);
 
       const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
@@ -45,8 +46,8 @@
 
           const user = await response.json();
           setUserData(user);
-          setPoints(user.points);
-          setLevel(user.level || 1);
+          setPoints(user.points || 50);
+          setLevel(user.level || 0);
         } catch (err) {
           setError(err.message || 'Ошибка загрузки данных.');
         } finally {
@@ -77,39 +78,60 @@
       };
 
       const playGame = () => {
+        if (gameOver) return;
+
         const newNumbers = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10));
         setNumbers(newNumbers);
         setClicks((prevClicks) => prevClicks + 1);
 
         const uniqueNumbers = new Set(newNumbers);
+        let newGamePoints = gamePoints;
+
         if (uniqueNumbers.size === 1) {
-          setMessage("Победа! Все три числа совпадают.");
-          setGamePoints((prevGamePoints) => prevGamePoints + 4);
-          setVictories((prevVictories) => prevVictories + 1);
+          setMessage("Три одинаковых числа! Вы получаете +4 балла.");
+          newGamePoints += 4;
         } else if (uniqueNumbers.size === 2) {
-          setMessage("Две цифры совпадают. Вы получаете +2 балла.");
-          setGamePoints((prevGamePoints) => prevGamePoints + 2);
+          setMessage("Две одинаковые цифры! Вы получаете +2 балла.");
+          newGamePoints += 2;
         } else {
-          setMessage("Все три числа разные. Вы теряете 2 балла.");
-          setGamePoints((prevGamePoints) => prevGamePoints - 2);
-          setDefeats((prevDefeats) => prevDefeats + 1);
+          setMessage("Все числа разные. Вы теряете 2 балла.");
+          newGamePoints -= 2;
         }
 
-        if (gamePoints >= 30 || clicks >= 40) {
-          if (gamePoints >= 30) {
-            setMessage("Поздравляем! Вы выиграли игру.");
-          } else {
-            setMessage("Игра окончена. Вы проиграли.");
-          }
-          setClicks(0);
-          setGamePoints(15);
-        }
+        setGamePoints(newGamePoints);
 
-        if (gamePoints <= 0) {
+        if (newGamePoints >= 17 || clicks + 1 >= 40) {
+          endGame(newGamePoints >= 17);
+        } else if (newGamePoints <= 0) {
+          endGame(false);
+        }
+      };
+
+      const endGame = (isVictory) => {
+        setGameOver(true);
+        if (isVictory) {
+          setMessage("Поздравляем! Вы выиграли игру.");
+          setVictories((prev) => {
+            const newVictories = prev + 1;
+            if (newVictories % 3 === 0) {
+              setLevel((prevLevel) => prevLevel + 1);
+            }
+            return newVictories;
+          });
+          setPoints((prevPoints) => prevPoints + 10);
+        } else {
           setMessage("Игра окончена. Вы проиграли.");
-          setClicks(0);
-          setGamePoints(15);
+          setDefeats((prev) => prev + 1);
+          setPoints((prevPoints) => Math.max(0, prevPoints - 10));
         }
+      };
+
+      const resetGame = () => {
+        setGamePoints(50);
+        setClicks(0);
+        setNumbers([0, 0, 0]);
+        setMessage("");
+        setGameOver(false);
       };
 
       useEffect(() => {
@@ -156,7 +178,14 @@
                 </div>
               ))}
             </div>
-            <button onClick={playGame} style={{ padding: "10px 20px", fontSize: "16px" }}>Играть</button>
+            <button onClick={playGame} style={{ padding: "10px 20px", fontSize: "16px" }} disabled={gameOver}>
+              Играть
+            </button>
+            {gameOver && (
+              <button onClick={resetGame} style={{ padding: "10px 20px", fontSize: "16px", marginTop: "20px" }}>
+                Начать заново
+              </button>
+            )}
             <p>{message}</p>
           </header>
         </div>
