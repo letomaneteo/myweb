@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>React Game</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.20.12/babel.min.js"></script>
-  <style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра</title>
+    <style>
        body {
         display: flex;
         flex-direction: column;
@@ -133,7 +130,7 @@ margin-top: 10px;
     </style>
 </head>
 <body>
-   <div id="greeting"></div>  <!-- Приветственное сообщение -->
+    <div id="greeting"></div>  <!-- Приветственное сообщение -->
 <!-- Добавьте блоки для отображения очков и уровня -->
 <h1>Очки: <span id="userScore">0</span></h1>
 <h2>Уровень: <span id="userLevel">1</span></h2>
@@ -183,107 +180,90 @@ margin-top: 10px;
 </div>
 
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-    const { createRoot } = ReactDOM;
 
-   const App = () => {
-  const [userData, setUserData] = useState(null);
-  const [points, setPoints] = useState(0);
-  const [level, setLevel] = useState(1);
-  const [victoryCount, setVictoryCount] = useState(0); // для побед
-  const [lossCount, setLossCount] = useState(0); // для поражений
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    <script>
+      // App.js
+import React, { useEffect, useState } from "react";
 
-  const getUserIdFromUrl = () => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('user_id');
-  };
-
-  const fetchUserData = async (userId) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`https://29d2-213-109-225-82.ngrok-free.app/get_user?user_id=${userId}`, {
-        headers: { 'ngrok-skip-browser-warning': 'true' },
-      });
-
-      if (!response.ok) throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
-
-      const user = await response.json();
-      setUserData(user);
-      setPoints(user.points);
-      setLevel(user.level || 1);
-    } catch (err) {
-      setError(err.message || 'Ошибка загрузки данных.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateServer = async () => {
-    if (!userData) return;
-
-    try {
-      await fetch('https://29d2-213-109-225-82.ngrok-free.app/edit_points', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-        body: JSON.stringify({ user_id: userData.id, points }),
-      });
-
-      await fetch('https://dbf3-213-109-225-82.ngrok-free.app/edit_level', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-        body: JSON.stringify({ user_id: userData.id, level }),
-      });
-
-      alert('Данные успешно обновлены!');
-    } catch (err) {
-      alert('Ошибка при обновлении данных: ' + err.message);
-    }
-  };
-
-  // Обновление очков и уровня из игрового блока
-  const updateFromGame = (newPoints, newLevel, wins, losses) => {
-    setPoints(newPoints);
-    setLevel(newLevel);
-    setVictoryCount(wins);
-    setLossCount(losses);
-  };
+function App() {
+  const [userData, setUserData] = useState({
+    id: "",
+    username: "Гость",
+    score: 0,
+    level: 1,
+  });
 
   useEffect(() => {
-    const userId = getUserIdFromUrl();
-    if (userId) fetchUserData(userId);
-    else setError('Пользователь не идентифицирован. Проверьте ссылку.');
+    // Замените URL на ваш сервер Flask
+    const serverUrl = "https://your-flask-server-url.com/get_user_data";
+
+    fetch(serverUrl)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Ошибка получения данных от сервера");
+        }
+      })
+      .then((data) => {
+        setUserData({
+          id: data.id,
+          username: data.username,
+          score: data.score,
+          level: data.level,
+        });
+      })
+      .catch((error) => console.error("Ошибка загрузки данных:", error));
   }, []);
 
-  useEffect(() => {
-    if (userData) updateServer();
-  }, [points, level]);
-
-  if (loading) return <p>Загрузка данных...</p>;
-  if (error) return <p>Ошибка: {error}</p>;
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Добро пожаловать!</h1>
-        <p>ID: {userData.id}</p>
-        <p>Имя пользователя: {userData.username}</p>
-        <p>Очки: {points}</p>
-        <p>Уровень: {level}</p>
-        <p>Победы: {victoryCount}</p>
-        <p>Поражения: {lossCount}</p>
-      </header>
+    <div>
+      <div id="greeting">
+        Здравствуйте, {userData.username} (ID: {userData.id})
+      </div>
+      <h1>Очки: <span id="userScore">{userData.score}</span></h1>
+      <h2>Уровень: <span id="userLevel">{userData.level}</span></h2>
+
+      {/* Ваш HTML-код игры */}
+      <div className="game-title">22 КЛИКА</div>
+      <div className="game-rules">
+        <p>Наберите 200 очков за 22 клика, чтобы победить</p>
+        <p>-8 очков за все разные</p>
+      </div>
+      <h1>Счет: <span id="score">30</span></h1>
+      <h2>Счетчик кликов: <span id="clickCount">0</span></h2>
+      <h3>Победы: <span id="winCount">0</span> Поражения: <span id="lossCount">0</span></h3>
+      <div className="grid">
+        {[...Array(9)].map((_, i) => (
+          <div className="cell" id={`cell-${i}`} key={i}></div>
+        ))}
+      </div>
+      <button className="play-button" id="playButton">Играть</button>
+      <div className="messages">
+        <div className="message green" id="horizontalMessage">
+          По горизонтали: <span id="horizontalResult"></span>
+        </div>
+        <div className="message blue" id="verticalMessage">
+          По вертикали: <span id="verticalResult"></span>
+        </div>
+        <div className="message yellow" id="diagonalMessage">
+          По диагонали: <span id="diagonalResult"></span>
+        </div>
+        <div className="message black" id="totalPointsMessage">
+          Сумма всех рядов: <span id="totalResult"></span>
+        </div>
+        <div className="message" id="endMessage"></div>
+      </div>
+      <button className="restart-button" id="restartButton" style={{ display: "none" }}>
+        Начать заново
+      </button>
     </div>
   );
-};
+}
 
-    const root = createRoot(document.getElementById('root'));
-    root.render(<App />);
-     const cells = Array.from(document.querySelectorAll('.cell'));
+export default App;
+
+        const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
         const clickCountElement = document.getElementById('clickCount');
         const winCountElement = document.getElementById('winCount');
@@ -305,20 +285,24 @@ margin-top: 10px;
         let lossCount = 0;
 
 function updateUserStats() {
+    // Проверяем результат игры
     if (messages.end.textContent.includes("Вы выиграли")) {
-        userScore += 10;
-        winCount++;
+        userScore = userScore + 10; // Увеличиваем очки
     } else if (messages.end.textContent.includes("Вы проиграли")) {
-        userScore -= 10;
-        lossCount++;
+        userScore = userScore - 10; // Уменьшаем очки
     }
 
+    // Каждые три победы увеличиваем уровень
     if (winCount % 3 === 0 && winCount > 0) {
-        userLevel++;
+        userLevel = userLevel + 1;
     }
 
-    updateFromGame(userScore, userLevel, winCount, lossCount); // передаем данные в React
-    sendStatsToServer(winCount, lossCount);
+    // Обновляем значения на странице
+    document.getElementById('userScore').textContent = userScore;
+    document.getElementById('userLevel').textContent = userLevel;
+
+    // Отправляем данные на сервер
+    sendStatsToServer(userScore, userLevel);
 }
 
         function updateScore(points) {
@@ -356,7 +340,7 @@ function sendStatsToServer(winCount, lossCount) {
         losses: lossCount
     };
 
-    const serverUrl = "https://29d2-213-109-225-82.ngrok-free.app/update_user_data";
+    const serverUrl = "https://dbf3-213-109-225-82.ngrok-free.app/update_user_data";
 
     fetch(serverUrl, {
         method: "POST",
@@ -628,6 +612,7 @@ restartButton.addEventListener('click', () => {
     // Сброс конца игры
     messages.end.textContent = '';
 });
-  </script>
+
+    </script>
 </body>
 </html>
