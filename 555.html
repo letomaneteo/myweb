@@ -24,10 +24,9 @@
       const [message, setMessage] = useState("");
       const [victories, setVictories] = useState(0);
       const [defeats, setDefeats] = useState(0);
-      const [gamePoints, setGamePoints] = useState(15); // Игровые баллы текущей игры
+      const [gamePoints, setGamePoints] = useState(15); // Игровые баллы
       const [clicks, setClicks] = useState(0);
-      const [gameOver, setGameOver] = useState(false);
-      const [outOfPoints, setOutOfPoints] = useState(false); // Флаг окончания игры из-за отсутствия очков
+      const [gameOver, setGameOver] = useState(false); // Конец текущей сессии
 
       const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
@@ -79,7 +78,7 @@
       };
 
       const playGame = () => {
-        if (gameOver || outOfPoints) return;
+        if (gameOver || points === 0) return;
 
         const newNumbers = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10));
         setNumbers(newNumbers);
@@ -102,7 +101,7 @@
         setGamePoints(newGamePoints);
 
         if (newGamePoints >= 30 || clicks + 1 >= 40) {
-          endGame(newGamePoints >= 30);
+          endGame(true);
         } else if (newGamePoints <= 0) {
           endGame(false);
         }
@@ -126,7 +125,7 @@
           setDefeats((prev) => prev + 1);
           setPoints((prevPoints) => {
             const newPoints = Math.max(0, prevPoints - 10);
-            if (newPoints === 0) setOutOfPoints(true); // Проверка на окончание очков
+            if (newPoints === 0) setMessage("У вас закончились очки.");
             return newPoints;
           });
         }
@@ -141,12 +140,12 @@
       };
 
       const remindLater = () => {
-        setMessage("Мы напомним вам через 3 часа!");
+        alert("Мы напомним вам через 3 часа!");
       };
 
       const buyPoints = () => {
-        setMessage("Переход к покупке очков...");
-        // Здесь можно добавить логику покупки очков
+        alert("Переход к покупке очков...");
+        // Добавить логику покупки очков
       };
 
       useEffect(() => {
@@ -166,27 +165,50 @@
         <div className="App">
           <header className="App-header">
             <h1>Игра: Три числа</h1>
-            {outOfPoints ? (
+            {points === 0 ? (
               <>
                 <p>У вас закончились очки.</p>
-                <p>Вы можете получить новые очки через 3 часа или купить их прямо сейчас.</p>
-                <button onClick={remindLater} style={{ padding: "10px 20px", fontSize: "16px", marginRight: "10px" }}>
+                <button onClick={remindLater} style={{ padding: "10px 20px", marginRight: "10px" }}>
                   Напомнить через 3 часа
                 </button>
-                <button onClick={buyPoints} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                <button onClick={buyPoints} style={{ padding: "10px 20px" }}>
                   Купить очки
                 </button>
               </>
             ) : (
               <>
+                <p>ID: {userData?.id}</p>
+                <p>Имя пользователя: {userData?.username}</p>
                 <p>Очки: {points}</p>
                 <p>Уровень: {level}</p>
+                <p>Победы: {victories}</p>
+                <p>Поражения: {defeats}</p>
                 <p>Игровые баллы: {gamePoints}</p>
-                <button onClick={playGame} style={{ padding: "10px 20px", fontSize: "16px" }} disabled={gameOver}>
+                <p>Количество кликов: {clicks}</p>
+                <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
+                  {numbers.map((num, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        border: "1px solid black",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 10px",
+                        fontSize: "24px",
+                      }}
+                    >
+                      {num}
+                    </div>
+                  ))}
+                </div>
+                <button onClick={playGame} style={{ padding: "10px 20px" }} disabled={gameOver}>
                   Играть
                 </button>
                 {gameOver && (
-                  <button onClick={resetGame} style={{ padding: "10px 20px", fontSize: "16px", marginTop: "20px" }}>
+                  <button onClick={resetGame} style={{ padding: "10px 20px", marginTop: "20px" }}>
                     Играть заново
                   </button>
                 )}
