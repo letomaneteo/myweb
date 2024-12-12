@@ -107,10 +107,18 @@
         setGameOver(true);
         if (isVictory) {
           setMessage("Поздравляем! Вы выиграли игру.");
-          setVictories((prev) => prev + 1);
+          setVictories((prev) => {
+            const newVictories = prev + 1;
+            if (newVictories % 3 === 0) {
+              setLevel((prevLevel) => prevLevel + 1);
+            }
+            return newVictories;
+          });
+          setPoints((prevPoints) => prevPoints + 10);
         } else {
           setMessage("Игра окончена. Вы проиграли.");
           setDefeats((prev) => prev + 1);
+          setPoints((prevPoints) => Math.max(0, prevPoints - 10));
         }
       };
 
