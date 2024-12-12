@@ -24,6 +24,9 @@
       const [message, setMessage] = useState("");
       const [victories, setVictories] = useState(0);
       const [defeats, setDefeats] = useState(0);
+      const [gamePoints, setGamePoints] = useState(15);
+      const [clicks, setClicks] = useState(0);
+      const [gameOver, setGameOver] = useState(false);
 
       const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
@@ -75,28 +78,48 @@
       };
 
       const playGame = () => {
+        if (gameOver) return;
+
         const newNumbers = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10));
         setNumbers(newNumbers);
+        setClicks((prevClicks) => prevClicks + 1);
 
         const uniqueNumbers = new Set(newNumbers);
-        let newVictories = victories;
-
         if (uniqueNumbers.size === 1) {
-          setMessage("Победа! Все три числа совпадают.");
-          setPoints((prevPoints) => prevPoints + 10);
-          newVictories += 1;
-          setVictories(newVictories);
-        } else if (uniqueNumbers.size === 3) {
-          setMessage("Поражение! Все три числа разные.");
-          setPoints((prevPoints) => prevPoints - 10);
-          setDefeats((prevDefeats) => prevDefeats + 1);
+          setMessage("Три одинаковых числа! Вы получаете +4 балла.");
+          setGamePoints((prevGamePoints) => prevGamePoints + 4);
+        } else if (uniqueNumbers.size === 2) {
+          setMessage("Две одинаковые цифры! Вы получаете +2 балла.");
+          setGamePoints((prevGamePoints) => prevGamePoints + 2);
         } else {
-          setMessage("Попробуйте снова!");
+          setMessage("Все числа разные. Вы теряете 2 балла.");
+          setGamePoints((prevGamePoints) => prevGamePoints - 2);
         }
 
-        if (newVictories % 3 === 0 && newVictories > 0) {
-          setLevel((prevLevel) => prevLevel + 1);
+        if (gamePoints + 4 >= 30 || clicks + 1 >= 40) {
+          endGame(gamePoints + 4 >= 30);
+        } else if (gamePoints - 2 <= 0) {
+          endGame(false);
         }
+      };
+
+      const endGame = (isVictory) => {
+        setGameOver(true);
+        if (isVictory) {
+          setMessage("Поздравляем! Вы выиграли игру.");
+          setVictories((prev) => prev + 1);
+        } else {
+          setMessage("Игра окончена. Вы проиграли.");
+          setDefeats((prev) => prev + 1);
+        }
+      };
+
+      const resetGame = () => {
+        setGamePoints(15);
+        setClicks(0);
+        setNumbers([0, 0, 0]);
+        setMessage("");
+        setGameOver(false);
       };
 
       useEffect(() => {
@@ -122,6 +145,8 @@
             <p>Уровень: {level}</p>
             <p>Победы: {victories}</p>
             <p>Поражения: {defeats}</p>
+            <p>Игровые баллы: {gamePoints}</p>
+            <p>Количество кликов: {clicks}</p>
             <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
               {numbers.map((num, index) => (
                 <div
@@ -141,7 +166,14 @@
                 </div>
               ))}
             </div>
-            <button onClick={playGame} style={{ padding: "10px 20px", fontSize: "16px" }}>Играть</button>
+            <button onClick={playGame} style={{ padding: "10px 20px", fontSize: "16px" }} disabled={gameOver}>
+              Играть
+            </button>
+            {gameOver && (
+              <button onClick={resetGame} style={{ padding: "10px 20px", fontSize: "16px", marginTop: "20px" }}>
+                Начать заново
+              </button>
+            )}
             <p>{message}</p>
           </header>
         </div>
