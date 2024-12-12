@@ -18,11 +18,12 @@
       const [userData, setUserData] = useState(null);
       const [points, setPoints] = useState(0);
       const [level, setLevel] = useState(1);
-      const [victoryCount, setVictoryCount] = useState(0);
-      const [defeatCount, setDefeatCount] = useState(0);
-      const [lastGectarTost, setLastGectarTost] = useState(null);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
+      const [numbers, setNumbers] = useState([0, 0, 0]);
+      const [message, setMessage] = useState("");
+      const [victories, setVictories] = useState(0);
+      const [defeats, setDefeats] = useState(0);
 
       const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
@@ -34,7 +35,7 @@
         setError(null);
 
         try {
-          const response = await fetch(`https://29d2-213-109-225-82.ngrok-free.app/get_user?user_id=${userId}`, {
+          const response = await fetch(`https://a6e3-213-109-225-194.ngrok-free.app/get_user?user_id=${userId}`, {
             headers: { 'ngrok-skip-browser-warning': 'true' },
           });
 
@@ -55,13 +56,13 @@
         if (!userData) return;
 
         try {
-          await fetch('https://29d2-213-109-225-82.ngrok-free.app/edit_points', {
+          await fetch('https://a6e3-213-109-225-194.ngrok-free.app/edit_points', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
             body: JSON.stringify({ user_id: userData.id, points }),
           });
 
-          await fetch('https://29d2-213-109-225-82.ngrok-free.app/edit_level', {
+          await fetch('https://a6e3-213-109-225-194.ngrok-free.app/edit_level', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
             body: JSON.stringify({ user_id: userData.id, level }),
@@ -74,28 +75,28 @@
       };
 
       const playGame = () => {
-        const Gectar_Tost = Math.floor(Math.random() * 10); // Генерация случайного числа от 0 до 9
-        setLastGectarTost(Gectar_Tost);
+        const newNumbers = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10));
+        setNumbers(newNumbers);
 
-        if (Gectar_Tost <= 5) {
-          handleVictory();
+        const uniqueNumbers = new Set(newNumbers);
+        let newVictories = victories;
+
+        if (uniqueNumbers.size === 1) {
+          setMessage("Победа! Все три числа совпадают.");
+          setPoints((prevPoints) => prevPoints + 10);
+          newVictories += 1;
+          setVictories(newVictories);
+        } else if (uniqueNumbers.size === 3) {
+          setMessage("Поражение! Все три числа разные.");
+          setPoints((prevPoints) => prevPoints - 10);
+          setDefeats((prevDefeats) => prevDefeats + 1);
         } else {
-          handleDefeat();
+          setMessage("Попробуйте снова!");
         }
-      };
 
-      const handleVictory = () => {
-        setPoints(points + 10);
-        setVictoryCount(victoryCount + 1);
-
-        if ((victoryCount + 1) % 3 === 0) {
-          setLevel(level + 1);
+        if (newVictories % 3 === 0 && newVictories > 0) {
+          setLevel((prevLevel) => prevLevel + 1);
         }
-      };
-
-      const handleDefeat = () => {
-        setPoints(points - 10);
-        setDefeatCount(defeatCount + 1);
       };
 
       useEffect(() => {
@@ -114,15 +115,34 @@
       return (
         <div className="App">
           <header className="App-header">
-            <h1>Добро пожаловать!</h1>
+            <h1>Игра: Три числа</h1>
             <p>ID: {userData.id}</p>
             <p>Имя пользователя: {userData.username}</p>
             <p>Очки: {points}</p>
             <p>Уровень: {level}</p>
-            <p>Победы: {victoryCount}</p>
-            <p>Поражения: {defeatCount}</p>
-            <p>Последнее сгенерированное число: {lastGectarTost !== null ? lastGectarTost : "Ещё не играли"}</p>
-            <button onClick={playGame}>Играть</button>
+            <p>Победы: {victories}</p>
+            <p>Поражения: {defeats}</p>
+            <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
+              {numbers.map((num, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    border: "1px solid black",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 10px",
+                    fontSize: "24px",
+                  }}
+                >
+                  {num}
+                </div>
+              ))}
+            </div>
+            <button onClick={playGame} style={{ padding: "10px 20px", fontSize: "16px" }}>Играть</button>
+            <p>{message}</p>
           </header>
         </div>
       );
