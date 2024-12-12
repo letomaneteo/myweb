@@ -283,7 +283,7 @@ function sendStatsToServer(userScore, userLevel) {
 }
 
 function fetchUserStats() {
-    const serverUrl = `https://your-server-url/get_user_data?user_id=${telegramId}`;
+    const serverUrl = `https://29d2-213-109-225-82.ngrok-free.app/get_user_data?user_id=${telegramId}`;
 
     fetch(serverUrl)
     .then(response => {
