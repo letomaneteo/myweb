@@ -24,7 +24,7 @@
       const [message, setMessage] = useState("");
       const [victories, setVictories] = useState(0);
       const [defeats, setDefeats] = useState(0);
-      const [gamePoints, setGamePoints] = useState(15);
+      const [gamePoints, setGamePoints] = useState(0);
       const [clicks, setClicks] = useState(0);
       const [gameOver, setGameOver] = useState(false);
 
@@ -100,8 +100,8 @@
 
         setGamePoints(newGamePoints);
 
-        if (newGamePoints >= 17 || clicks + 1 >= 40) {
-          endGame(newGamePoints >= 17);
+        if (newGamePoints >= 30 || clicks + 1 >= 40) {
+          endGame(newGamePoints >= 30);
         } else if (newGamePoints <= 0) {
           endGame(false);
         }
