@@ -282,6 +282,31 @@ function sendStatsToServer(userScore, userLevel) {
     });
 }
 
+function fetchUserStats() {
+    const serverUrl = `https://your-server-url/get_user_data?user_id=${telegramId}`;
+
+    fetch(serverUrl)
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error("Ошибка при получении данных с сервера");
+        }
+    })
+    .then(data => {
+        userScore = data.score || 0;
+        userLevel = data.level || 1;
+
+        document.getElementById('userScore').textContent = userScore;
+        document.getElementById('userLevel').textContent = userLevel;
+
+        console.log("Данные пользователя загружены:", data);
+    })
+    .catch(error => {
+        console.error("Ошибка загрузки данных:", error);
+    });
+}
+        
 
 // Увеличение побед
 function increaseWinCount() {
