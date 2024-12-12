@@ -253,11 +253,20 @@ let userLevel = parseInt(queryParams['level']) || 1;  // То же для уро
 
 
 function sendStatsToServer(userScore, userLevel) {
+    if (typeof telegramId === "undefined" || !telegramId) {
+        console.error("Не найден параметр telegram_id.");
+        return;
+    }
+    if (typeof username === "undefined" || !username) {
+        console.error("Не найден параметр username.");
+        return;
+    }
+
     const payload = {
         user_id: telegramId, // ID пользователя
         username: username, // Имя пользователя
         score: userScore,
-        level: userLevel
+        level: userLevel,
     };
 
     const serverUrl = "https://29d2-213-109-225-82.ngrok-free.app/update_user_data"; // Замените на ваш URL
@@ -265,46 +274,55 @@ function sendStatsToServer(userScore, userLevel) {
     fetch(serverUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
     })
-    .then(response => {
-        if (response.ok) {
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Ошибка при отправке данных на сервер");
+            }
             return response.json();
-        } else {
-            throw new Error("Ошибка при отправке данных на сервер");
-        }
-    })
-    .then(data => {
-        console.log("Данные успешно отправлены:", data);
-    })
-    .catch(error => {
-        console.error("Ошибка отправки данных:", error);
-    });
+        })
+        .then((data) => {
+            console.log("Данные успешно отправлены:", data);
+        })
+        .catch((error) => {
+            console.error("Ошибка отправки данных:", error);
+            document.getElementById('errorMessage').textContent = "Не удалось отправить данные. Проверьте соединение.";
+        });
 }
 
+
 function fetchUserStats() {
+    if (typeof telegramId === "undefined" || !telegramId) {
+        console.error("Не найден параметр telegram_id.");
+        return;
+    }
+
     const serverUrl = `https://29d2-213-109-225-82.ngrok-free.app/get_user_data?user_id=${telegramId}`;
 
     fetch(serverUrl)
-    .then(response => {
-        if (response.ok) {
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Ошибка при получении данных с сервера");
+            }
             return response.json();
-        } else {
-            throw new Error("Ошибка при получении данных с сервера");
-        }
-    })
-    .then(data => {
-        userScore = data.score || 0;
-        userLevel = data.level || 1;
+        })
+        .then((data) => {
+            if (!data || typeof data !== "object") {
+                throw new Error("Некорректные данные от сервера");
+            }
+            userScore = data.score || 0;
+            userLevel = data.level || 1;
 
-        document.getElementById('userScore').textContent = userScore;
-        document.getElementById('userLevel').textContent = userLevel;
+            document.getElementById("userScore").textContent = userScore;
+            document.getElementById("userLevel").textContent = userLevel;
 
-        console.log("Данные пользователя загружены:", data);
-    })
-    .catch(error => {
-        console.error("Ошибка загрузки данных:", error);
-    });
+            console.log("Данные пользователя загружены:", data);
+        })
+        .catch((error) => {
+            console.error("Ошибка загрузки данных:", error);
+            document.getElementById('errorMessage').textContent = "Не удалось загрузить данные с сервера.";
+        });
 }
         
 
