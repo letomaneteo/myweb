@@ -195,7 +195,7 @@ function App() {
 
   useEffect(() => {
     // Замените URL на ваш сервер Flask
-    const serverUrl = "https://your-flask-server-url.com/get_user_data";
+    const serverUrl = "https://29d2-213-109-225-82.ngrok-free.app/get_user_data";
 
     fetch(serverUrl)
       .then((response) => {
@@ -340,7 +340,7 @@ function sendStatsToServer(winCount, lossCount) {
         losses: lossCount
     };
 
-    const serverUrl = "https://dbf3-213-109-225-82.ngrok-free.app/update_user_data";
+    const serverUrl = "https://29d2-213-109-225-82.ngrok-free.app/update_user_data";
 
     fetch(serverUrl, {
         method: "POST",
