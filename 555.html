@@ -85,20 +85,24 @@
         setClicks((prevClicks) => prevClicks + 1);
 
         const uniqueNumbers = new Set(newNumbers);
+        let newGamePoints = gamePoints;
+
         if (uniqueNumbers.size === 1) {
           setMessage("Три одинаковых числа! Вы получаете +4 балла.");
-          setGamePoints((prevGamePoints) => prevGamePoints + 4);
+          newGamePoints += 4;
         } else if (uniqueNumbers.size === 2) {
           setMessage("Две одинаковые цифры! Вы получаете +2 балла.");
-          setGamePoints((prevGamePoints) => prevGamePoints + 2);
+          newGamePoints += 2;
         } else {
           setMessage("Все числа разные. Вы теряете 2 балла.");
-          setGamePoints((prevGamePoints) => prevGamePoints - 2);
+          newGamePoints -= 2;
         }
 
-        if (gamePoints + 4 >= 30 || clicks + 1 >= 40) {
-          endGame(gamePoints + 4 >= 30);
-        } else if (gamePoints - 2 <= 0) {
+        setGamePoints(newGamePoints);
+
+        if (newGamePoints >= 30 || clicks + 1 >= 40) {
+          endGame(newGamePoints >= 30);
+        } else if (newGamePoints <= 0) {
           endGame(false);
         }
       };
