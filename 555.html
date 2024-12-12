@@ -19,6 +19,8 @@
       const [points, setPoints] = useState(0);
       const [level, setLevel] = useState(1);
       const [victoryCount, setVictoryCount] = useState(0);
+      const [defeatCount, setDefeatCount] = useState(0);
+      const [lastGectarTost, setLastGectarTost] = useState(null);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
 
@@ -32,7 +34,7 @@
         setError(null);
 
         try {
-          const response = await fetch(`https://29d2-213-109-225-82.ngrok-free.app/get_user?user_id=${userId}`, {
+          const response = await fetch(`https://dbf3-213-109-225-82.ngrok-free.app/get_user?user_id=${userId}`, {
             headers: { 'ngrok-skip-browser-warning': 'true' },
           });
 
@@ -53,13 +55,13 @@
         if (!userData) return;
 
         try {
-          await fetch('https://29d2-213-109-225-82.ngrok-free.app/edit_points', {
+          await fetch('https://dbf3-213-109-225-82.ngrok-free.app/edit_points', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
             body: JSON.stringify({ user_id: userData.id, points }),
           });
 
-          await fetch('https://29d2-213-109-225-82.ngrok-free.app/edit_level', {
+          await fetch('https://dbf3-213-109-225-82.ngrok-free.app/edit_level', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
             body: JSON.stringify({ user_id: userData.id, level }),
@@ -73,6 +75,8 @@
 
       const playGame = () => {
         const Gectar_Tost = Math.floor(Math.random() * 10); // Генерация случайного числа от 0 до 9
+        setLastGectarTost(Gectar_Tost);
+
         if (Gectar_Tost <= 5) {
           handleVictory();
         } else {
@@ -91,6 +95,7 @@
 
       const handleDefeat = () => {
         setPoints(points - 10);
+        setDefeatCount(defeatCount + 1);
       };
 
       useEffect(() => {
@@ -114,6 +119,9 @@
             <p>Имя пользователя: {userData.username}</p>
             <p>Очки: {points}</p>
             <p>Уровень: {level}</p>
+            <p>Победы: {victoryCount}</p>
+            <p>Поражения: {defeatCount}</p>
+            <p>Последнее сгенерированное число: {lastGectarTost !== null ? lastGectarTost : "Ещё не играли"}</p>
             <button onClick={playGame}>Играть</button>
           </header>
         </div>
