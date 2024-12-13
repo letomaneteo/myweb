@@ -107,7 +107,7 @@
         setGamePoints(newGamePoints);
 
         if (newGamePoints >= 30 || clicks + 1 >= 40) {
-          endGame(newGamePoints >= 30);
+          endGame(newGamePoints >= 30 || clicks + 1 >= 40);
         } else if (newGamePoints <= 0) {
           endGame(false);
         }
@@ -175,6 +175,8 @@
             <p>Имя пользователя: {userData.username}</p>
             <p>Очки: {points}</p>
             <p>Уровень: {level}</p>
+            <p>Победы: {victories}</p>
+            <p>Поражения: {defeats}</p>
             {outOfPoints ? (
               <div>
                 <p>У вас не осталось очков, следующие 50 очков будут доступны через 3 часа</p>
