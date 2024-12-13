@@ -47,8 +47,13 @@
 
           const user = await response.json();
           setUserData(user);
-          setPoints(user.points !== undefined ? user.points : 50);
+
+          const points = user.points !== undefined ? user.points : 50;
+          setPoints(points);
           setLevel(user.level || 0);
+
+          // Устанавливаем состояние "нет очков" при загрузке
+          setOutOfPoints(points <= 0);
         } catch (err) {
           setError(err.message || 'Ошибка загрузки данных.');
         } finally {
@@ -170,40 +175,7 @@
             <p>Имя пользователя: {userData.username}</p>
             <p>Очки: {points}</p>
             <p>Уровень: {level}</p>
-            <p>Победы: {victories}</p>
-            <p>Поражения: {defeats}</p>
-            <p>Игровые баллы: {gamePoints}</p>
-            <p>Количество кликов: {clicks}</p>
-            <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
-              {numbers.map((num, index) => (
-                <div
-                  key={index}
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    border: "1px solid black",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "0 10px",
-                    fontSize: "24px",
-                  }}
-                >
-                  {num}
-                </div>
-              ))}
-            </div>
-            {!outOfPoints && (
-              <button onClick={playGame} style={{ padding: "10px 20px", fontSize: "16px" }} disabled={gameOver}>
-                Играть
-              </button>
-            )}
-            {gameOver && !outOfPoints && (
-              <button onClick={resetGame} style={{ padding: "10px 20px", fontSize: "16px", marginTop: "20px" }}>
-                Начать заново
-              </button>
-            )}
-            {outOfPoints && (
+            {outOfPoints ? (
               <div>
                 <p>У вас не осталось очков, следующие 50 очков будут доступны через 3 часа</p>
                 <div style={{ display: "flex", gap: "10px" }}>
@@ -214,6 +186,38 @@
                     Купить очки
                   </button>
                 </div>
+              </div>
+            ) : (
+              <div>
+                <p>Игровые баллы: {gamePoints}</p>
+                <p>Количество кликов: {clicks}</p>
+                <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
+                  {numbers.map((num, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        border: "1px solid black",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 10px",
+                        fontSize: "24px",
+                      }}
+                    >
+                      {num}
+                    </div>
+                  ))}
+                </div>
+                <button onClick={playGame} style={{ padding: "10px 20px", fontSize: "16px" }} disabled={gameOver}>
+                  Играть
+                </button>
+                {gameOver && (
+                  <button onClick={resetGame} style={{ padding: "10px 20px", fontSize: "16px", marginTop: "20px" }}>
+                    Начать заново
+                  </button>
+                )}
               </div>
             )}
             <p>{message}</p>
