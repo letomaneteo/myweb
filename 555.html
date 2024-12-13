@@ -39,7 +39,7 @@
         setError(null);
 
         try {
-          const response = await fetch(`https://a18f-213-109-225-55.ngrok-free.app/get_user?user_id=${userId}`, {
+          const response = await fetch(`https://d586-213-109-225-35.ngrok-free.app/get_user?user_id=${userId}`, {
             headers: { 'ngrok-skip-browser-warning': 'true' },
           });
 
@@ -60,13 +60,13 @@
         if (!userData) return;
 
         try {
-          await fetch('https://a18f-213-109-225-55.ngrok-free.app/edit_points', {
+          await fetch('https://d586-213-109-225-35.ngrok-free.app/edit_points', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
             body: JSON.stringify({ user_id: userData.id, points }),
           });
 
-          await fetch('https://a18f-213-109-225-55.ngrok-free.app/edit_level', {
+          await fetch('https://d586-213-109-225-35.ngrok-free.app/edit_level', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
             body: JSON.stringify({ user_id: userData.id, level }),
