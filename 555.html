@@ -47,7 +47,7 @@
 
           const user = await response.json();
           setUserData(user);
-          setPoints(user.points || 50);
+          setPoints(user.points !== undefined ? user.points : 50);
           setLevel(user.level || 0);
         } catch (err) {
           setError(err.message || 'Ошибка загрузки данных.');
