@@ -16,7 +16,7 @@
 
     const App = () => {
       const [userData, setUserData] = useState(null);
-      const [points, setPoints] = useState(50); // Общие очки
+      const [points, setPoints] = useState(50);
       const [level, setLevel] = useState(0);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
@@ -24,9 +24,10 @@
       const [message, setMessage] = useState("");
       const [victories, setVictories] = useState(0);
       const [defeats, setDefeats] = useState(0);
-      const [gamePoints, setGamePoints] = useState(15); // Игровые баллы
+      const [gamePoints, setGamePoints] = useState(15);
       const [clicks, setClicks] = useState(0);
-      const [gameOver, setGameOver] = useState(false); // Конец текущей сессии
+      const [gameOver, setGameOver] = useState(false);
+      const [outOfPoints, setOutOfPoints] = useState(false);
 
       const getUserIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
@@ -38,7 +39,7 @@
         setError(null);
 
         try {
-          const response = await fetch(`https://8cc6-213-109-225-55.ngrok-free.app/get_user?user_id=${userId}`, {
+          const response = await fetch(`https://a18f-213-109-225-55.ngrok-free.app/get_user?user_id=${userId}`, {
             headers: { 'ngrok-skip-browser-warning': 'true' },
           });
 
@@ -59,13 +60,13 @@
         if (!userData) return;
 
         try {
-          await fetch('https://8cc6-213-109-225-55.ngrok-free.app/edit_points', {
+          await fetch('https://a18f-213-109-225-55.ngrok-free.app/edit_points', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
             body: JSON.stringify({ user_id: userData.id, points }),
           });
 
-          await fetch('https://8cc6-213-109-225-55.ngrok-free.app/edit_level', {
+          await fetch('https://a18f-213-109-225-55.ngrok-free.app/edit_level', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
             body: JSON.stringify({ user_id: userData.id, level }),
@@ -78,7 +79,7 @@
       };
 
       const playGame = () => {
-        if (gameOver || points === 0) return;
+        if (gameOver || outOfPoints) return;
 
         const newNumbers = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10));
         setNumbers(newNumbers);
@@ -101,7 +102,7 @@
         setGamePoints(newGamePoints);
 
         if (newGamePoints >= 30 || clicks + 1 >= 40) {
-          endGame(true);
+          endGame(newGamePoints >= 30);
         } else if (newGamePoints <= 0) {
           endGame(false);
         }
@@ -109,7 +110,6 @@
 
       const endGame = (isVictory) => {
         setGameOver(true);
-
         if (isVictory) {
           setMessage("Поздравляем! Вы выиграли игру.");
           setVictories((prev) => {
@@ -125,7 +125,9 @@
           setDefeats((prev) => prev + 1);
           setPoints((prevPoints) => {
             const newPoints = Math.max(0, prevPoints - 10);
-            if (newPoints === 0) setMessage("У вас закончились очки.");
+            if (newPoints === 0) {
+              setOutOfPoints(true);
+            }
             return newPoints;
           });
         }
@@ -140,12 +142,11 @@
       };
 
       const remindLater = () => {
-        alert("Мы напомним вам через 3 часа!");
+        alert("Напоминание через 3 часа будет добавлено!");
       };
 
       const buyPoints = () => {
         alert("Переход к покупке очков...");
-        // Добавить логику покупки очков
       };
 
       useEffect(() => {
@@ -165,56 +166,57 @@
         <div className="App">
           <header className="App-header">
             <h1>Игра: Три числа</h1>
-            {points === 0 ? (
-              <>
-                <p>У вас закончились очки.</p>
-                <button onClick={remindLater} style={{ padding: "10px 20px", marginRight: "10px" }}>
-                  Напомнить через 3 часа
-                </button>
-                <button onClick={buyPoints} style={{ padding: "10px 20px" }}>
-                  Купить очки
-                </button>
-              </>
-            ) : (
-              <>
-                <p>ID: {userData?.id}</p>
-                <p>Имя пользователя: {userData?.username}</p>
-                <p>Очки: {points}</p>
-                <p>Уровень: {level}</p>
-                <p>Победы: {victories}</p>
-                <p>Поражения: {defeats}</p>
-                <p>Игровые баллы: {gamePoints}</p>
-                <p>Количество кликов: {clicks}</p>
-                <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
-                  {numbers.map((num, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        border: "1px solid black",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        margin: "0 10px",
-                        fontSize: "24px",
-                      }}
-                    >
-                      {num}
-                    </div>
-                  ))}
+            <p>ID: {userData.id}</p>
+            <p>Имя пользователя: {userData.username}</p>
+            <p>Очки: {points}</p>
+            <p>Уровень: {level}</p>
+            <p>Победы: {victories}</p>
+            <p>Поражения: {defeats}</p>
+            <p>Игровые баллы: {gamePoints}</p>
+            <p>Количество кликов: {clicks}</p>
+            <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
+              {numbers.map((num, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    border: "1px solid black",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 10px",
+                    fontSize: "24px",
+                  }}
+                >
+                  {num}
                 </div>
-                <button onClick={playGame} style={{ padding: "10px 20px" }} disabled={gameOver}>
-                  Играть
-                </button>
-                {gameOver && (
-                  <button onClick={resetGame} style={{ padding: "10px 20px", marginTop: "20px" }}>
-                    Играть заново
-                  </button>
-                )}
-                <p>{message}</p>
-              </>
+              ))}
+            </div>
+            {!outOfPoints && (
+              <button onClick={playGame} style={{ padding: "10px 20px", fontSize: "16px" }} disabled={gameOver}>
+                Играть
+              </button>
             )}
+            {gameOver && !outOfPoints && (
+              <button onClick={resetGame} style={{ padding: "10px 20px", fontSize: "16px", marginTop: "20px" }}>
+                Начать заново
+              </button>
+            )}
+            {outOfPoints && (
+              <div>
+                <p>У вас не осталось очков, следующие 50 очков будут доступны через 3 часа</p>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button onClick={remindLater} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                    Напомнить через 3 часа
+                  </button>
+                  <button onClick={buyPoints} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                    Купить очки
+                  </button>
+                </div>
+              </div>
+            )}
+            <p>{message}</p>
           </header>
         </div>
       );
