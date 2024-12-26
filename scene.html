@@ -72,7 +72,7 @@
                                 color: new THREE.Color(0x162a10), // Цвет стекла
                                 transparent: true,
                                 opacity: 0.8, // Прозрачность
-                                roughness: 0.3, // Гладкая поверхность для бликов
+                                roughness: 0.0, // Гладкая поверхность для бликов
                                 metalness: 1.0, // Не металл
                                 transmission: 0.2, // Почти полная прозрачность
                                 ior: 2.4, // Индекс преломления
@@ -80,7 +80,7 @@
                                 envMap: scene.environment,
                                 envMapIntensity: 2.0, // Усиление бликов и отражений
                                 clearcoat: 2.0, // Дополнительные блики
-                                clearcoatRoughness: 0.1 // Гладкость для clearcoat
+                                clearcoatRoughness: 1.1 // Гладкость для clearcoat
                             });
                             child.material.needsUpdate = true;
                         } else if (child.name === "Object22") { // Металл
