@@ -58,27 +58,31 @@
                     if (child.isMesh) {
                         child.material.envMap = scene.environment;
 
-                        // Общие настройки для стекла и металла
-                        if (child.material.name.includes("glass")) {
-                            child.material = new THREE.MeshPhysicalMaterial({
-                                color: 0x00ff00,  // Стеклянный цвет
-                                transmission: 1.0, // Полная прозрачность
-                                roughness: 0.0,
-                                metalness: 0.0,
-                                opacity: 0.9,
-                                ior: 1.5, // Индекс преломления
-                                thickness: 1.0,
-                                envMap: scene.environment,
-                                envMapIntensity: 2.0,
-                                clearcoat: 0.1,
-                                reflectivity: 0.9
-                            });
-                        } else {
-                            child.material = new THREE.MeshPhysicalMaterial({
-                                metalness: 1.0,
-                                roughness: 0.3,
-                                envMapIntensity: 2.0
-                            });
+                        // Применяем материал в зависимости от его свойств
+                        if (child.material.roughness !== undefined) {
+                            if (child.material.roughness > 0.5) {
+                                // Предположим, что материал металлический
+                                child.material = new THREE.MeshStandardMaterial({
+                                    metalness: 1.0,
+                                    roughness: 0.3,
+                                    envMapIntensity: 2.0
+                                });
+                            } else {
+                                // Стекло
+                                child.material = new THREE.MeshPhysicalMaterial({
+                                    color: 0x00ff00,  // Стеклянный цвет
+                                    transmission: 1.0, // Полная прозрачность
+                                    roughness: 0.0,
+                                    metalness: 0.0,
+                                    opacity: 0.9,
+                                    ior: 1.5, // Индекс преломления
+                                    thickness: 1.0,
+                                    envMap: scene.environment,
+                                    envMapIntensity: 2.0,
+                                    clearcoat: 0.1,
+                                    reflectivity: 0.9
+                                });
+                            }
                         }
                     }
                 });
