@@ -59,7 +59,7 @@
         // Загрузка моделей
         const loader = new THREE.GLTFLoader();
         loader.load(
-            'https://raw.githubusercontent.com/letomaneteo/21/main/ring7ring7.glb',
+            'https://raw.githubusercontent.com/letomaneteo/21/main/ring33.glb',
             (gltf) => {
                 const model = gltf.scene;
 
@@ -71,12 +71,12 @@
                             child.material = new THREE.MeshPhysicalMaterial({
                                 color: new THREE.Color(0x00ff00), // Цвет стекла
                                 transparent: true,
-                                opacity: 0.8, // Прозрачность
+                                opacity: 1.0, // Прозрачность
                                 roughness: 0.3, // Гладкая поверхность для бликов
                                 metalness: 0.0, // Не металл
                                 transmission: 0.7, // Почти полная прозрачность
                                 ior: 1.5, // Индекс преломления
-                                thickness: 0.1, // Толщина стекла
+                                thickness: 0.7, // Толщина стекла
                                 envMap: scene.environment,
                                 envMapIntensity: 2.0, // Усиление бликов и отражений
                                 clearcoat: 1.0, // Дополнительные блики
