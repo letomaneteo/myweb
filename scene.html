@@ -13,7 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
-
+    
     <script>
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -24,43 +24,113 @@
         renderer.outputEncoding = THREE.sRGBEncoding;
         document.body.appendChild(renderer.domElement);
 
-        // Установка прозрачного фона
-        scene.background = null;
-
-        // Загрузка HDR окружения (если оно необходимо)
+        // PMREM для обработки EXR
         const pmremGenerator = new THREE.PMREMGenerator(renderer);
         pmremGenerator.compileEquirectangularShader();
-        new THREE.EXRLoader().load(
-            'https://raw.githubusercontent.com/letomaneteo/21/main/meadow_2_4k.exr',
-            (texture) => {
+
+        // Загрузка EXR
+        new THREE.EXRLoader()
+            .load('https://raw.githubusercontent.com/letomaneteo/21/main/meadow_2_4k.exr', function (texture) {
                 const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
-                scene.environment = hdrTexture;
+                scene.environment = hdrTexture; // Освещение
+                scene.background = null; // Прозрачный фон
                 pmremGenerator.dispose();
-            }
-        );
+            });
 
-        // Освещение
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-        scene.add(ambientLight);
+       // Освещение сцены
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Увеличенная интенсивность окружающего освещения
 
-        // Загрузка модели
+// Несколько точечных источников света для равномерного освещения
+const pointLight1 = new THREE.PointLight(0xffffff, 1.2, 50);
+pointLight1.position.set(5, 5, 5);
+
+const pointLight2 = new THREE.PointLight(0xffffff, 1.0, 50);
+pointLight2.position.set(-5, 5, 5);
+
+const pointLight3 = new THREE.PointLight(0xffffff, 0.8, 50);
+pointLight3.position.set(0, -5, 5);
+
+// Добавлены два новых источника света для бокового освещения
+const pointLight4 = new THREE.PointLight(0xffffff, 0.7, 50);
+pointLight4.position.set(5, -5, -5);
+
+const pointLight5 = new THREE.PointLight(0xffffff, 0.7, 50);
+pointLight5.position.set(-5, -5, -5);
+
+scene.add(ambientLight, pointLight1, pointLight2, pointLight3, pointLight4, pointLight5);
+
+        // Загрузка моделей
         const loader = new THREE.GLTFLoader();
         loader.load(
             'https://raw.githubusercontent.com/letomaneteo/21/main/ring3ring5.glb',
             (gltf) => {
                 const model = gltf.scene;
+
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material.envMap = scene.environment;
+
+                        if (child.name === "Object11") { // Стекло
+                            child.material.transparent = true;
+                            child.material.color = new THREE.Color(0x00ff00); // Цвет стекла
+                            child.material.opacity = 0.9; // Прозрачность
+                            child.material.roughness = 0.3; // Гладкая поверхность для бликов
+                            child.material.metalness = 0.0; // Не металл
+                            child.material.transmission = 0.4; // Почти полная прозрачность
+                            child.material.ior = 1.5; // Индекс преломления
+                            child.material.thickness = 0.5; // Толщина стекла
+                            child.material.envMapIntensity = 8; // Усиление бликов и отражений
+                        } else if (child.name === "Object22") { // Металл
+                            child.material.metalness = 1.0;
+                            child.material.roughness = 0.3; // Настройка шероховатости
+                            child.material.envMapIntensity = 2.0; // Усиление отражений
+                        }
+
+                        child.material.needsUpdate = true;
+                    }
+                });
+
                 scene.add(model);
-                console.log("Model loaded successfully!");
             },
             undefined,
-            (error) => {
-                console.error("Error loading model:", error);
-            }
+            (error) => console.error("Ошибка загрузки модели:", error)
         );
 
         // Вращение сцены
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        const autoRotationSpeed = 0.005;
+
+        renderer.domElement.addEventListener('mousedown', (event) => {
+            isDragging = true;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+        });
+
+        renderer.domElement.addEventListener('mousemove', (event) => {
+            if (isDragging) {
+                const deltaMove = {
+                    x: event.clientX - previousMousePosition.x,
+                    y: event.clientY - previousMousePosition.y
+                };
+
+                scene.rotation.y += deltaMove.x * 0.005;
+                scene.rotation.x += deltaMove.y * 0.005;
+
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+            }
+        });
+
+        renderer.domElement.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
         function animate() {
             requestAnimationFrame(animate);
+
+            if (!isDragging) {
+                scene.rotation.y += autoRotationSpeed;
+            }
+
             renderer.render(scene, camera);
         }
 
