@@ -71,14 +71,14 @@
                             child.material = new THREE.MeshPhysicalMaterial({
                                 color: new THREE.Color(0x00ff00), // Цвет стекла
                                 transparent: true,
-                                opacity: 0.9, // Прозрачность
-                                roughness: 0.0, // Гладкая поверхность для бликов
+                                opacity: 0.1, // Прозрачность
+                                roughness: 0.3, // Гладкая поверхность для бликов
                                 metalness: 0.0, // Не металл
-                                transmission: 0.85, // Почти полная прозрачность
+                                transmission: 0.5, // Почти полная прозрачность
                                 ior: 1.5, // Индекс преломления
                                 thickness: 0.1, // Толщина стекла
                                 envMap: scene.environment,
-                                envMapIntensity: 1.5, // Усиление бликов и отражений
+                                envMapIntensity: 2.0, // Усиление бликов и отражений
                                 clearcoat: 1.0, // Дополнительные блики
                                 clearcoatRoughness: 0.1 // Гладкость для clearcoat
                             });
