@@ -37,27 +37,24 @@
                 pmremGenerator.dispose();
             });
 
-       // Освещение сцены
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Увеличенная интенсивность окружающего освещения
+        // Освещение сцены
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Увеличенная интенсивность окружающего освещения
+        const pointLight1 = new THREE.PointLight(0xffffff, 1.2, 50);
+        pointLight1.position.set(5, 5, 5);
 
-// Несколько точечных источников света для равномерного освещения
-const pointLight1 = new THREE.PointLight(0xffffff, 1.2, 50);
-pointLight1.position.set(5, 5, 5);
+        const pointLight2 = new THREE.PointLight(0xffffff, 1.0, 50);
+        pointLight2.position.set(-5, 5, 5);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 1.0, 50);
-pointLight2.position.set(-5, 5, 5);
+        const pointLight3 = new THREE.PointLight(0xffffff, 0.8, 50);
+        pointLight3.position.set(0, -5, 5);
 
-const pointLight3 = new THREE.PointLight(0xffffff, 0.8, 50);
-pointLight3.position.set(0, -5, 5);
+        const pointLight4 = new THREE.PointLight(0xffffff, 0.7, 50);
+        pointLight4.position.set(5, -5, -5);
 
-// Добавлены два новых источника света для бокового освещения
-const pointLight4 = new THREE.PointLight(0xffffff, 0.7, 50);
-pointLight4.position.set(5, -5, -5);
+        const pointLight5 = new THREE.PointLight(0xffffff, 0.7, 50);
+        pointLight5.position.set(-5, -5, -5);
 
-const pointLight5 = new THREE.PointLight(0xffffff, 0.7, 50);
-pointLight5.position.set(-5, -5, -5);
-
-scene.add(ambientLight, pointLight1, pointLight2, pointLight3, pointLight4, pointLight5);
+        scene.add(ambientLight, pointLight1, pointLight2, pointLight3, pointLight4, pointLight5);
 
         // Загрузка моделей
         const loader = new THREE.GLTFLoader();
@@ -71,19 +68,25 @@ scene.add(ambientLight, pointLight1, pointLight2, pointLight3, pointLight4, poin
                         child.material.envMap = scene.environment;
 
                         if (child.name === "Object11") { // Стекло
-                            child.material.transparent = true;
-                            child.material.color = new THREE.Color(0x00ff00); // Цвет стекла
-                            child.material.opacity = 0.9; // Прозрачность
-                            child.material.roughness = 0.3; // Гладкая поверхность для бликов
-                            child.material.metalness = 0.0; // Не металл
-                            child.material.transmission = 0.4; // Почти полная прозрачность
-                            child.material.ior = 1.5; // Индекс преломления
-                            child.material.thickness = 0.5; // Толщина стекла
-                            child.material.envMapIntensity = 8; // Усиление бликов и отражений
+                            child.material = new THREE.MeshPhysicalMaterial({
+                                color: new THREE.Color(0x00ff00), // Цвет стекла
+                                transparent: true,
+                                opacity: 0.9, // Прозрачность
+                                roughness: 0.0, // Гладкая поверхность для бликов
+                                metalness: 0.0, // Не металл
+                                transmission: 0.85, // Почти полная прозрачность
+                                ior: 1.5, // Индекс преломления
+                                thickness: 0.1, // Толщина стекла
+                                envMap: scene.environment,
+                                envMapIntensity: 1.5, // Усиление бликов и отражений
+                                clearcoat: 1.0, // Дополнительные блики
+                                clearcoatRoughness: 0.1 // Гладкость для clearcoat
+                            });
+                            child.material.needsUpdate = true;
                         } else if (child.name === "Object22") { // Металл
                             child.material.metalness = 1.0;
-                            child.material.roughness = 0.3; // Настройка шероховатости
-                            child.material.envMapIntensity = 2.0; // Усиление отражений
+                            child.material.roughness = 0.3;
+                            child.material.envMapIntensity = 2.0;
                         }
 
                         child.material.needsUpdate = true;
