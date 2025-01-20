@@ -94,19 +94,18 @@
         width: 100%;
         background-color: #333;
         position: absolute;
-        top: 0;  /* Меню будет ниже гамбургера */
         left: 0;
         padding: 10px 0;
         margin: 0;
         text-align: center;
         z-index: 999;
-        transform: translateY(100%); /* Меню будет по умолчанию скрыто ниже */
+        transform: translateY(-100%); /* Изначально меню скрыто за пределами экрана */
         transition: transform 0.3s ease; /* Плавное появление */
     }
 
     .header .nav.active {
         display: flex;
-        transform: translateY(0);/* Показываем меню при активации */
+        transform: translateY(0); /* Меню появляется с анимацией */
     }
 
     .menu-toggle {
@@ -118,22 +117,22 @@
     }
 
     .header.shrink .nav {
-        display: none;
+        display: none; /* Скрыть меню, если шапка сжата */
     }
 
     .header.shrink h1 {
         font-size: 18px;
     }
-}
 
-/* Позиционирование гамбургера при сжатой шапке */
-.header.shrink .menu-toggle {
-    position: absolute;
-    top: 10px;  /* Поднимите гамбургер */
-    right: 10px;
-    font-size: 24px;
-    color: white;
-    z-index: 1001; /* Гамбургер будет поверх всех элементов */
+    /* Позиционирование гамбургера при сжатой шапке */
+    .header.shrink .menu-toggle {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        color: white;
+        z-index: 1001; /* Гамбургер будет поверх всех элементов */
+    }
 }
 
 /* Когда гамбургер активирует меню */
@@ -141,7 +140,7 @@
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 60px;  /* Меню будет ниже гамбургера */
+    top: 60px; /* Располагаем меню ниже гамбургера */
     left: 0;
     right: 0;
     background-color: #333;
@@ -149,8 +148,6 @@
     text-align: center;
     z-index: 1000;
 }
-
-
         /* Основной контент */
         .main-content {
             padding: 20px;
