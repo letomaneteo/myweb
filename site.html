@@ -60,6 +60,7 @@
             margin-top: 10px;
         }
 
+        /* Основные стили */
         .header .nav {
             display: flex;
             gap: 15px;
@@ -106,16 +107,16 @@
                 transform: translateY(calc(100% + 10px)); /* Меню появляется ниже шапки */
             }
 
-            .header.shrink .nav.active {
-                transform: translateY(calc(80px + 10px)); /* Меню ниже сжатой шапки */
-            }
-
             .menu-toggle {
                 display: block;
                 cursor: pointer;
                 font-size: 24px;
                 color: white;
                 margin-top: 10px;
+            }
+
+            .header.shrink .nav.active {
+                transform: translateY(calc(80px + 10px)); /* Меню ниже сжатой шапки */
             }
 
             .header.shrink .menu-toggle {
@@ -131,12 +132,7 @@
         /* Основной контент */
         .main-content {
             padding: 20px;
-            margin-top: 120px; /* Учитываем высоту шапки */
-            transition: margin-top 0.3s ease; /* Плавное изменение отступа */
-        }
-
-        .header.shrink ~ .main-content {
-            margin-top: 60px; /* Уменьшаем отступ для сжатой шапки */
+            transition: margin-top 0.3s ease;
         }
 
         .section {
@@ -168,15 +164,15 @@
 
     <header class="header">
         <div class="container">
-            <a href="index.html"><img src="2.gif" alt="Логотип" style="width: 100px;"></a> <!-- Логотип с ссылкой -->
+            <a href="index.html"><img src="2.gif" alt="Логотип" style="width: 100px;"></a>
             <h1>Фиксированная шапка</h1>
             <nav class="nav">
-                <a href="home.html">Главная</a> <!-- Ссылка на страницу "Главная" -->
-                <a href="about.html">О нас</a> <!-- Ссылка на страницу "О нас" -->
-                <a href="services.html">Услуги</a> <!-- Ссылка на страницу "Услуги" -->
-                <a href="contact.html">Контакты</a> <!-- Ссылка на страницу "Контакты" -->
+                <a href="home.html">Главная</a>
+                <a href="about.html">О нас</a>
+                <a href="services.html">Услуги</a>
+                <a href="contact.html">Контакты</a>
             </nav>
-            <div class="menu-toggle" id="menuToggle">&#9776;</div> <!-- Гамбургер-меню -->
+            <div class="menu-toggle" id="menuToggle">&#9776;</div>
         </div>
     </header>
 
@@ -201,31 +197,31 @@
             <p>Свяжитесь с нами по телефону или через электронную почту. Мы всегда рады помочь!</p>
         </section>
 
-        <!-- Блок с анимацией или Three.js -->
         <div class="animation-container" id="animation-container">
             <p>Здесь может быть ваша анимация или 3D-сцена.</p>
         </div>
     </div>
 
     <script>
-        // Динамическая настройка отступа для основного контента
-        window.addEventListener('load', function () {
-            const header = document.querySelector('.header');
-            const mainContent = document.querySelector('.main-content');
-
-            function adjustContentMargin() {
-                const headerHeight = header.offsetHeight;
-                mainContent.style.marginTop = headerHeight + 'px';
+        window.onscroll = function() {
+            var header = document.querySelector('.header');
+            var mainContent = document.getElementById('mainContent');
+            var logo = document.querySelector('.header .container img');
+            
+            if (window.pageYOffset > 50) {
+                header.classList.add('shrink');
+                mainContent.style.marginTop = '90px';
+                logo.style.display = 'none';
+            } else {
+                header.classList.remove('shrink');
+                mainContent.style.marginTop = '180px';
+                logo.style.display = 'block';
             }
+        };
 
-            adjustContentMargin(); // Начальная установка
-            window.addEventListener('scroll', adjustContentMargin); // Корректировка при прокрутке
-        });
-
-        // Выпадающее меню
-        const menuToggle = document.getElementById('menuToggle');
-        const nav = document.querySelector('.header .nav');
-        const navLinks = document.querySelectorAll('.header .nav a');
+        var menuToggle = document.getElementById('menuToggle');
+        var nav = document.querySelector('.header .nav');
+        var navLinks = document.querySelectorAll('.header .nav a');
 
         menuToggle.addEventListener('click', function() {
             nav.classList.toggle('active');
@@ -243,7 +239,5 @@
             }
         });
     </script>
-
 </body>
 </html>
-
