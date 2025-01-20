@@ -120,8 +120,8 @@
 
         /* Основной контент */
         .main-content {
-            margin-top: 150px; /* Отступ сверху для учета шапки и выпадающего меню */
             padding: 20px;
+            transition: margin-top 0.3s ease; /* Плавное изменение отступа */
         }
 
         /* Анимация и блок для Three.js */
@@ -165,7 +165,7 @@
         </div>
     </header>
 
-    <div class="main-content">
+    <div class="main-content" id="mainContent">
         <section class="section" id="home">
             <h2>Главная</h2>
             <p>Добро пожаловать на наш сайт! Здесь вы найдете информацию о наших услугах и контактные данные.</p>
@@ -197,10 +197,13 @@
         // Уменьшение шапки при прокрутке
         window.onscroll = function() {
             var header = document.querySelector('.header');
+            var mainContent = document.getElementById('mainContent');
             if (window.pageYOffset > 50) {
                 header.classList.add('shrink');
+                mainContent.style.marginTop = '90px'; // Уменьшаем отступ при сжатии шапки
             } else {
                 header.classList.remove('shrink');
+                mainContent.style.marginTop = '150px'; // Восстанавливаем исходный отступ
             }
         };
 
