@@ -99,13 +99,14 @@
         margin: 0;
         text-align: center;
         z-index: 999;
-        transform: translateY(-100%); /* Изначально меню скрыто за пределами экрана */
-        transition: transform 0.3s ease; /* Плавное появление */
+        transform: translateY(-100%);
+        transition: transform 0.3s ease;
     }
 
     .header .nav.active {
         display: flex;
-        transform: translateY(0); /* Меню появляется с анимацией */
+        transform: translateY(0);
+        top: 100%; /* Устанавливаем меню ниже шапки */
     }
 
     .menu-toggle {
@@ -120,6 +121,9 @@
         display: none; /* Скрыть меню, если шапка сжата */
     }
 
+    .header.shrink .nav.active {
+        top: 40px; /* При сжатой шапке меню ниже её уменьшенной высоты */
+    }
     .header.shrink h1 {
         font-size: 18px;
     }
