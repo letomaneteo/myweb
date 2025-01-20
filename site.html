@@ -20,7 +20,7 @@
             color: white;
             padding: 20px 0;
             z-index: 1000;
-            transition: height 0.3s ease;
+            transition: height 0.3s ease, background-color 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -33,6 +33,11 @@
         .header.shrink {
             height: 70px;
             padding: 10px 0;
+            background-color: #444; /* Цвет фона шапки при прокрутке */
+        }
+
+        .header.shrink .container img {
+            display: none; /* Скрыть логотип при прокрутке */
         }
 
         .header .container {
@@ -53,7 +58,6 @@
             font-size: 20px;
         }
 
-        /* Навигация */
         .header .nav {
             display: flex;
             gap: 15px;
@@ -95,10 +99,6 @@
 
             .header .nav.active {
                 display: flex; /* Отобразить меню, когда класс active */
-            }
-
-            .header h1 {
-                font-size: 20px;
             }
 
             .menu-toggle {
@@ -198,12 +198,17 @@
         window.onscroll = function() {
             var header = document.querySelector('.header');
             var mainContent = document.getElementById('mainContent');
+            var logo = document.querySelector('.header .container img');
+            var nav = document.querySelector('.header .nav');
+            
             if (window.pageYOffset > 50) {
                 header.classList.add('shrink');
                 mainContent.style.marginTop = '90px'; // Уменьшаем отступ при сжатии шапки
+                logo.style.display = 'none'; // Скрыть логотип
             } else {
                 header.classList.remove('shrink');
                 mainContent.style.marginTop = '150px'; // Восстанавливаем исходный отступ
+                logo.style.display = 'block'; // Показываем логотип
             }
         };
 
