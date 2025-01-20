@@ -25,7 +25,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            background-image: url('earth2.gif'); /* Фон шапки */
+            background-image: url('earth2.gif');
             background-size: cover;
             background-position: center;
         }
@@ -33,12 +33,12 @@
         .header.shrink {
             height: 40px;
             padding: 10px 0;
-            background-color: #444; /* Цвет фона шапки при прокрутке */
-            background-image: none; /* Скрываем фон при прокрутке */
+            background-color: #444;
+            background-image: none;
         }
 
         .header.shrink .container img {
-            display: none; /* Скрыть логотип при прокрутке */
+            display: none;
         }
 
         .header .container {
@@ -60,102 +60,69 @@
             margin-top: 10px;
         }
 
-      /* Основные стили */
-.header .nav {
-    display: flex;
-    gap: 15px;
-    flex-direction: row;
-    justify-content: center;
-    margin-top: 10px;
-    transition: margin-top 0.3s ease;
-    position: relative; /* Позиционируем меню относительно шапки */
-}
+        .header .nav {
+            display: flex;
+            gap: 15px;
+            flex-direction: row;
+            justify-content: center;
+            margin-top: 10px;
+            position: relative;
+        }
 
-.header .nav a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-    transition: color 0.3s;
-}
+        .header .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
 
-.header .nav a:hover {
-    color: #ff6347;
-}
+        .header .nav a:hover {
+            color: #ff6347;
+        }
 
-/* Мобильное меню */
-.menu-toggle {
-    display: none;
-}
+        /* Мобильное меню */
+        .menu-toggle {
+            display: none;
+        }
 
-@media (max-width: 768px) {
-    .header .nav {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background-color: #333;
-        position: absolute;
-        left: 0;
-        padding: 10px 0;
-        margin: 0;
-        text-align: center;
-        z-index: 999;
-        transform: translateY(-100%);
-        transition: transform 0.3s ease;
-    }
+        @media (max-width: 768px) {
+            .header .nav {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background-color: #333;
+                position: absolute;
+                left: 0;
+                padding: 10px 0;
+                margin: 0;
+                text-align: center;
+                z-index: 999;
+                transform: translateY(-100%);
+                transition: transform 0.3s ease, top 0.3s ease;
+            }
 
-    .header .nav.active {
-        display: flex;
-        transform: translateY(0);
-        top: 100%; /* Устанавливаем меню ниже шапки */
-    }
+            .header .nav.active {
+                display: flex;
+                transform: translateY(0);
+                top: 100%;
+            }
 
-    .menu-toggle {
-        display: block;
-        cursor: pointer;
-        font-size: 24px;
-        color: white;
-        margin-top: 10px;
-    }
+            .header.shrink .nav.active {
+                top: 40px;
+            }
 
-    .header.shrink .nav {
-        display: none; /* Скрыть меню, если шапка сжата */
-    }
+            .menu-toggle {
+                display: block;
+                cursor: pointer;
+                font-size: 24px;
+                color: white;
+                margin-top: 10px;
+            }
+        }
 
-    .header.shrink .nav.active {
-        top: 40px; /* При сжатой шапке меню ниже её уменьшенной высоты */
-    }
-    .header.shrink h1 {
-        font-size: 18px;
-    }
-
-    /* Позиционирование гамбургера при сжатой шапке */
-    .header.shrink .menu-toggle {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 24px;
-        color: white;
-        z-index: 1001; /* Гамбургер будет поверх всех элементов */
-    }
-}
-
-/* Когда гамбургер активирует меню */
-.header .nav.active {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 60px; /* Располагаем меню ниже гамбургера */
-    left: 0;
-    right: 0;
-    background-color: #333;
-    padding: 10px 0;
-    text-align: center;
-    z-index: 1000;
-}
-        /* Основной контент */
         .main-content {
             padding: 20px;
-            transition: margin-top 0.3s ease; /* Плавное изменение отступа */
+            transition: margin-top 0.3s ease;
         }
 
         .section {
@@ -171,31 +138,20 @@
             font-size: 16px;
             line-height: 1.6;
         }
-
-        /* Анимация и блок для Three.js */
-        .animation-container {
-            width: 100%;
-            height: 500px;
-            margin-top: 20px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
-            position: relative;
-        }
     </style>
 </head>
 <body>
-
     <header class="header">
         <div class="container">
-            <a href="index.html"><img src="2.gif" alt="Логотип" style="width: 100px;"></a> <!-- Логотип с ссылкой -->
+            <a href="index.html"><img src="2.gif" alt="Логотип" style="width: 100px;"></a>
             <h1>Фиксированная шапка</h1>
             <nav class="nav">
-                <a href="home.html">Главная</a> <!-- Ссылка на страницу "Главная" -->
-                <a href="about.html">О нас</a> <!-- Ссылка на страницу "О нас" -->
-                <a href="services.html">Услуги</a> <!-- Ссылка на страницу "Услуги" -->
-                <a href="contact.html">Контакты</a> <!-- Ссылка на страницу "Контакты" -->
+                <a href="home.html">Главная</a>
+                <a href="about.html">О нас</a>
+                <a href="services.html">Услуги</a>
+                <a href="contact.html">Контакты</a>
             </nav>
-            <div class="menu-toggle" id="menuToggle">&#9776;</div> <!-- Гамбургер-меню -->
+            <div class="menu-toggle" id="menuToggle">&#9776;</div>
         </div>
     </header>
 
@@ -204,27 +160,18 @@
             <h2>Главная</h2>
             <p>Добро пожаловать на наш сайт! Здесь вы найдете информацию о наших услугах и контактные данные.</p>
         </section>
-        
         <section class="section" id="about">
             <h2>О нас</h2>
             <p>Мы — компания, которая предоставляет лучшие услуги для ваших нужд. Наши сотрудники имеют богатый опыт и всегда готовы помочь.</p>
         </section>
-
         <section class="section" id="services">
             <h2>Услуги</h2>
             <p>Мы предлагаем широкий спектр услуг, включая веб-разработку, консультации и поддержку клиентов.</p>
         </section>
-
         <section class="section" id="contact">
             <h2>Контакты</h2>
             <p>Свяжитесь с нами по телефону или через электронную почту. Мы всегда рады помочь!</p>
         </section>
-
-        <!-- Блок с анимацией или Three.js -->
-        <div class="animation-container" id="animation-container">
-            <!-- Здесь будет код для анимации или Three.js -->
-            <p>Здесь может быть ваша анимация или 3D-сцена.</p>
-        </div>
     </div>
 
     <script>
@@ -233,43 +180,28 @@
             var header = document.querySelector('.header');
             var mainContent = document.getElementById('mainContent');
             var logo = document.querySelector('.header .container img');
-            var nav = document.querySelector('.header .nav');
-            
+
             if (window.pageYOffset > 50) {
                 header.classList.add('shrink');
-                mainContent.style.marginTop = '90px'; // Уменьшаем отступ при сжатии шапки
-                logo.style.display = 'none'; // Скрыть логотип
+                mainContent.style.marginTop = '90px';
+                logo.style.display = 'none';
             } else {
                 header.classList.remove('shrink');
-                mainContent.style.marginTop = '180px'; // Восстанавливаем исходный отступ
-                logo.style.display = 'block'; // Показываем логотип
+                mainContent.style.marginTop = '180px';
+                logo.style.display = 'block';
             }
         };
 
         // Выпадающее меню
         var menuToggle = document.getElementById('menuToggle');
         var nav = document.querySelector('.header .nav');
-        var navLinks = document.querySelectorAll('.header .nav a');
 
-        // Открытие/закрытие меню при клике на гамбургер
         menuToggle.addEventListener('click', function() {
+            var header = document.querySelector('.header');
+            var isShrunk = header.classList.contains('shrink');
             nav.classList.toggle('active');
-        });
-
-        // Скрытие меню при клике на ссылку в меню
-        navLinks.forEach(function(link) {
-            link.addEventListener('click', function() {
-                nav.classList.remove('active');
-            });
-        });
-
-        // Скрытие меню при клике вне меню
-        document.addEventListener('click', function(event) {
-            if (!nav.contains(event.target) && !menuToggle.contains(event.target)) {
-                nav.classList.remove('active');
-            }
+            nav.style.top = isShrunk ? '40px' : '100%';
         });
     </script>
-
 </body>
 </html>
