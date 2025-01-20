@@ -121,6 +121,30 @@
             }
         }
 
+        /* Позиционирование гамбургера при сжатой шапке */
+        .header.shrink .menu-toggle {
+            position: absolute;
+            top: 10px;  /* Поднимите гамбургер */
+            right: 10px;
+            font-size: 24px;
+            color: white;
+            z-index: 1001; /* Гамбургер будет поверх всех элементов */
+        }
+
+        /* Когда гамбургер активирует меню */
+        .header .nav.active {
+            display: flex; /* Показываем меню */
+            flex-direction: column;
+            position: absolute;
+            top: 40px;  /* Сдвиг вниз, чтобы меню не перекрывало гамбургер */
+            left: 0;
+            right: 0;
+            background-color: #333;
+            padding: 10px 0;
+            text-align: center;
+            z-index: 1000;
+        }
+
         /* Основной контент */
         .main-content {
             padding: 20px;
@@ -130,14 +154,6 @@
         .section {
             margin-bottom: 40px;
         }
-/* Позиционирование гамбургера при сжатой шапке */
-.header.shrink .menu-toggle {
-    position: absolute;
-    top: 10px;  /* Немного поднимите гамбургер */
-    right: 10px;
-    font-size: 24px;
-    color: white;
-}
 
         .section h2 {
             font-size: 28px;
