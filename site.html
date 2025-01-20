@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Фиксированная шапка</title>
+    <title>Фиксированная шапка с выпадающим меню</title>
     <style>
         body {
             margin: 0;
@@ -18,8 +18,14 @@
             width: 100%;
             background-color: #333;
             color: white;
-            padding: 10px 0;
+            padding: 20px 0;
             z-index: 1000;
+            transition: height 0.3s ease;
+        }
+
+        .header.shrink {
+            height: 70px;
+            padding: 10px 0;
         }
 
         .header .container {
@@ -34,8 +40,14 @@
         .header h1 {
             margin: 0;
             font-size: 24px;
+            transition: font-size 0.3s ease;
         }
 
+        .header.shrink h1 {
+            font-size: 20px;
+        }
+
+        /* Навигация */
         .header .nav {
             display: flex;
             gap: 15px;
@@ -52,9 +64,48 @@
             color: #ff6347;
         }
 
+        /* Мобильное меню */
+        .menu-toggle {
+            display: none;
+        }
+
+        .header .nav {
+            display: flex;
+        }
+
+        @media (max-width: 768px) {
+            .header .nav {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background-color: #333;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                padding: 10px 0;
+                margin: 0;
+            }
+
+            .header .nav.active {
+                display: flex;
+            }
+
+            .header .nav a {
+                padding: 10px;
+                text-align: center;
+            }
+
+            .menu-toggle {
+                display: block;
+                cursor: pointer;
+                font-size: 24px;
+                color: white;
+            }
+        }
+
         /* Основной контент */
         .main-content {
-            margin-top: 60px; /* Отступ сверху для учета фиксированной шапки */
+            margin-top: 80px; /* Отступ сверху для учета фиксированной шапки */
             padding: 20px;
         }
 
@@ -72,40 +123,6 @@
             line-height: 1.6;
         }
 
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .header .container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .header h1 {
-                font-size: 20px;
-            }
-
-            .header .nav {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .header .nav a {
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 18px;
-            }
-
-            .header .nav a {
-                font-size: 12px;
-            }
-
-            .main-content {
-                padding: 10px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -119,6 +136,7 @@
                 <a href="#services">Услуги</a>
                 <a href="#contact">Контакты</a>
             </nav>
+            <div class="menu-toggle" id="menuToggle">&#9776;</div> <!-- Гамбургер-меню -->
         </div>
     </header>
 
@@ -143,6 +161,26 @@
             <p>Свяжитесь с нами по телефону или через электронную почту. Мы всегда рады помочь!</p>
         </section>
     </div>
+
+    <script>
+        // Уменьшение шапки при прокрутке
+        window.onscroll = function() {
+            var header = document.querySelector('.header');
+            if (window.pageYOffset > 50) {
+                header.classList.add('shrink');
+            } else {
+                header.classList.remove('shrink');
+            }
+        };
+
+        // Выпадающее меню
+        var menuToggle = document.getElementById('menuToggle');
+        var nav = document.querySelector('.header .nav');
+
+        menuToggle.addEventListener('click', function() {
+            nav.classList.toggle('active');
+        });
+    </script>
 
 </body>
 </html>
