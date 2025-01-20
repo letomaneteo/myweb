@@ -66,6 +66,7 @@
             flex-direction: row;
             justify-content: center;
             margin-top: 10px;
+            transition: margin-top 0.3s ease;
         }
 
         .header .nav a {
@@ -129,6 +130,14 @@
         .section {
             margin-bottom: 40px;
         }
+/* Позиционирование гамбургера при сжатой шапке */
+.header.shrink .menu-toggle {
+    position: absolute;
+    top: 10px;  /* Немного поднимите гамбургер */
+    right: 10px;
+    font-size: 24px;
+    color: white;
+}
 
         .section h2 {
             font-size: 28px;
