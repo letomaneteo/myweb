@@ -22,7 +22,7 @@
             left: 0;
             width: 100%;
             background: url('https://your-header-gif-link.com') no-repeat center center/cover;
-            height: 80px;
+            height: 100px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -31,63 +31,91 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        header .logo {
+        .header-content {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            left: 20px;
             width: 60px;
             height: 60px;
             background: url('https://your-logo-gif-link.com') no-repeat center center/cover;
         }
 
-        header .menu {
+        .menu {
             display: flex;
             gap: 20px;
             list-style: none;
+            justify-content: center;
         }
 
-        header .menu li a {
+        .menu li a {
             text-decoration: none;
             color: white;
             font-weight: bold;
+            font-size: 18px;
             transition: color 0.3s;
         }
 
-        header .menu li a:hover {
+        .menu li a:hover {
             color: #f0a500;
         }
 
+        .menu-toggle {
+            display: none;
+        }
+
         .content {
-            padding-top: 100px; /* Чтобы контент не перекрывался шапкой */
+            padding-top: 120px; /* Чтобы контент не перекрывался шапкой */
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            text-align: center;
         }
 
         /* Стили для мобильных устройств */
         @media (max-width: 768px) {
             header {
                 height: auto;
-                flex-direction: column;
-                align-items: center;
                 padding: 10px;
+                flex-direction: column;
             }
 
-            header .menu {
+            .header-content {
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .logo {
+                left: 0;
+                margin-bottom: 10px;
+            }
+
+            .menu {
                 display: none;
                 flex-direction: column;
-                text-align: center;
-                width: 100%;
                 gap: 10px;
                 background: rgba(0, 0, 0, 0.8);
+                width: 100%;
+                padding: 10px 0;
+                border-radius: 5px;
             }
 
-            header .menu.active {
+            .menu.active {
                 display: flex;
             }
 
-            header .menu li a {
+            .menu li a {
                 color: white;
             }
 
-            header .menu-toggle {
+            .menu-toggle {
                 display: block;
                 background: white;
                 color: black;
@@ -103,18 +131,20 @@
 <body>
     <header>
         <div class="logo"></div>
-        <ul class="menu">
-            <li><a href="#home">Главная</a></li>
-            <li><a href="#about">О нас</a></li>
-            <li><a href="#services">Услуги</a></li>
-            <li><a href="#contact">Контакты</a></li>
-        </ul>
-        <button class="menu-toggle">Меню</button>
+        <div class="header-content">
+            <ul class="menu">
+                <li><a href="#home">Главная</a></li>
+                <li><a href="#about">О нас</a></li>
+                <li><a href="#services">Услуги</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+            <button class="menu-toggle">Меню</button>
+        </div>
     </header>
     <div class="content">
         <h1>Добро пожаловать на наш сайт!</h1>
-        <p>Здесь размещен пример адаптированного сайта с фиксированной шапкой.</p>
-        <p>Добавьте свой контент ниже...</p>
+        <p>Это исправленная версия адаптированного сайта с центрированной шапкой.</p>
+        <p>Добавьте сюда свой контент...</p>
     </div>
 
     <script>
