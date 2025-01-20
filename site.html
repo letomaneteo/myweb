@@ -3,158 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сайт с фиксированной шапкой</title>
+    <title>Фиксированная шапка</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
-            line-height: 1.6;
         }
 
-        header {
+        /* Стиль шапки */
+        .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            background: url('https://your-header-gif-link.com') no-repeat center center/cover;
-            height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            justify-content: center;
-            position: relative;
-        }
-
-        .logo {
-            position: absolute;
-            left: 20px;
-            width: 60px;
-            height: 60px;
-            background: url('https://your-logo-gif-link.com') no-repeat center center/cover;
-        }
-
-        .menu {
-            display: flex;
-            gap: 20px;
-            list-style: none;
-            justify-content: center;
-        }
-
-        .menu li a {
-            text-decoration: none;
+            background-color: #333;
             color: white;
-            font-weight: bold;
-            font-size: 18px;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header .nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
             transition: color 0.3s;
         }
 
-        .menu li a:hover {
-            color: #f0a500;
+        .header .nav a:hover {
+            color: #ff6347;
         }
 
-        .menu-toggle {
-            display: none;
-        }
-
-        .content {
-            padding-top: 120px; /* Чтобы контент не перекрывался шапкой */
-            max-width: 1200px;
-            margin: 0 auto;
+        /* Основной контент */
+        .main-content {
+            margin-top: 60px; /* Отступ сверху для учета фиксированной шапки */
             padding: 20px;
-            text-align: center;
         }
 
-        /* Стили для мобильных устройств */
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .section p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Адаптивность */
         @media (max-width: 768px) {
-            header {
-                height: auto;
-                padding: 10px;
+            .header .container {
                 flex-direction: column;
+                align-items: flex-start;
             }
 
-            .header-content {
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
+            .header h1 {
+                font-size: 20px;
             }
 
-            .logo {
-                left: 0;
-                margin-bottom: 10px;
-            }
-
-            .menu {
-                display: none;
+            .header .nav {
                 flex-direction: column;
                 gap: 10px;
-                background: rgba(0, 0, 0, 0.8);
-                width: 100%;
-                padding: 10px 0;
-                border-radius: 5px;
             }
 
-            .menu.active {
-                display: flex;
+            .header .nav a {
+                font-size: 14px;
             }
+        }
 
-            .menu li a {
-                color: white;
-            }
-
-            .menu-toggle {
-                display: block;
-                background: white;
-                color: black;
-                border: none;
-                padding: 10px;
-                cursor: pointer;
+        @media (max-width: 480px) {
+            .header h1 {
                 font-size: 18px;
-                margin-top: 10px;
+            }
+
+            .header .nav a {
+                font-size: 12px;
+            }
+
+            .main-content {
+                padding: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo"></div>
-        <div class="header-content">
-            <ul class="menu">
-                <li><a href="#home">Главная</a></li>
-                <li><a href="#about">О нас</a></li>
-                <li><a href="#services">Услуги</a></li>
-                <li><a href="#contact">Контакты</a></li>
-            </ul>
-            <button class="menu-toggle">Меню</button>
+
+    <header class="header">
+        <div class="container">
+            <h1>Фиксированная шапка</h1>
+            <nav class="nav">
+                <a href="#home">Главная</a>
+                <a href="#about">О нас</a>
+                <a href="#services">Услуги</a>
+                <a href="#contact">Контакты</a>
+            </nav>
         </div>
     </header>
-    <div class="content">
-        <h1>Добро пожаловать на наш сайт!</h1>
-        <p>Это исправленная версия адаптированного сайта с центрированной шапкой.</p>
-        <p>Добавьте сюда свой контент...</p>
+
+    <div class="main-content">
+        <section class="section" id="home">
+            <h2>Главная</h2>
+            <p>Добро пожаловать на наш сайт! Здесь вы найдете информацию о наших услугах и контактные данные.</p>
+        </section>
+        
+        <section class="section" id="about">
+            <h2>О нас</h2>
+            <p>Мы — компания, которая предоставляет лучшие услуги для ваших нужд. Наши сотрудники имеют богатый опыт и всегда готовы помочь.</p>
+        </section>
+
+        <section class="section" id="services">
+            <h2>Услуги</h2>
+            <p>Мы предлагаем широкий спектр услуг, включая веб-разработку, консультации и поддержку клиентов.</p>
+        </section>
+
+        <section class="section" id="contact">
+            <h2>Контакты</h2>
+            <p>Свяжитесь с нами по телефону или через электронную почту. Мы всегда рады помочь!</p>
+        </section>
     </div>
 
-    <script>
-        // Логика для выпадающего меню на мобильных устройствах
-        const menuToggle = document.querySelector('.menu-toggle');
-        const menu = document.querySelector('.menu');
-
-        menuToggle.addEventListener('click', () => {
-            menu.classList.toggle('active');
-        });
-    </script>
 </body>
 </html>
