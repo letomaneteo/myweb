@@ -1,33 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Object Viewer</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Сайт с фиксированной шапкой</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: url('https://your-header-gif-link.com') no-repeat center center/cover;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header .logo {
+            width: 60px;
+            height: 60px;
+            background: url('https://your-logo-gif-link.com') no-repeat center center/cover;
+        }
+
+        header .menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        header .menu li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        header .menu li a:hover {
+            color: #f0a500;
+        }
+
+        .content {
+            padding-top: 100px; /* Чтобы контент не перекрывался шапкой */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Стили для мобильных устройств */
+        @media (max-width: 768px) {
+            header {
+                height: auto;
+                flex-direction: column;
+                align-items: center;
+                padding: 10px;
+            }
+
+            header .menu {
+                display: none;
+                flex-direction: column;
+                text-align: center;
+                width: 100%;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.8);
+            }
+
+            header .menu.active {
+                display: flex;
+            }
+
+            header .menu li a {
+                color: white;
+            }
+
+            header .menu-toggle {
+                display: block;
+                background: white;
+                color: black;
+                border: none;
+                padding: 10px;
+                cursor: pointer;
+                font-size: 18px;
+                margin-top: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <div class="logo-container">
-            <img src="logo.gif" alt="Logo" class="logo">
-            <h1>3D Object Viewer</h1>
-        </div>
-        <nav>
-            <button class="menu-toggle" aria-label="Toggle Menu">☰</button>
-            <ul class="menu">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#gallery">Gallery</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
+        <div class="logo"></div>
+        <ul class="menu">
+            <li><a href="#home">Главная</a></li>
+            <li><a href="#about">О нас</a></li>
+            <li><a href="#services">Услуги</a></li>
+            <li><a href="#contact">Контакты</a></li>
+        </ul>
+        <button class="menu-toggle">Меню</button>
     </header>
-    <main>
-        <section id="viewer">
-            <canvas id="three-canvas"></canvas>
-        </section>
-    </main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="script.js"></script>
+    <div class="content">
+        <h1>Добро пожаловать на наш сайт!</h1>
+        <p>Здесь размещен пример адаптированного сайта с фиксированной шапкой.</p>
+        <p>Добавьте свой контент ниже...</p>
+    </div>
+
+    <script>
+        // Логика для выпадающего меню на мобильных устройствах
+        const menuToggle = document.querySelector('.menu-toggle');
+        const menu = document.querySelector('.menu');
+
+        menuToggle.addEventListener('click', () => {
+            menu.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
