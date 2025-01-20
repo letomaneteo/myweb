@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Фиксированная шапка с логотипом</title>
+    <title>ИНТЕРАКТИВНЫЕ 3D модели</title>
     <style>
         body {
             margin: 0;
@@ -139,7 +139,7 @@
 
     <header class="header">
         <div class="container">
-            <h1>Фиксированная шапка</h1>
+            <h1>ИНТЕРАКТИВНЫЕ 3D МОДЕЛИ</h1>
             <nav class="nav">
                 <a href="#home">Главная</a>
                 <a href="#about">О нас</a>
@@ -186,9 +186,25 @@
         // Выпадающее меню
         var menuToggle = document.getElementById('menuToggle');
         var nav = document.querySelector('.header .nav');
+        var navLinks = document.querySelectorAll('.header .nav a');
 
+        // Открытие/закрытие меню при клике на гамбургер
         menuToggle.addEventListener('click', function() {
-            nav.classList.toggle('active'); // Открывает/закрывает меню
+            nav.classList.toggle('active');
+        });
+
+        // Скрытие меню при клике на ссылку в меню
+        navLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                nav.classList.remove('active');
+            });
+        });
+
+        // Скрытие меню при клике вне меню
+        document.addEventListener('click', function(event) {
+            if (!nav.contains(event.target) && !menuToggle.contains(event.target)) {
+                nav.classList.remove('active');
+            }
         });
     </script>
 
