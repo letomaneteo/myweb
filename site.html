@@ -31,9 +31,10 @@
         }
 
         .header.shrink {
-            height: 50px;
+            height: 70px;
             padding: 10px 0;
             background-color: #444; /* Цвет фона шапки при прокрутке */
+            background-image: none; /* Скрываем фон при прокрутке */
         }
 
         .header.shrink .container img {
@@ -124,16 +125,6 @@
             transition: margin-top 0.3s ease; /* Плавное изменение отступа */
         }
 
-        /* Анимация и блок для Three.js */
-        .animation-container {
-            width: 100%;
-            height: 500px;
-            margin-top: 20px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
-            position: relative;
-        }
-
         .section {
             margin-bottom: 40px;
         }
@@ -146,6 +137,16 @@
         .section p {
             font-size: 16px;
             line-height: 1.6;
+        }
+
+        /* Анимация и блок для Three.js */
+        .animation-container {
+            width: 100%;
+            height: 500px;
+            margin-top: 20px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            position: relative;
         }
     </style>
 </head>
