@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карусель с ручным управлением</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: transparent;
+            overflow: hidden;
+        }
+
+        .carousel {
+            position: relative;
+            width: 90vw;
+            height: 50vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .carousel img {
+            position: absolute;
+            transition: all 1s ease;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .carousel img.active {
+            width: 40vw;
+            z-index: 3;
+            transform: translateX(0) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .carousel img.left, .carousel img.right {
+            width: 25vw;
+            opacity: 1;
+            z-index: 2;
+            visibility: visible;
+        }
+
+        .carousel img.left {
+            transform: translateX(-130%) scale(0.9);
+        }
+
+        .carousel img.right {
+            transform: translateX(130%) scale(0.9);
+        }
+
+        /* Сделаем изображения невидимыми, когда они вне экрана */
+        .carousel img.hidden-left {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-200%) scale(0.8);
+        }
+
+        .carousel img.hidden-right {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(200%) scale(0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel">
+        <img src="https://i.imgur.com/HIGRoOs.png" />
+        <img src="https://i.imgur.com/7RmDFNW.png" />
+        <img src="https://i.imgur.com/yEUZFBA.png" />
+        <img src="https://i.imgur.com/pUmrb9g.png" />
+        <img src="https://i.imgur.com/6fJJTug.png" />
+        <img src="https://i.imgur.com/fJfMv4G.png" />
+    </div>
+
+    <script>
+        const carouselImages = document.querySelectorAll('.carousel img');
+        const carousel = document.querySelector('.carousel');
+        let currentIndex = 0;
+
+        function updateCarousel() {
+            carouselImages.forEach((img, index) => {
+                img.classList.remove('active', 'left', 'right', 'hidden-left', 'hidden-right');
+
+                if (index === currentIndex) {
+                    img.classList.add('active');
+                } else if (index === (currentIndex + 1) % carouselImages.length) {
+                    img.classList.add('right');
+                } else if (index === (currentIndex - 1 + carouselImages.length) % carouselImages.length) {
+                    img.classList.add('left');
+                } else if (index === (currentIndex - 2 + carouselImages.length) % carouselImages.length) {
+                    img.classList.add('hidden-left');
+                } else if (index === (currentIndex + 2) % carouselImages.length) {
+                    img.classList.add('hidden-right');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % carouselImages.length;
+            updateCarousel();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + carouselImages.length) % carouselImages.length;
+            updateCarousel();
+        }
+
+        // Обработчики кликов
+        carousel.addEventListener('click', (event) => {
+            const rect = carousel.getBoundingClientRect();
+            const clickX = event.clientX;
+            const centerX = rect.left + rect.width / 2;
+
+            if (clickX > centerX) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Обработчики свайпов для сенсорных экранов
+        let startX = 0;
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        carousel.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+
+            if (endX < startX) {
+                nextSlide();
+            } else if (endX > startX) {
+                prevSlide();
+            }
+        });
+
+        // Обновляем карусель
+        updateCarousel();
+    </script>
+</body>
+</html>
