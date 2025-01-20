@@ -60,40 +60,41 @@
             margin-top: 10px;
         }
 
-        .header .nav {
+      /* Основные стили */
+.header .nav {
     display: flex;
     gap: 15px;
     flex-direction: row;
     justify-content: center;
     margin-top: 10px;
     transition: margin-top 0.3s ease;
-    position: relative; /* Добавлено для того, чтобы меню выпадало вниз */
+    position: relative; /* Позиционируем меню относительно шапки */
 }
 
-        .header .nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
+.header .nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+}
 
-        .header .nav a:hover {
-            color: #ff6347;
-        }
+.header .nav a:hover {
+    color: #ff6347;
+}
 
-        /* Мобильное меню */
-        .menu-toggle {
-            display: none;
-        }
+/* Мобильное меню */
+.menu-toggle {
+    display: none;
+}
 
-       @media (max-width: 768px) {
+@media (max-width: 768px) {
     .header .nav {
         display: none;
         flex-direction: column;
         width: 100%;
         background-color: #333;
         position: absolute;
-        top: 100%; /* Добавлено, чтобы меню выпадало вниз под шапку */
+        top: 60px;  /* Меню будет ниже гамбургера */
         left: 0;
         padding: 10px 0;
         margin: 0;
@@ -101,43 +102,43 @@
         z-index: 999;
     }
 
-            .header .nav.active {
-                display: flex; /* Отобразить меню, когда класс active */
-            }
+    .header .nav.active {
+        display: flex;  /* Показываем меню при активации */
+    }
 
-            .menu-toggle {
-                display: block;
-                cursor: pointer;
-                font-size: 24px;
-                color: white;
-                margin-top: 10px;
-            }
+    .menu-toggle {
+        display: block;
+        cursor: pointer;
+        font-size: 24px;
+        color: white;
+        margin-top: 10px;
+    }
 
-            .header.shrink .nav {
-                display: none;
-            }
+    .header.shrink .nav {
+        display: none;
+    }
 
-            .header.shrink h1 {
-                font-size: 18px;
-            }
-        }
+    .header.shrink h1 {
+        font-size: 18px;
+    }
+}
 
-        /* Позиционирование гамбургера при сжатой шапке */
-        .header.shrink .menu-toggle {
-            position: absolute;
-            top: 10px;  /* Поднимите гамбургер */
-            right: 10px;
-            font-size: 24px;
-            color: white;
-            z-index: 1001; /* Гамбургер будет поверх всех элементов */
-        }
+/* Позиционирование гамбургера при сжатой шапке */
+.header.shrink .menu-toggle {
+    position: absolute;
+    top: 10px;  /* Поднимите гамбургер */
+    right: 10px;
+    font-size: 24px;
+    color: white;
+    z-index: 1001; /* Гамбургер будет поверх всех элементов */
+}
 
-        /* Когда гамбургер активирует меню */
-        .header .nav.active {
+/* Когда гамбургер активирует меню */
+.header .nav.active {
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 40px;  /* Добавлено, чтобы меню не перекрывало гамбургер */
+    top: 60px;  /* Меню будет ниже гамбургера */
     left: 0;
     right: 0;
     background-color: #333;
@@ -145,6 +146,7 @@
     text-align: center;
     z-index: 1000;
 }
+
 
         /* Основной контент */
         .main-content {
