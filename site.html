@@ -80,20 +80,21 @@
 
         @media (max-width: 768px) {
             .header .nav {
-                display: none;
+                display: none; /* Скрыть меню по умолчанию */
                 flex-direction: column;
                 width: 100%;
                 background-color: #333;
                 position: absolute;
-                top: 60px;
+                top: 100%; /* Меню будет выпадать под шапкой */
                 left: 0;
                 padding: 10px 0;
                 margin: 0;
                 text-align: center;
+                z-index: 999; /* Меню будет поверх контента */
             }
 
             .header .nav.active {
-                display: flex;
+                display: flex; /* Отобразить меню, когда класс active */
             }
 
             .header h1 {
@@ -119,7 +120,7 @@
 
         /* Основной контент */
         .main-content {
-            margin-top: 80px;
+            margin-top: 120px; /* Отступ сверху для учета шапки и выпадающего меню */
             padding: 20px;
         }
 
@@ -142,8 +143,8 @@
 
     <header class="header">
         <div class="container">
-            <a href="index.html"><img src="2.gif" alt="Логотип" style="width: 100px;"></a> <!-- Логотип с ссылкой -->
-            <h1>INTERACTIVE 3D</h1>
+            <a href="index.html"><img src="logo.png" alt="Логотип" style="width: 100px;"></a> <!-- Логотип с ссылкой -->
+            <h1>Фиксированная шапка</h1>
             <nav class="nav">
                 <a href="home.html">Главная</a> <!-- Ссылка на страницу "Главная" -->
                 <a href="about.html">О нас</a> <!-- Ссылка на страницу "О нас" -->
