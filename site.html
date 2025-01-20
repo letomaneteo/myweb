@@ -203,28 +203,49 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const header = document.querySelector('.header');
-            const mainContent = document.getElementById('mainContent');
-            const logo = document.querySelector('.header .container img');
-
-            function adjustMargin() {
-                const headerHeight = header.offsetHeight;
-                mainContent.style.marginTop = `${headerHeight}px`;
+        window.onload = function() {
+        var header = document.querySelector('.header');
+        var mainContent = document.getElementById('mainContent');
+        
+        // Получаем высоту шапки и устанавливаем отступ для основного контента
+        var headerHeight = header.offsetHeight;
+        mainContent.style.marginTop = headerHeight + 'px';
+    };
+        
+        window.onscroll = function() {
+            var header = document.querySelector('.header');
+            var mainContent = document.getElementById('mainContent');
+            var logo = document.querySelector('.header .container img');
+            
+            if (window.pageYOffset > 50) {
+                header.classList.add('shrink');
+                mainContent.style.marginTop = '90px';
+                logo.style.display = 'none';
+            } else {
+                header.classList.remove('shrink');
+                mainContent.style.marginTop = '180px';
+                logo.style.display = 'block';
             }
+        };
 
-            adjustMargin();
+        var menuToggle = document.getElementById('menuToggle');
+        var nav = document.querySelector('.header .nav');
+        var navLinks = document.querySelectorAll('.header .nav a');
 
-            window.addEventListener('scroll', function () {
-                if (window.pageYOffset > 50) {
-                    header.classList.add('shrink');
-                    logo.style.display = 'none';
-                } else {
-                    header.classList.remove('shrink');
-                    logo.style.display = 'block';
-                }
-                adjustMargin();
+        menuToggle.addEventListener('click', function() {
+            nav.classList.toggle('active');
+        });
+
+        navLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                nav.classList.remove('active');
             });
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!nav.contains(event.target) && !menuToggle.contains(event.target)) {
+                nav.classList.remove('active');
+            }
         });
     </script>
 </body>
