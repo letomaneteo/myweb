@@ -67,8 +67,8 @@
     flex-direction: row;
     justify-content: center;
     margin-top: 10px;
+    position: relative;
     transition: margin-top 0.3s ease;
-    position: relative; /* Позиционируем меню относительно шапки */
 }
 
 .header .nav a {
@@ -87,25 +87,27 @@
     display: none;
 }
 
+/* Мобильное меню - по умолчанию скрыто */
 @media (max-width: 768px) {
     .header .nav {
         display: none;
         flex-direction: column;
         width: 100%;
-        background-color: #333;
         position: absolute;
+        top: 100%;  /* Меню будет всегда ниже шапки */
         left: 0;
+        background-color: rgba(51, 51, 51, 0.8); /* Полупрозрачный фон для открытого меню */
         padding: 10px 0;
         margin: 0;
         text-align: center;
         z-index: 999;
-        transform: translateY(-100%); /* Изначально меню скрыто за пределами экрана */
+        transform: translateY(-100%); /* Скрыто по умолчанию */
         transition: transform 0.3s ease; /* Плавное появление */
     }
 
     .header .nav.active {
         display: flex;
-        transform: translateY(0); /* Меню появляется с анимацией */
+        transform: translateY(0); /* Показываем меню при активации */
     }
 
     .menu-toggle {
@@ -117,22 +119,30 @@
     }
 
     .header.shrink .nav {
-        display: none; /* Скрыть меню, если шапка сжата */
+        display: none;
     }
 
     .header.shrink h1 {
         font-size: 18px;
     }
+}
 
-    /* Позиционирование гамбургера при сжатой шапке */
-    .header.shrink .menu-toggle {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 24px;
-        color: white;
-        z-index: 1001; /* Гамбургер будет поверх всех элементов */
+/* Когда шапка сжата и гамбургер активирует меню */
+@media (max-width: 768px) {
+    .header.shrink .nav.active {
+        top: 60px; /* Меню будет ниже шапки */
+        background-color: rgba(51, 51, 51, 0.8); /* Полупрозрачный фон */
     }
+}
+
+/* Позиционирование гамбургера при сжатой шапке */
+.header.shrink .menu-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: white;
+    z-index: 1001; /* Гамбургер будет поверх всех элементов */
 }
 
 /* Когда гамбургер активирует меню */
