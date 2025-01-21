@@ -1,6 +1,7 @@
-        const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Соотношение сторон 1:1 для квадратного канваса
-camera.position.set(0, 0, 1);
+// Создание сцены, камеры и рендера
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Соотношение сторон 1:1
+camera.position.set(0, 0, 2); // Расположение камеры
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setSize(500, 500); // Квадратный размер
@@ -10,19 +11,22 @@ renderer.toneMappingExposure = 1.5;
 
 document.body.appendChild(renderer.domElement);
 
+// Освещение
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(5, 10, 7.5).normalize();
+directionalLight.position.set(-5, 10, 7.5).normalize();
 scene.add(directionalLight);
 
+// Загрузка окружения
 new THREE.EXRLoader()
     .load('https://raw.githubusercontent.com/letomaneteo/21/main/sunset_fairway_4k.exr', (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         scene.environment = texture;
     });
 
+// Загрузка модели GLTF
 const loader = new THREE.GLTFLoader();
 let model;
 let mixer;
@@ -68,6 +72,7 @@ loader.load(
     (error) => console.error('Ошибка загрузки модели:', error)
 );
 
+// Обработка кликов
 function onPointerClick(event) {
     const rect = renderer.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -100,6 +105,7 @@ function onPointerClick(event) {
 
 window.addEventListener('click', onPointerClick);
 
+// Обработка вращения и масштабирования модели
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 let autoRotate = true;
@@ -137,6 +143,7 @@ renderer.domElement.addEventListener('wheel', (event) => {
     }
 });
 
+// Анимация
 const clock = new THREE.Clock();
 
 function animate() {
@@ -154,8 +161,10 @@ function animate() {
 
 animate();
 
+// Обновление размеров
 window.addEventListener('resize', () => {
-    camera.aspect = 1; // Соотношение сторон 1:1 для квадратного канваса
+    const size = Math.min(window.innerWidth, window.innerHeight); // Квадратный размер
+    camera.aspect = 1; // Соотношение сторон 1:1
     camera.updateProjectionMatrix();
-    renderer.setSize(500, 500); // Квадратный размер
+    renderer.setSize(size, size);
 });
