@@ -7,7 +7,8 @@
         renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.5;
-        document.body.appendChild(renderer.domElement);
+        const container = document.getElementById('rendererCanvasContainer');
+        container.appendChild(renderer.domElement);
         renderer.domElement.classList.add('myCanvasClass');
 
 
