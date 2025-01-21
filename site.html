@@ -151,28 +151,29 @@
             line-height: 1.6;
         }
     canvas {
-        border: 3px solid black;  /* Устанавливаем рамку */
-        display: block;           /* Убираем лишние отступы вокруг canvas */
-        margin: 0 auto;           /* Центрируем */
-        box-sizing: border-box;   /* Учитываем рамку в общей ширине */
+        border: 3px solid black;   /* Устанавливаем рамку */
+        display: block;            /* Убираем лишние отступы вокруг canvas */
+        margin: 0 auto;            /* Центрируем */
+        box-sizing: border-box;    /* Учитываем рамку в общей ширине */
+        width: 100%;               /* Ширина канваса на всю ширину экрана */
+        height: auto;              /* Высота автоматически подстраивается */
     }
 
     /* Мобильная адаптация */
     @media (max-width: 768px) {
         canvas {
-            width: 100%;    /* Канвас будет занимать всю ширину экрана */
-            height: auto;   /* Высота будет адаптироваться по ширине */
+            width: 100%;        /* Канвас будет занимать всю ширину экрана */
+            height: auto;       /* Высота будет автоматически адаптироваться */
         }
     }
 
     /* Очень маленькие экраны */
     @media (max-width: 480px) {
         canvas {
-            width: 100%;    /* Канвас займет всю ширину экрана */
-            height: 200px;  /* Установим фиксированную высоту для маленьких экранов */
+            width: 100%;        /* Канвас займет всю ширину экрана */
+            height: auto;       /* Высота будет автоматически адаптироваться */
         }
-    }       
-}
+    }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
