@@ -69,7 +69,7 @@
             justify-content: center;
             margin-top: 10px;
             transition: margin-top 0.3s ease;
-            position: relative; /* Позиционируем меню относительно шапки */
+            position: relative;
         }
 
         .header .nav a {
@@ -99,13 +99,13 @@
                 padding: 10px 0;
                 text-align: center;
                 z-index: 999;
-                transform: translateY(-100%); /* Изначально меню скрыто за пределами экрана */
-                transition: transform 0.3s ease; /* Плавное появление */
+                transform: translateY(-100%);
+                transition: transform 0.3s ease;
             }
 
             .header .nav.active {
                 display: flex;
-                transform: translateY(calc(100% + 10px)); /* Меню появляется ниже шапки */
+                transform: translateY(calc(100% + 10px));
             }
 
             .menu-toggle {
@@ -118,7 +118,7 @@
 
             .header.shrink .nav.active {
                 transform: translateY(calc(80px + 10px));
-                background-color: rgba(52, 76, 17, 0.5);/* Меню ниже сжатой шапки */
+                background-color: rgba(52, 76, 17, 0.5);
             }
 
             .header.shrink .menu-toggle {
@@ -150,35 +150,35 @@
             font-size: 16px;
             line-height: 1.6;
         }
-    canvas {
-        border: 3px solid black;   /* Устанавливаем рамку */
-        display: block;            /* Убираем лишние отступы вокруг canvas */
-        margin: 0 auto;            /* Центрируем */
-        box-sizing: border-box;    /* Учитываем рамку в общей ширине */
-        width: 100%;               /* Ширина канваса на всю ширину экрана */
-        height: auto;              /* Высота автоматически подстраивается */
-    }
 
-    /* Мобильная адаптация */
-    @media (max-width: 768px) {
         canvas {
-            width: 100%;        /* Канвас будет занимать всю ширину экрана */
-            height: auto;       /* Высота будет автоматически адаптироваться */
+            border: 3px solid black;
+            display: block;
+            margin: 0 auto;
+            box-sizing: border-box;
+            width: 100%;
+            height: auto;
+            max-width: 600px; /* Максимальная ширина канваса */
+            max-height: 600px; /* Максимальная высота канваса */
         }
-    }
 
-    /* Очень маленькие экраны */
-    @media (max-width: 480px) {
-        canvas {
-            width: 100%;        /* Канвас займет всю ширину экрана */
-            height: auto;       /* Высота будет автоматически адаптироваться */
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            canvas {
+                width: 100%;
+                height: auto;
+            }
         }
-    }
+
+        /* Очень маленькие экраны */
+        @media (max-width: 480px) {
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
-
 </head>
 <body>
 
@@ -217,57 +217,56 @@
             <p>Свяжитесь с нами по телефону или через электронную почту. Мы всегда рады помочь!</p>
         </section>
 
-        <div class="animation-container" id="animation-container">
-            <p>Здесь может быть ваша анимация или 3D-сцена.</p>
-        </div>
+        <canvas id="webgl-canvas"></canvas>
     </div>
 
     <script>
         window.onload = function() {
-        var header = document.querySelector('.header');
-        var mainContent = document.getElementById('mainContent');
-        
-        // Получаем высоту шапки и устанавливаем отступ для основного контента
-        var headerHeight = header.offsetHeight;
-        mainContent.style.marginTop = headerHeight + 'px';
-    };
+            var header = document.querySelector('.header');
+            var mainContent = document.getElementById('mainContent');
+            
+            var headerHeight = header.offsetHeight;
+            mainContent.style.marginTop = headerHeight + 'px';
+        };
    
         window.onscroll = function() {
             var header = document.querySelector('.header');
-            var mainContent = document.getElementById('mainContent');
-            var logo = document.querySelector('.header .container img');
-            
             if (window.pageYOffset > 50) {
                 header.classList.add('shrink');
-                mainContent.style.marginTop = '90px';
-                logo.style.display = 'none';
             } else {
                 header.classList.remove('shrink');
-                mainContent.style.marginTop = '180px';
-                logo.style.display = 'block';
             }
         };
 
-        var menuToggle = document.getElementById('menuToggle');
-        var nav = document.querySelector('.header .nav');
-        var navLinks = document.querySelectorAll('.header .nav a');
+        const canvas = document.getElementById('webgl-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
 
-        menuToggle.addEventListener('click', function() {
-            nav.classList.toggle('active');
-        });
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
 
-        navLinks.forEach(function(link) {
-            link.addEventListener('click', function() {
-                nav.classList.remove('active');
-            });
-        });
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
 
-        document.addEventListener('click', function(event) {
-            if (!nav.contains(event.target) && !menuToggle.contains(event.target)) {
-                nav.classList.remove('active');
-            }
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            const { clientWidth, clientHeight } = canvas;
+            renderer.setSize(clientWidth, clientHeight, false);
+            camera.aspect = clientWidth / clientHeight;
+            camera.updateProjectionMatrix();
         });
     </script>
-    <script src="object1.js"></script>
 </body>
 </html>
