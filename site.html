@@ -156,7 +156,7 @@
         margin: 0 auto;            /* Центрируем */
         box-sizing: border-box;    /* Учитываем рамку в общей ширине */
         width: 100%;               /* Ширина канваса на всю ширину экрана */
-        height: auto;              /* Высота автоматически подстраивается */
+        height: 100%;              /* Высота автоматически подстраивается */
     }
 
     /* Мобильная адаптация */
@@ -269,21 +269,6 @@
         });
     </script>
     <script src="object1.js"></script>
-    <script>
-    window.addEventListener('resize', resizeCanvas);  // При изменении размера окна вызываем функцию resizeCanvas
-
-    function resizeCanvas() {
-        const canvas = document.querySelector('canvas');  // Находим канвас
-        if (canvas) {
-            const aspectRatio = 16 / 9;  // Пропорции канваса (например, 16:9)
-
-            // Устанавливаем высоту канваса, сохраняя пропорции
-            canvas.height = canvas.offsetWidth / aspectRatio;
-        }
-    }
-
-    // Инициализация при загрузке страницы
-    resizeCanvas();
-</script>
+    
 </body>
 </html>
