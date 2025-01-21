@@ -205,32 +205,29 @@
         </div>
     </header>
 
-    <div class="main-content" id="mainContent">
-        <section class="section" id="home">
-            <h2>Главная</h2>
-            <p>Добро пожаловать на наш сайт! Здесь вы найдете информацию о наших услугах и контактные данные.</p>
-        </section>
-        
-        <section class="section" id="about">
-            <h2>О нас</h2>
-            <p>Мы — компания, которая предоставляет лучшие услуги для ваших нужд. Наши сотрудники имеют богатый опыт и всегда готовы помочь.</p>
-        </section>
+   <div class="main-content" id="mainContent">
+    <!-- Раздел Главная -->
+    <section class="section" id="home">
+        <h2>Главная</h2>
+        <p>Добро пожаловать на наш сайт! Здесь вы найдете информацию о наших услугах и контактные данные.</p>
+    </section>
 
-        <section class="section" id="services">
-            <h2>Услуги</h2>
-            <p>Мы предлагаем широкий спектр услуг, включая веб-разработку, консультации и поддержку клиентов.</p>
-        </section>
-
-        <section class="section" id="contact">
-            <h2>Контакты</h2>
-            <p>Свяжитесь с нами по телефону или через электронную почту. Мы всегда рады помочь!</p>
-        </section>
-
-        <div class="animation-container" id="animation-container">
+    <!-- Раздел с 3D-объектом -->
+    <section class="section" id="animation">
+        <h2>Анимация</h2>
+        <div class="animation-container">
             <p>Здесь может быть ваша анимация или 3D-сцена.</p>
+            <!-- Вставляем элемент с 3D-объектом -->
+            <canvas id="rendererCanvas" class="myCanvasClass"></canvas>
         </div>
-    </div>
+    </section>
 
+    <!-- Раздел О нас -->
+    <section class="section" id="about">
+        <h2>О нас</h2>
+        <p>Мы — компания, которая предоставляет лучшие услуги для ваших нужд. Наши сотрудники имеют богатый опыт и всегда готовы помочь.</p>
+    </section>
+</div>
     <script>
         window.onload = function() {
         var header = document.querySelector('.header');
