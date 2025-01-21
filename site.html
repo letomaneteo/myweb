@@ -150,37 +150,28 @@
             font-size: 16px;
             line-height: 1.6;
         }
-   .myCanvasClass {
-        display: block;
-        width: 100%;
-        height: auto; /* Автоматическая высота для сохранения пропорций */
-        object-fit: contain; /* Элемент не будет растягиваться */
+    canvas {
+        border: 3px solid black;   /* Устанавливаем рамку */
+        display: block;            /* Убираем лишние отступы вокруг canvas */
+        margin: 0 auto;            /* Центрируем */
+        box-sizing: border-box;    /* Учитываем рамку в общей ширине */
+        width: 100%;               /* Ширина канваса на всю ширину экрана */
+        height: auto;              /* Высота автоматически подстраивается */
     }
 
-    /* Медиазапрос для мобильных устройств */
+    /* Мобильная адаптация */
     @media (max-width: 768px) {
-        .myCanvasClass {
-            width: 100%;
-            height: auto;
-            /* Подстройка для мобильных устройств */
+        canvas {
+            width: 100%;        /* Канвас будет занимать всю ширину экрана */
+            height: auto;       /* Высота будет автоматически адаптироваться */
         }
     }
 
-    /* Медиазапрос для экранов планшетов */
-    @media (max-width: 1024px) {
-        .myCanvasClass {
-            width: 100%;
-            height: auto;
-            /* Можно добавить дополнительные стили для планшетов */
-        }
-    }
-
-    /* Медиазапрос для больших экранов */
-    @media (min-width: 1025px) {
-        .myCanvasClass {
-            width: 100%;
-            height: auto;
-            /* Дополнительные стили для больших экранов, если необходимо */
+    /* Очень маленькие экраны */
+    @media (max-width: 480px) {
+        canvas {
+            width: 100%;        /* Канвас займет всю ширину экрана */
+            height: auto;       /* Высота будет автоматически адаптироваться */
         }
     }
     </style>
@@ -205,21 +196,30 @@
         </div>
     </header>
 
- <div class="main-content" id="mainContent">
-        <!-- Раздел Главная -->
+    <div class="main-content" id="mainContent">
         <section class="section" id="home">
             <h2>Главная</h2>
             <p>Добро пожаловать на наш сайт! Здесь вы найдете информацию о наших услугах и контактные данные.</p>
         </section>
-
-        <!-- Раздел с 3D-объектом -->
-       <div id="rendererCanvasContainer"></div>
-
-        <!-- Раздел О нас -->
+        
         <section class="section" id="about">
             <h2>О нас</h2>
             <p>Мы — компания, которая предоставляет лучшие услуги для ваших нужд. Наши сотрудники имеют богатый опыт и всегда готовы помочь.</p>
         </section>
+
+        <section class="section" id="services">
+            <h2>Услуги</h2>
+            <p>Мы предлагаем широкий спектр услуг, включая веб-разработку, консультации и поддержку клиентов.</p>
+        </section>
+
+        <section class="section" id="contact">
+            <h2>Контакты</h2>
+            <p>Свяжитесь с нами по телефону или через электронную почту. Мы всегда рады помочь!</p>
+        </section>
+
+        <div class="animation-container" id="animation-container">
+            <p>Здесь может быть ваша анимация или 3D-сцена.</p>
+        </div>
     </div>
 
     <script>
