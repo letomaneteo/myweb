@@ -205,26 +205,28 @@
         </div>
     </header>
 
-  <div class="main-content" id="mainContent">
-    <!-- Раздел Главная -->
-    <section class="section" id="home">
-        <h2>Главная</h2>
-        <p>Добро пожаловать на наш сайт! Здесь вы найдете информацию о наших услугах и контактные данные.</p>
-    </section>
+ <div class="main-content" id="mainContent">
+        <!-- Раздел Главная -->
+        <section class="section" id="home">
+            <h2>Главная</h2>
+            <p>Добро пожаловать на наш сайт! Здесь вы найдете информацию о наших услугах и контактные данные.</p>
+        </section>
 
-    <div class="content">
-    <p>Добро пожаловать! Здесь будет ваша сцена.</p>
-    <div id="rendererCanvasContainer" style="width: 100%; height: 500px;"></div>
-    <p>Спасибо за внимание! Это был наш проект.</p>
-</div>
+        <!-- Раздел с 3D-объектом -->
+        <section class="section" id="animation">
+            <h2>Анимация</h2>
+            <div class="animation-container">
+                <p>Здесь может быть ваша анимация или 3D-сцена.</p>
+                <canvas id="rendererCanvas" class="myCanvasClass"></canvas>
+            </div>
+        </section>
 
-
-    <!-- Раздел О нас -->
-    <section class="section" id="about">
-        <h2>О нас</h2>
-        <p>Мы — компания, которая предоставляет лучшие услуги для ваших нужд. Наши сотрудники имеют богатый опыт и всегда готовы помочь.</p>
-    </section>
-</div>
+        <!-- Раздел О нас -->
+        <section class="section" id="about">
+            <h2>О нас</h2>
+            <p>Мы — компания, которая предоставляет лучшие услуги для ваших нужд. Наши сотрудники имеют богатый опыт и всегда готовы помочь.</p>
+        </section>
+    </div>
 
     <script>
         window.onload = function() {
