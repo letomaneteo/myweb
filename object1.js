@@ -7,10 +7,7 @@
         renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.5;
-        const container = document.getElementById('rendererCanvasContainer');
-        container.appendChild(renderer.domElement);
-        renderer.domElement.classList.add('myCanvasClass');
-
+        document.body.appendChild(renderer.domElement);
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
@@ -215,4 +212,3 @@ renderer.domElement.addEventListener('wheel', (event) => {
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-   
