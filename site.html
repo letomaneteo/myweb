@@ -179,6 +179,8 @@
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
 </head>
 <body>
 
@@ -228,7 +230,7 @@
             var headerHeight = header.offsetHeight;
             mainContent.style.marginTop = headerHeight + 'px';
         };
-   
+
         window.onscroll = function() {
             var header = document.querySelector('.header');
             if (window.pageYOffset > 50) {
@@ -238,35 +240,45 @@
             }
         };
 
+        var menuToggle = document.getElementById('menuToggle');
+        var nav = document.querySelector('.header .nav');
+        var navLinks = document.querySelectorAll('.header .nav a');
+
+        menuToggle.addEventListener('click', function() {
+            nav.classList.toggle('active');
+        });
+
+        navLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                nav.classList.remove('active');
+            });
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!nav.contains(event.target) && !menuToggle.contains(event.target)) {
+                nav.classList.remove('active');
+            }
+        });
+
         const canvas = document.getElementById('webgl-canvas');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
         renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
 
-        const geometry = new THREE.BoxGeometry();
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
+        const loader = new THREE.GLTFLoader();
+        loader.load('object1.js', (gltf) => {
+            scene.add(gltf.scene);
+        });
 
         camera.position.z = 5;
 
         function animate() {
             requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
             renderer.render(scene, camera);
         }
 
         animate();
-
-        window.addEventListener('resize', () => {
-            const { clientWidth, clientHeight } = canvas;
-            renderer.setSize(clientWidth, clientHeight, false);
-            camera.aspect = clientWidth / clientHeight;
-            camera.updateProjectionMatrix();
-        });
     </script>
 </body>
 </html>
