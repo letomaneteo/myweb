@@ -269,5 +269,21 @@
         });
     </script>
     <script src="object1.js"></script>
+    <script>
+    window.addEventListener('resize', resizeCanvas);  // При изменении размера окна вызываем функцию resizeCanvas
+
+    function resizeCanvas() {
+        const canvas = document.querySelector('canvas');  // Находим канвас
+        if (canvas) {
+            const aspectRatio = 16 / 9;  // Пропорции канваса (например, 16:9)
+
+            // Устанавливаем высоту канваса, сохраняя пропорции
+            canvas.height = canvas.offsetWidth / aspectRatio;
+        }
+    }
+
+    // Инициализация при загрузке страницы
+    resizeCanvas();
+</script>
 </body>
 </html>
