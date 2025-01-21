@@ -8,6 +8,7 @@
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.5;
         document.body.appendChild(renderer.domElement);
+        renderer.domElement.classList.add('myCanvasClass');
 
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
