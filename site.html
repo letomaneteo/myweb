@@ -224,8 +224,16 @@
         // Получаем высоту шапки и устанавливаем отступ для основного контента
         var headerHeight = header.offsetHeight;
         mainContent.style.marginTop = headerHeight + 'px';
+
+        resizeCanvas(); // Устанавливаем размер канваса при загрузке
     };
-        
+     function resizeCanvas() {
+    var canvas = document.querySelector('canvas');
+    if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight - document.querySelector('.header').offsetHeight; // высота канваса = высота окна минус шапка
+    }
+}
         window.onscroll = function() {
             var header = document.querySelector('.header');
             var mainContent = document.getElementById('mainContent');
