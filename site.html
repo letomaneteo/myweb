@@ -99,13 +99,13 @@
                 padding: 10px 0;
                 text-align: center;
                 z-index: 999;
-                transform: translateY(-100%);
-                transition: transform 0.3s ease;
+                transform: translateY(-100%); /* Изначально меню скрыто за пределами экрана */
+                transition: transform 0.3s ease; /* Плавное появление */
             }
 
             .header .nav.active {
                 display: flex;
-                transform: translateY(calc(100% + 10px));
+                transform: translateY(calc(100% + 10px)); /* Меню появляется ниже шапки */
             }
 
             .menu-toggle {
@@ -118,7 +118,7 @@
 
             .header.shrink .nav.active {
                 transform: translateY(calc(80px + 10px));
-                background-color: rgba(52, 76, 17, 0.5);
+                background-color: rgba(52, 76, 17, 0.5); /* Меню ниже сжатой шапки */
             }
 
             .header.shrink .menu-toggle {
@@ -151,30 +151,30 @@
             line-height: 1.6;
         }
 
+        .animation-container {
+            text-align: center;
+            position: relative;
+            width: 100%;
+            height: 500px; /* Задаем высоту контейнера для канваса */
+        }
+
         canvas {
-            border: 3px solid black;
             display: block;
             margin: 0 auto;
-            box-sizing: border-box;
-            width: 100%;
-            height: auto;
-            max-width: 600px; /* Максимальная ширина канваса */
-            max-height: 600px; /* Максимальная высота канваса */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px; /* Размер канваса */
+            height: 500px;
+            border: 1px solid black;
         }
 
         /* Мобильная адаптация */
         @media (max-width: 768px) {
             canvas {
-                width: 100%;
-                height: auto;
-            }
-        }
-
-        /* Очень маленькие экраны */
-        @media (max-width: 480px) {
-            canvas {
-                width: 100%;
-                height: auto;
+                width: 100%; /* Канвас будет занимать всю ширину экрана */
+                height: auto; /* Высота будет автоматически адаптироваться */
             }
         }
     </style>
@@ -219,7 +219,9 @@
             <p>Свяжитесь с нами по телефону или через электронную почту. Мы всегда рады помочь!</p>
         </section>
 
-        <canvas id="webgl-canvas"></canvas>
+        <div class="animation-container" id="animation-container">
+            <!-- Здесь будет отображаться анимация Three.js -->
+        </div>
     </div>
 
     <script>
@@ -227,16 +229,24 @@
             var header = document.querySelector('.header');
             var mainContent = document.getElementById('mainContent');
             
+            // Получаем высоту шапки и устанавливаем отступ для основного контента
             var headerHeight = header.offsetHeight;
             mainContent.style.marginTop = headerHeight + 'px';
         };
-
+       
         window.onscroll = function() {
             var header = document.querySelector('.header');
+            var mainContent = document.getElementById('mainContent');
+            var logo = document.querySelector('.header .container img');
+            
             if (window.pageYOffset > 50) {
                 header.classList.add('shrink');
+                mainContent.style.marginTop = '90px';
+                logo.style.display = 'none';
             } else {
                 header.classList.remove('shrink');
+                mainContent.style.marginTop = '180px';
+                logo.style.display = 'block';
             }
         };
 
@@ -259,26 +269,7 @@
                 nav.classList.remove('active');
             }
         });
-
-        const canvas = document.getElementById('webgl-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-
-        const loader = new THREE.GLTFLoader();
-        loader.load('object1.js', (gltf) => {
-            scene.add(gltf.scene);
-        });
-
-        camera.position.z = 5;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-
-        animate();
     </script>
+    <script src="object1.js"></script>
 </body>
 </html>
