@@ -8,7 +8,7 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #eaeaea; /* Задаем фоновый цвет */
+            background-color: #eaeaea; /* Фоновый цвет */
             background-image: url('https://example.com/background.jpg'); /* Ссылка на фон */
             background-size: cover;
             background-attachment: fixed;
@@ -20,13 +20,14 @@
             top: 0;
             left: 0;
             width: 100%;
-            background-color: #333;
+            background-color: #4CAF50; /* Зеленый цвет шапки */
             color: white;
             padding: 10px 0;
             z-index: 1000;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .header .container {
@@ -42,6 +43,13 @@
         }
 
         .nav {
+            position: relative;
+        }
+
+        .nav > ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
             display: flex;
             gap: 15px;
         }
@@ -55,6 +63,23 @@
 
         .nav a:hover {
             color: #ff6347;
+        }
+
+        .nav ul ul {
+            display: none;
+            position: absolute;
+            background-color: #4CAF50;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .nav ul li:hover > ul {
+            display: block;
+        }
+
+        .nav ul ul li {
+            margin: 0;
         }
 
         .main-content {
@@ -71,6 +96,7 @@
             text-decoration: none;
             color: #036280;
             margin: 0 10px;
+            font-size: 18px;
         }
 
         .page-links a:hover {
@@ -105,7 +131,7 @@
                 height: 400px;
             }
 
-            .nav {
+            .nav > ul {
                 flex-direction: column;
                 gap: 10px;
             }
@@ -118,10 +144,17 @@
     <div class="container">
         <h1>INTERACTIVE 3D</h1>
         <nav class="nav">
-            <a href="home.html">Главная</a>
-            <a href="about.html">О нас</a>
-            <a href="services.html">Услуги</a>
-            <a href="contact.html">Контакты</a>
+            <ul>
+                <li><a href="home.html">Главная</a></li>
+                <li><a href="about.html">О нас</a>
+                    <ul>
+                        <li><a href="team.html">Наша команда</a></li>
+                        <li><a href="history.html">История</a></li>
+                    </ul>
+                </li>
+                <li><a href="services.html">Услуги</a></li>
+                <li><a href="contact.html">Контакты</a></li>
+            </ul>
         </nav>
     </div>
 </header>
