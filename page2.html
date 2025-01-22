@@ -270,12 +270,27 @@
 </div>
 
 <script>
-    const menuToggle = document.getElementById('menuToggle');
-    const nav = document.querySelector('.header .nav');
+   const menuToggle = document.getElementById('menuToggle');
+const nav = document.querySelector('.header .nav');
+const body = document.querySelector('body');
 
-    menuToggle.addEventListener('click', () => {
-        nav.classList.toggle('active');
-    });
+// Открытие/закрытие меню по кнопке
+menuToggle.addEventListener('click', (event) => {
+    nav.classList.toggle('active');
+    event.stopPropagation(); // Остановка распространения события, чтобы клик не закрывал меню сразу
+});
+
+// Закрытие меню при клике на любое место страницы
+body.addEventListener('click', () => {
+    if (nav.classList.contains('active')) {
+        nav.classList.remove('active');
+    }
+});
+
+// Остановка события при клике внутри меню, чтобы не закрывать его
+nav.addEventListener('click', (event) => {
+    event.stopPropagation();
+});
 </script>
 
 </body>
