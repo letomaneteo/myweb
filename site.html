@@ -158,7 +158,19 @@
     height: 100%;
     object-fit: cover; /* Это позволяет растягивать видео по экрану, сохраняя пропорции */
 }
-        
+ .page-links a {
+    text-decoration: none;
+    color: #036280; /* Цвет обычной ссылки */
+}
+
+.page-links a:hover {
+    color: #ff6347; /* Цвет ссылки при наведении */
+}
+
+.page-links a.active {
+    color: green; /* Цвет активной ссылки (текущей страницы) */
+    font-weight: bold; /* Дополнительное выделение */
+}       
 /* Основной контент */
 .main-content {
     padding: 20px;
@@ -260,17 +272,20 @@ iframe {
     </div>
 </section>
         
-        <section class="section" id="next">
-        <p class="centered-text">
-            <a href="page2.html">Дальше</a>
-            <span class="page-links">
-                <a href="page2.html">2</a>, 
-                <a href="page3.html">3</a>, 
-                <a href="page4.html">4</a>, 
-                <a href="page5.html">5</a>                            
-            </span>
-        </p>
-    </section>
+       <section class="section" id="next">
+    <p class="centered-text">
+        <a href="page2.html">Дальше</a>
+        <span class="page-links">
+            <a href="page1.html" class="active">1</a>
+            <a href="page2.html">2</a>, 
+            <a href="page3.html">3</a>, 
+            <a href="page4.html">4</a>, 
+            <a href="page5.html">5</a>, 
+             <!-- активная ссылка для текущей страницы -->
+        </span>  
+    </p>
+</section>
+
 </div>
     <script>
         window.onload = function() {
