@@ -98,7 +98,30 @@
     height: 400px; /* или 500px, если хотите больше высоту */
     overflow: hidden; /* Скрывает часть контента, выходящего за пределы */
 }
-        
+        .modal-button {
+    display: inline-block;
+    background-color: #0BA5BE; /* Цвет кнопки */
+    color: white; /* Цвет текста */
+    border: none; /* Убираем обводку */
+    padding: 10px 20px; /* Внутренние отступы */
+    font-size: 16px; /* Размер текста */
+    font-weight: bold; /* Жирный текст */
+    border-radius: 5px; /* Скругленные края */
+    cursor: pointer; /* Курсор указателя */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Тень */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Анимация при наведении */
+}
+
+.modal-button:hover {
+    background-color: #0A8EA5; /* Цвет кнопки при наведении */
+    transform: scale(1.05); /* Легкое увеличение */
+}
+
+.modal-button:active {
+    background-color: #087589; /* Цвет кнопки при клике */
+    transform: scale(0.95); /* Легкое уменьшение при клике */
+}
+
         @media (max-width: 768px) {
             .menu-toggle {
                 display: block;
@@ -244,6 +267,9 @@
     </section>
 
     <div class="animation-container">
+        <button class="modal-button" id="openModal">Открыть окно</button>
+       <!-- Iframe для модального окна -->
+        <iframe src="modal.html" style="display: none; border: none; width: 100%; height: 100vh;" id="modalIframe"></iframe>
         <iframe src="tumba.html" title="3D Object"></iframe>
     </div>
 
@@ -291,6 +317,19 @@ body.addEventListener('click', () => {
 nav.addEventListener('click', (event) => {
     event.stopPropagation();
 });
+
+    const openModal = document.getElementById('openModal');
+        const modalIframe = document.getElementById('modalIframe');
+
+        openModal.addEventListener('click', () => {
+            modalIframe.style.display = 'block';
+        });
+
+        // Закрытие окна при клике вне iframe (можно дополнительно обработать внутри modal.html)
+        window.addEventListener('click', (event) => {
+            if (!modalIframe.contains(event.target) && modalIframe.style.display === 'block') {
+                modalIframe.style.display = 'none';
+            }
 </script>
 
 </body>
