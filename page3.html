@@ -30,6 +30,7 @@
         .header .container {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
@@ -39,6 +40,8 @@
         .header h1 {
             font-size: 20px;
             margin: 0;
+            text-align: center;
+            flex-grow: 1;
         }
 
         .header .nav {
@@ -165,6 +168,11 @@
             color: green;
             font-weight: bold;
         }
+
+        .page-links span {
+            font-weight: bold;
+            color: #344C11;
+        }
     </style>
 </head>
 <body>
@@ -210,6 +218,7 @@
     </section>
 
     <div class="page-links">
+        <span>Дальше:</span>
         <a href="page1.html" class="active">1</a>
         <a href="page2.html">2</a>
         <a href="page3.html">3</a>
