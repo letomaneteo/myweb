@@ -3,336 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Фиксированная шапка с логотипом</title>
+    <title>Сжатая шапка с меню</title>
     <style>
-      body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4; /* Добавляем светлый фон для общей эстетики */
-}
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
 
-/* Стиль шапки */
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #333;
-    color: white;
-    padding: 20px 0;
-    z-index: 1000;
-    transition: height 0.3s ease, background-color 0.3s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-image: url('earth2.gif'); /* Фон шапки */
-    background-size: cover;
-    background-position: center;
-}
+        /* Сжатая шапка */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #344C11;
+            color: white;
+            padding: 10px 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
 
-.header.shrink {
-    height: 40px;
-    padding: 10px 0;
-    background-color: #344C11; /* Цвет фона шапки при прокрутке */
-    background-image: none; /* Скрываем фон при прокрутке */
-}
+        .header .container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-.header.shrink .container img {
-    display: none; /* Скрыть логотип при прокрутке */
-}
+        .header h1 {
+            font-size: 20px;
+            margin: 0;
+        }
 
-.header .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-}
+        .header .nav {
+            display: flex;
+            gap: 15px;
+        }
 
-.header h1 {
-    margin: 0;
-    font-size: 24px;
-    transition: font-size 0.3s ease, margin-top 0.3s ease;
-}
+        .header .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
 
-.header.shrink h1 {
-    font-size: 20px;
-    margin-top: 10px;
-    background-color: rgba(52, 76, 17, 0.7);
-}
+        .header .nav a:hover {
+            color: #ff6347;
+        }
 
-/* Основные стили */
-.header .nav {
-    display: flex;
-    gap: 15px;
-    flex-direction: row;
-    justify-content: center;
-    margin-top: 10px;
-    transition: margin-top 0.3s ease;
-    position: relative;
-}
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: white;
+        }
 
-.header .nav a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-    transition: color 0.3s;
-}
+        @media (max-width: 768px) {
+            .header .nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: #344C11;
+                padding: 10px 0;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
 
-.header .nav a:hover {
-    color: #ff6347;
-}
+            .header .nav.active {
+                display: flex;
+            }
 
-/* Мобильное меню */
-.menu-toggle {
-    display: none;
-}
+            .menu-toggle {
+                display: block;
+            }
+        }
 
-@media (max-width: 768px) {
-    .header .nav {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background-color: rgba(123, 124, 129, 0.8);
-        position: absolute;
-        left: 0;
-        padding: 10px 0;
-        text-align: center;
-        z-index: 999;
-        transform: translateY(-100%); /* Изначально меню скрыто за пределами экрана */
-        transition: transform 0.3s ease; /* Плавное появление */
-    }
+        .main-content {
+            padding: 20px;
+            margin-top: 60px; /* Высота шапки */
+        }
 
-    .header .nav.active {
-        display: flex;
-        transform: translateY(calc(100% + 10px)); /* Меню появляется ниже шапки */
-    }
+        .section {
+            margin-bottom: 40px;
+        }
 
-    .menu-toggle {
-        display: block;
-        cursor: pointer;
-        font-size: 24px;
-        color: white;
-        margin-top: 10px;
-    }
+        .section h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #344C11;
+        }
 
-    .header.shrink .nav.active {
-        transform: translateY(calc(80px + 10px));
-        background-color: rgba(52, 76, 17, 0.5); /* Меню ниже сжатой шапки */
-    }
+        .section p {
+            font-size: 16px;
+            line-height: 1.6;
+            text-align: justify;
+            color: #344C11;
+        }
 
-    .header.shrink .menu-toggle {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 24px;
-        color: white;
-        z-index: 1001;
-    }
-}
-.centered-text {
-    text-align: center;
-    color: #344C11;
-}
+        .animation-container {
+            text-align: center;
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            margin: 20px auto;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
 
-.justified-text {
-    text-align: justify;
-    color: #344C11;
-}
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
 
-#video-section {
-    width: 100%;
-    height: 400px; /* или 500px, если хотите больше высоту */
-    overflow: hidden; /* Скрывает часть контента, выходящего за пределы */
-}
+        @media (max-width: 768px) {
+            .animation-container {
+                height: 400px;
+            }
+        }
 
-.video-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
 
-.video-container iframe {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Это позволяет растягивать видео по экрану, сохраняя пропорции */
-}
- .page-links a {
-    text-decoration: none;
-    color: #036280; /* Цвет обычной ссылки */
-}
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-.page-links a:hover {
-    color: #ff6347; /* Цвет ссылки при наведении */
-}
+        .page-links {
+            text-align: center;
+            margin-top: 20px;
+        }
 
-.page-links a.active {
-    color: green; /* Цвет активной ссылки (текущей страницы) */
-    font-weight: bold; /* Дополнительное выделение */
-}       
-/* Основной контент */
-.main-content {
-    padding: 20px;
-    transition: margin-top 0.3s ease;
-}
+        .page-links a {
+            text-decoration: none;
+            color: #036280;
+            margin: 0 5px;
+        }
 
-.section {
-    margin-bottom: 40px;
-}
+        .page-links a:hover {
+            color: #ff6347;
+        }
 
-.section h2 {
-    font-size: 28px;
-    margin-bottom: 10px;
-}
-
-.section p {
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-/* Контейнер для 3D объекта */
-.animation-container {
-    text-align: center;
-    position: relative;
-    width: 100%;
-    max-width: 800px; /* Максимальная ширина контейнера */
-    height: 600px; /* Высота контейнера */
-    margin: 20px auto;
-    background: white; /* Фон для контейнера */
-    border: 1px solid #ccc; /* Граница контейнера */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
-}
-
-iframe {
-    width: 100%;
-    height: 100%;
-    border: none; /* Убираем рамку у iframe */
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-    .animation-container {
-        height: 400px; /* Уменьшенная высота на мобильных устройствах */
-    }
-}
+        .page-links a.active {
+            color: green;
+            font-weight: bold;
+        }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
 </head>
 <body>
 
-    <header class="header">
-        <div class="container">
-            <a href="index.html"><img src="2.gif" alt="Логотип" style="width: 100px;"></a>
-            <h1>INTERACTIVE 3D</h1>
-            <nav class="nav">
-                <a href="home.html">2D анимация</a>
-                <a href="about.html">О нас</a>
-                <a href="services.html">Услуги и цены</a>
-                <a href="contact.html">Контакты</a>
-            </nav>
-            <div class="menu-toggle" id="menuToggle">&#9776;</div>
-        </div>
-    </header>
+<header class="header">
+    <div class="container">
+        <h1>INTERACTIVE 3D</h1>
+        <nav class="nav">
+            <a href="home.html">2D анимация</a>
+            <a href="about.html">О нас</a>
+            <a href="services.html">Услуги и цены</a>
+            <a href="contact.html">Контакты</a>
+        </nav>
+        <div class="menu-toggle" id="menuToggle">&#9776;</div>
+    </div>
+</header>
 
-    <div class="main-content" id="mainContent">
+<div class="main-content">
     <section class="section" id="home">
-        <h2 class="centered-text">Онлайн выставка интерактивных 3D моделей</h2>
-        <p class="justified-text">Если вы хотите что-то купить, то его неплохо бы проверить на функциональность.</p>
-        <p class="justified-text">Осмотрите товар на нашей 3D выставке.</p>
+        <h2>Онлайн выставка интерактивных 3D моделей</h2>
+        <p>Если вы хотите что-то купить, то его неплохо бы проверить на функциональность.</p>
+        <p>Осмотрите товар на нашей 3D выставке.</p>
     </section>
 
-    <!-- Первый блок с 3D объектом -->
     <div class="animation-container">
         <iframe src="tumba.html" title="3D Object"></iframe>
     </div>
 
     <section class="section" id="about">
-        <h2 class="centered-text">Выберите цвет🎨</h2>
-        <p class="justified-text">Цвет имеет значение. Меняйте цвет кликом.</p>
+        <h2>Выберите цвет🎨</h2>
+        <p>Цвет имеет значение. Меняйте цвет кликом.</p>
     </section>
 
-    <!-- Второй блок с 3D объектом -->
     <div class="animation-container">
         <iframe src="tumba.html" title="3D Object"></iframe>
     </div>
-        <section class="section" id="about">
-        <p class="justified-text">Тематические шоурумы в разных цветах</p>
-    </section> 
 
-<section class="section" id="video-section">
-    <div class="video-container">
-        <!-- Локальное видео с автозапуском, без управления и зацикленное -->
-        <video width="100%" height="400" autoplay muted loop>
-            <source src="путь_к_вашему_видео/video.mp4" type="video/mp4">
+    <section class="video-container">
+        <video autoplay muted loop>
+            <source src="video.mp4" type="video/mp4">
             Ваш браузер не поддерживает видео.
         </video>
+    </section>
+
+    <div class="page-links">
+        <a href="page1.html" class="active">1</a>
+        <a href="page2.html">2</a>
+        <a href="page3.html">3</a>
+        <a href="page4.html">4</a>
+        <a href="page5.html">5</a>
     </div>
-</section>
-        
-       <section class="section" id="next">
-    <p class="centered-text">
-        <a href="page2.html">Дальше</a>
-        <span class="page-links">
-            <a href="page1.html" class="active">1</a>,
-            <a href="page2.html">2</a>, 
-            <a href="page3.html">3</a>, 
-            <a href="page4.html">4</a>, 
-            <a href="page5.html">5</a> 
-             <!-- активная ссылка для текущей страницы -->
-        </span>  
-    </p>
-</section>
-
 </div>
-    <script>
-        window.onload = function() {
-            var header = document.querySelector('.header');
-            var mainContent = document.getElementById('mainContent');
-            
-            // Получаем высоту шапки и устанавливаем отступ для основного контента
-            var headerHeight = header.offsetHeight;
-            mainContent.style.marginTop = headerHeight + 'px';
-        };
-       
-        window.onscroll = function() {
-            var header = document.querySelector('.header');
-            var mainContent = document.getElementById('mainContent');
-            var logo = document.querySelector('.header .container img');
-            
-            if (window.pageYOffset > 50) {
-                header.classList.add('shrink');
-                mainContent.style.marginTop = '90px';
-                logo.style.display = 'none';
-            } else {
-                header.classList.remove('shrink');
-                mainContent.style.marginTop = '180px';
-                logo.style.display = 'block';
-            }
-        };
 
-        var menuToggle = document.getElementById('menuToggle');
-        var nav = document.querySelector('.header .nav');
-        var navLinks = document.querySelectorAll('.header .nav a');
+<script>
+    const menuToggle = document.getElementById('menuToggle');
+    const nav = document.querySelector('.header .nav');
 
-        menuToggle.addEventListener('click', function() {
-            nav.classList.toggle('active');
-        });
+    menuToggle.addEventListener('click', () => {
+        nav.classList.toggle('active');
+    });
+</script>
 
-        navLinks.forEach(function(link) {
-            link.addEventListener('click', function() {
-                nav.classList.remove('active');
-            });
-        });
-
-        document.addEventListener('click', function(event) {
-            if (!nav.contains(event.target) && !menuToggle.contains(event.target)) {
-                nav.classList.remove('active');
-            }
-        });
-    </script>
-   
 </body>
 </html>
