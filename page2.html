@@ -11,33 +11,32 @@
             background-color: #f4f4f4;
         }
 
-        /* Стиль шапки */
+        /* Сжатая шапка */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 50px; /* Высота шапки */
+            height: 50px; /* Устанавливаем фиксированную высоту */
             background-color: #344C11;
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1000;
             padding: 0 20px;
-            transition: all 0.3s ease;
+            z-index: 1000;
         }
 
         .header .container {
             display: flex;
             align-items: center;
-            width: 100%;
             justify-content: space-between;
+            width: 100%;
         }
 
         /* Логотип */
         .header img {
-            height: 30px; /* Размер логотипа */
+            height: 30px;
             margin-right: 10px;
         }
 
@@ -64,7 +63,7 @@
             color: #ff6347;
         }
 
-        /* Мобильное меню */
+        /* Выпадающее меню на мобильных */
         .menu-toggle {
             display: none;
         }
@@ -97,7 +96,7 @@
 
         /* Основной контент */
         .main-content {
-            padding: 70px 20px 20px; /* Отступ сверху для компенсации высоты шапки */
+            padding: 70px 20px 20px; /* Отступ сверху под шапку */
         }
 
         .section {
