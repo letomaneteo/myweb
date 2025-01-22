@@ -11,34 +11,44 @@
             background-color: #f4f4f4;
         }
 
-        /* Сжатая статичная шапка */
+        /* Стиль шапки */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 40px; /* Фиксированная высота */
+            height: 50px; /* Высота шапки */
             background-color: #344C11;
             color: white;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             z-index: 1000;
+            padding: 0 20px;
+            transition: all 0.3s ease;
         }
 
         .header .container {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: 0 20px;
+            justify-content: space-between;
+        }
+
+        /* Логотип */
+        .header img {
+            height: 30px; /* Размер логотипа */
+            margin-right: 10px;
         }
 
         .header h1 {
             margin: 0;
             font-size: 20px;
+            display: flex;
+            align-items: center;
         }
 
+        /* Навигация */
         .header .nav {
             display: flex;
             gap: 15px;
@@ -54,9 +64,40 @@
             color: #ff6347;
         }
 
+        /* Мобильное меню */
+        .menu-toggle {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+                cursor: pointer;
+                font-size: 24px;
+                color: white;
+            }
+
+            .header .nav {
+                display: none;
+                flex-direction: column;
+                gap: 10px;
+                position: absolute;
+                top: 50px; /* Под шапкой */
+                left: 0;
+                width: 100%;
+                background-color: rgba(52, 76, 17, 0.9);
+                padding: 10px 0;
+                z-index: 999;
+            }
+
+            .header .nav.active {
+                display: flex;
+            }
+        }
+
         /* Основной контент */
         .main-content {
-            padding: 60px 20px 20px; /* Отступ сверху под шапку */
+            padding: 70px 20px 20px; /* Отступ сверху для компенсации высоты шапки */
         }
 
         .section {
@@ -119,13 +160,18 @@
     <!-- Сжатая шапка -->
     <header class="header">
         <div class="container">
-            <h1>INTERACTIVE 3D</h1>
+            <!-- Логотип -->
+            <h1>
+                <img src="logo.png" alt="Логотип"> <!-- Замените "logo.png" на путь к вашему изображению -->
+                INTERACTIVE 3D
+            </h1>
             <nav class="nav">
                 <a href="home.html">Главная</a>
                 <a href="about.html">О нас</a>
                 <a href="services.html">Услуги</a>
                 <a href="contact.html">Контакты</a>
             </nav>
+            <div class="menu-toggle" id="menuToggle">&#9776;</div>
         </div>
     </header>
 
@@ -169,5 +215,20 @@
             <a href="page5.html">5</a>
         </section>
     </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const nav = document.querySelector('.nav');
+
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!nav.contains(event.target) && !menuToggle.contains(event.target)) {
+                nav.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
