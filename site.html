@@ -199,24 +199,27 @@ iframe {
     </header>
 
     <div class="main-content" id="mainContent">
-        <section class="section" id="home">
-            <h2 style="text-align: center;">Онлайн выставка интерактивных 3D моделей</h2>
-            <p>Если вы хотите что-то купить, то это лучше проверить на функциональность.</p>
-            <p>Если вы хотите что-то купить, то это лучше проверить на функциональность.</p>
-        </section>
+    <section class="section" id="home">
+        <h2 class="centered-text">Онлайн выставка интерактивных 3D моделей</h2>
+        <p class="justified-text">Если вы хотите что-то купить, то его неплохо бы проверить на функциональность.</p>
+        <p class="justified-text">Осмотрите товар на нашей 3D выставке.</p>
+    </section>
 
-        <div class="animation-container">
-            <iframe src="tumba.html" title="3D Object"></iframe>
-        </div>
-        <section class="section" id="about">
-            
-            <h2>О нас</h2>
-            <p>Мы — компания, которая предоставляет лучшие услуги для ваших нужд. Наши сотрудники имеют богатый опыт и всегда готовы помочь.</p>
-        </section>
+    <!-- Первый блок с 3D объектом -->
+    <div class="animation-container">
+        <iframe src="tumba.html" title="3D Object"></iframe>
     </div>
-<div class="animation-container" id="animation-container">
-            <!-- Здесь будет отображаться анимация Three.js -->
-        </div>
+
+    <section class="section" id="about">
+        <h2 class="centered-text">Выберите цвет</h2>
+        <p class="justified-text">Цвет имеет значения. Меняйте цвет кликом.</p>
+    </section>
+
+    <!-- Второй блок с 3D объектом -->
+    <div class="animation-container">
+        <iframe src="tumba.html" title="3D Object"></iframe>
+    </div>
+</div>
     <script>
         window.onload = function() {
             var header = document.querySelector('.header');
