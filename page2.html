@@ -3,35 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Фиксированная шапка с меню</title>
+    <title>Фиксированная шапка с логотипом</title>
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #eaeaea; /* Фоновый цвет */
-            background-image: url('https://example.com/background.jpg'); /* Ссылка на фон */
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
+            background-color: #f4f4f4;
         }
 
+        /* Сжатая статичная шапка */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            background-color: #4CAF50; /* Зеленый цвет шапки */
+            height: 40px; /* Фиксированная высота */
+            background-color: #344C11;
             color: white;
-            padding: 10px 0;
-            z-index: 1000;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
 
         .header .container {
             display: flex;
+            justify-content: space-between;
             align-items: center;
             width: 100%;
             padding: 0 20px;
@@ -39,75 +36,44 @@
 
         .header h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 20px;
         }
 
-        .nav {
-            position: relative;
-        }
-
-        .nav > ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
+        .header .nav {
             display: flex;
             gap: 15px;
         }
 
-        .nav a {
+        .header .nav a {
             color: white;
             text-decoration: none;
             font-size: 16px;
-            transition: color 0.3s;
         }
 
-        .nav a:hover {
+        .header .nav a:hover {
             color: #ff6347;
         }
 
-        .nav ul ul {
-            display: none;
-            position: absolute;
-            background-color: #4CAF50;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .nav ul li:hover > ul {
-            display: block;
-        }
-
-        .nav ul ul li {
-            margin: 0;
-        }
-
+        /* Основной контент */
         .main-content {
-            padding: 20px;
-            margin-top: 60px; /* Отступ для основного контента */
+            padding: 60px 20px 20px; /* Отступ сверху под шапку */
         }
 
-        .page-links {
-            text-align: center;
-            margin-top: 20px;
+        .section {
+            margin-bottom: 40px;
         }
 
-        .page-links a {
-            text-decoration: none;
-            color: #036280;
-            margin: 0 10px;
-            font-size: 18px;
+        .section h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
         }
 
-        .page-links a:hover {
-            color: #ff6347;
+        .section p {
+            font-size: 16px;
+            line-height: 1.6;
         }
 
-        .page-links a.active {
-            color: green;
-            font-weight: bold;
-        }
-
+        /* Контейнер для 3D объекта */
         .animation-container {
             text-align: center;
             position: relative;
@@ -126,80 +92,82 @@
             border: none;
         }
 
-        @media (max-width: 768px) {
-            .animation-container {
-                height: 400px;
-            }
+        /* Стили для навигации с цифрами */
+        .page-links {
+            text-align: center;
+            margin-top: 20px;
+        }
 
-            .nav > ul {
-                flex-direction: column;
-                gap: 10px;
-            }
+        .page-links a {
+            text-decoration: none;
+            color: #036280;
+            font-size: 18px;
+            margin: 0 5px;
+        }
+
+        .page-links a:hover {
+            color: #ff6347;
+        }
+
+        .page-links a.active {
+            color: green;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-
-<header class="header">
-    <div class="container">
-        <h1>INTERACTIVE 3D</h1>
-        <nav class="nav">
-            <ul>
-                <li><a href="home.html">Главная</a></li>
-                <li><a href="about.html">О нас</a>
-                    <ul>
-                        <li><a href="team.html">Наша команда</a></li>
-                        <li><a href="history.html">История</a></li>
-                    </ul>
-                </li>
-                <li><a href="services.html">Услуги</a></li>
-                <li><a href="contact.html">Контакты</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
-
-<div class="main-content">
-    <section class="section" id="home">
-        <h2 class="centered-text">Онлайн выставка интерактивных 3D моделей</h2>
-        <p class="justified-text">Если вы хотите что-то купить, то его неплохо бы проверить на функциональность.</p>
-        <p class="justified-text">Осмотрите товар на нашей 3D выставке.</p>
-    </section>
-
-    <div class="animation-container">
-        <iframe src="tumba.html" title="3D Object"></iframe>
-    </div>
-
-    <section class="section" id="about">
-        <h2 class="centered-text">Выберите цвет🎨</h2>
-        <p class="justified-text">Цвет имеет значения. Меняйте цвет кликом.</p>
-    </section>
-
-    <div class="animation-container">
-        <iframe src="tumba.html" title="3D Object"></iframe>
-    </div>
-
-    <section class="section" id="about">
-        <p class="justified-text">Тематические шоурумы в разных цветах</p>
-    </section>
-
-    <section class="section" id="video-section">
-        <div class="video-container">
-            <video width="100%" height="400" autoplay muted loop>
-                <source src="путь_к_вашему_видео/video.mp4" type="video/mp4">
-                Ваш браузер не поддерживает видео.
-            </video>
+    <!-- Сжатая шапка -->
+    <header class="header">
+        <div class="container">
+            <h1>INTERACTIVE 3D</h1>
+            <nav class="nav">
+                <a href="home.html">Главная</a>
+                <a href="about.html">О нас</a>
+                <a href="services.html">Услуги</a>
+                <a href="contact.html">Контакты</a>
+            </nav>
         </div>
-    </section>
+    </header>
 
-    <div class="page-links">
-        <a href="page1.html" class="active">1</a>
-        <a href="page2.html">2</a>
-        <a href="page3.html">3</a>
-        <a href="page4.html">4</a>
-        <a href="page5.html">5</a>
+    <div class="main-content">
+        <section class="section" id="home">
+            <h2>Онлайн выставка интерактивных 3D моделей</h2>
+            <p>Если вы хотите что-то купить, то его неплохо бы проверить на функциональность.</p>
+            <p>Осмотрите товар на нашей 3D выставке.</p>
+        </section>
+
+        <!-- Первый блок с 3D объектом -->
+        <div class="animation-container">
+            <iframe src="tumba.html" title="3D Object"></iframe>
+        </div>
+
+        <section class="section" id="about">
+            <h2>Выберите цвет 🎨</h2>
+            <p>Цвет имеет значения. Меняйте цвет кликом.</p>
+        </section>
+
+        <!-- Второй блок с 3D объектом -->
+        <div class="animation-container">
+            <iframe src="tumba.html" title="3D Object"></iframe>
+        </div>
+        
+        <section class="section" id="video-section">
+            <div class="video-container">
+                <video width="100%" height="400" autoplay muted loop>
+                    <source src="путь_к_вашему_видео/video.mp4" type="video/mp4">
+                    Ваш браузер не поддерживает видео.
+                </video>
+            </div>
+        </section>
+
+        <!-- Навигация с цифрами -->
+        <section class="page-links">
+            <a href="page1.html" class="active">1</a>
+            <a href="page2.html">2</a>
+            <a href="page3.html">3</a>
+            <a href="page4.html">4</a>
+            <a href="page5.html">5</a>
+        </section>
     </div>
-</div>
-
 </body>
 </html>
