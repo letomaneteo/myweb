@@ -155,21 +155,33 @@
     z-index: 1000;
 }
        /* Стили для крестика */
-.close-btn {
-    position: absolute;
-    top: 10px; /* Расстояние от верхнего края */
-    right: 10px; /* Расстояние от правого края */
-    font-size: 30px; /* Размер шрифта для крестика */
-    color: #0BA5BE; /* Цвет крестика */
-    cursor: pointer; /* Курсор при наведении */
-    font-weight: bold;
-    z-index: 1002;
+#modalWindow {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    border: 2px solid #0BA5BE;
+    background: white;
+    z-index: 1001;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    position: relative; /* Добавьте эту строку */
 }
 
-/* При наведении на крестик */
-.close-btn:hover {
-    color: #087589; /* Цвет при наведении */
+.close-btn {
+    position: absolute;
+    top: 10px; /* Расстояние от верхнего края модального окна */
+    right: 10px; /* Расстояние от правого края модального окна */
+    font-size: 30px;
+    color: #0BA5BE;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 1002; /* Убедитесь, что крестик поверх контента */
 }
+
 
 
         @media (max-width: 768px) {
