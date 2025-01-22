@@ -8,36 +8,29 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f4f4f4; /* Добавляем светлый фон для общей эстетики */
         }
 
-        /* Сжатая шапка */
+        /* Стиль шапки */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 50px; /* Устанавливаем фиксированную высоту */
-            background-color: #344C11;
+            background-color: #344C11; /* Цвет шапки */
             color: white;
+            padding: 10px 20px; /* Фиксированный отступ */
+            z-index: 1000;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
-            z-index: 1000;
         }
 
         .header .container {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             width: 100%;
-        }
-
-        /* Логотип */
-        .header img {
-            height: 30px;
-            margin-right: 10px;
         }
 
         .header h1 {
@@ -47,7 +40,6 @@
             align-items: center;
         }
 
-        /* Навигация */
         .header .nav {
             display: flex;
             gap: 15px;
@@ -63,7 +55,7 @@
             color: #ff6347;
         }
 
-        /* Выпадающее меню на мобильных */
+        /* Мобильное меню */
         .menu-toggle {
             display: none;
         }
@@ -79,13 +71,12 @@
             .header .nav {
                 display: none;
                 flex-direction: column;
-                gap: 10px;
-                position: absolute;
-                top: 50px; /* Под шапкой */
-                left: 0;
                 width: 100%;
                 background-color: rgba(52, 76, 17, 0.9);
+                position: absolute;
+                left: 0;
                 padding: 10px 0;
+                text-align: center;
                 z-index: 999;
             }
 
@@ -94,9 +85,8 @@
             }
         }
 
-        /* Основной контент */
         .main-content {
-            padding: 70px 20px 20px; /* Отступ сверху под шапку */
+            padding: 70px 20px; /* Отступ сверху под шапку */
         }
 
         .section {
@@ -113,7 +103,6 @@
             line-height: 1.6;
         }
 
-        /* Контейнер для 3D объекта */
         .animation-container {
             text-align: center;
             position: relative;
@@ -132,7 +121,6 @@
             border: none;
         }
 
-        /* Стили для навигации с цифрами */
         .page-links {
             text-align: center;
             margin-top: 20px;
@@ -156,14 +144,10 @@
     </style>
 </head>
 <body>
-    <!-- Сжатая шапка -->
     <header class="header">
         <div class="container">
-            <!-- Логотип -->
-            <h1>
-                <img src="logo.png" alt="Логотип"> <!-- Замените "logo.png" на путь к вашему изображению -->
-                INTERACTIVE 3D
-            </h1>
+            <a href="index.html"><img src="2.gif" alt="Логотип" style="width: 50px;"></a>
+            <h1>INTERACTIVE 3D</h1>
             <nav class="nav">
                 <a href="home.html">Главная</a>
                 <a href="about.html">О нас</a>
@@ -181,7 +165,6 @@
             <p>Осмотрите товар на нашей 3D выставке.</p>
         </section>
 
-        <!-- Первый блок с 3D объектом -->
         <div class="animation-container">
             <iframe src="tumba.html" title="3D Object"></iframe>
         </div>
@@ -191,11 +174,10 @@
             <p>Цвет имеет значения. Меняйте цвет кликом.</p>
         </section>
 
-        <!-- Второй блок с 3D объектом -->
         <div class="animation-container">
             <iframe src="tumba.html" title="3D Object"></iframe>
         </div>
-        
+
         <section class="section" id="video-section">
             <div class="video-container">
                 <video width="100%" height="400" autoplay muted loop>
@@ -205,7 +187,6 @@
             </div>
         </section>
 
-        <!-- Навигация с цифрами -->
         <section class="page-links">
             <a href="page1.html" class="active">1</a>
             <a href="page2.html">2</a>
