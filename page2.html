@@ -98,7 +98,15 @@
     height: 400px; /* или 500px, если хотите больше высоту */
     overflow: hidden; /* Скрывает часть контента, выходящего за пределы */
 }
-        .modal-button {
+       /* Контейнер для кнопки, расположенной под 3D-объектом */
+.button-container {
+    display: flex;
+    justify-content: center; /* Центрирует кнопку по горизонтали */
+    margin-top: 20px; /* Расстояние между 3D-объектом и кнопкой */
+}
+
+/* Кнопка */
+.modal-button {
     display: inline-block;
     background-color: #0BA5BE; /* Цвет кнопки */
     color: white; /* Цвет текста */
@@ -121,6 +129,7 @@
     background-color: #087589; /* Цвет кнопки при клике */
     transform: scale(0.95); /* Легкое уменьшение при клике */
 }
+
 #modalIframe {
     display: none;
     position: fixed;
@@ -290,25 +299,23 @@
         <p>Цвет имеет значение. Меняйте цвет кликом.</p>
     </section>
 
-    <div class="modal-container">
-    <!-- Кнопка для открытия модального окна -->
-    <button class="modal-button" id="openModal">Открыть окно</button>
-</div>
-
-<!-- Контейнер для 3D-объекта -->
+    <!-- Контейнер для 3D-объекта -->
 <div class="animation-container">
     <!-- Iframe с 3D-объектом -->
     <iframe src="tumba.html" title="3D Object"></iframe>
 </div>
 
-<!-- Модальное окно и затемняющий слой -->
-<div class="modal-container">
-    <!-- Iframe для отображения модального окна -->
-    <iframe src="modal.html" id="modalIframe"></iframe>
-
-    <!-- Затемняющий слой модального окна -->
-    <div id="modalOverlay"></div>
+<!-- Контейнер для кнопки, которая будет по центру -->
+<div class="button-container">
+    <button class="modal-button" id="openModal">Открыть окно</button>
 </div>
+
+<!-- Iframe для отображения модального окна -->
+<iframe src="modal.html" id="modalIframe"></iframe>
+
+<!-- Затемняющий слой модального окна -->
+<div id="modalOverlay"></div>
+
 
     <section class="video-container">
         <video autoplay muted loop>
