@@ -154,7 +154,19 @@
     background: rgba(0, 0, 0, 0.6);
     z-index: 1000;
 }
-       /* Стили для крестика */
+ #modalWindow {
+    position: relative; /* Родительский элемент, к которому будет привязан крестик */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: white;
+    border: 2px solid #0BA5BE;
+    z-index: 1001;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    display: none; /* Окно скрыто по умолчанию */
+}      /* Стили для крестика */
 
 .close-btn {
     position: absolute; /* Абсолютное позиционирование относительно окна */
