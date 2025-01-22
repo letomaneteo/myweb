@@ -39,12 +39,22 @@
         .header h1 {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
-    margin: -0.5;
+    transform: translateX(-50%) translateY(-10px);
+    margin: 0;
     font-size: 24px; /* Можно увеличить размер текста */
     font-weight: bold;
 }
 
+.header .subtitle {
+    position: absolute;
+    bottom: -20px; /* Расстояние от нижнего края шапки */
+    left: 50%;
+    transform: translateX(-50%); /* Центрирует по горизонтали */
+    font-size: 14px;
+    color: white; /* Цвет текста */
+    margin: 0;
+}
+        
         .header img {
             height: 40px; /* Логотип */
             margin-right: 5px;
@@ -172,6 +182,7 @@
                 <img src="2.gif" alt="Логотип">
             </a>
             <h1>INTERACTIVE 3D</h1>
+            <p class="subtitle">Морской шоурум</p> <
             <nav class="nav">
                 <a href="home.html">Услуги</a>
                 <a href="about.html">Цены</a>
