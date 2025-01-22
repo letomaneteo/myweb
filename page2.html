@@ -154,19 +154,22 @@
     background: rgba(0, 0, 0, 0.6);
     z-index: 1000;
 }
-        close-btn {
+       /* Стили для крестика */
+.close-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 36px; /* Большой размер крестика */
+    top: 10px; /* Расстояние от верхнего края */
+    right: 10px; /* Расстояние от правого края */
+    font-size: 30px; /* Размер шрифта для крестика */
     color: #0BA5BE; /* Цвет крестика */
-    cursor: pointer; /* Курсор указателя */
-    transition: color 0.3s ease;
+    cursor: pointer; /* Курсор при наведении */
+    font-weight: bold;
 }
 
+/* При наведении на крестик */
 .close-btn:hover {
-    color: #087589; /* Цвет крестика при наведении */
+    color: #087589; /* Цвет при наведении */
 }
+
 
         @media (max-width: 768px) {
             .menu-toggle {
@@ -323,13 +326,18 @@
     <button class="modal-button" id="openModal">Открыть окно</button>
 </div>
 
-<!-- Iframe для отображения модального окна -->
-<iframe src="modal.html" id="modalIframe">
-    <div id="closeModal" class="close-btn">×</div>
-</iframe>
-
 <!-- Затемняющий слой модального окна -->
 <div id="modalOverlay"></div>
+
+<!-- Модальное окно -->
+<div id="modalWindow">
+    <!-- Iframe для отображения модального окна -->
+    <iframe src="modal.html" id="modalIframe"></iframe>
+    
+    <!-- Кнопка крестика для закрытия окна -->
+    <div id="closeModal" class="close-btn">×</div>
+</div>
+
 
 
     <section class="video-container">
@@ -379,40 +387,28 @@ nav.addEventListener('click', (event) => {
 
     // Находим элементы
 const openModalButton = document.getElementById('openModal');
-const modalIframe = document.getElementById('modalIframe');
+const modalWindow = document.getElementById('modalWindow');
 const modalOverlay = document.getElementById('modalOverlay');
-const closeModalBtn = document.getElementById('closeModal'); // Получаем крестик
+const closeModalBtn = document.getElementById('closeModal'); // Кнопка закрытия
 
-// Проверка наличия элементов перед добавлением обработчиков событий
-if (openModalButton && modalIframe && modalOverlay) {
-    // Открытие модального окна
-    openModalButton.addEventListener('click', () => {
-        modalIframe.style.display = 'block'; // Показываем iframe
-        modalOverlay.style.display = 'block'; // Показываем фон
-    });
+// Открытие модального окна
+openModalButton.addEventListener('click', () => {
+    modalWindow.style.display = 'block'; // Показываем модальное окно
+    modalOverlay.style.display = 'block'; // Показываем затемняющий слой
+});
 
-    // Закрытие модального окна при клике на фон (вне окна)
-    modalOverlay.addEventListener('click', () => {
-        modalIframe.style.display = 'none'; // Скрываем iframe
-        modalOverlay.style.display = 'none'; // Скрываем фон
-    });
+// Закрытие модального окна при клике на фон (вне окна)
+modalOverlay.addEventListener('click', () => {
+    modalWindow.style.display = 'none'; // Скрываем модальное окно
+    modalOverlay.style.display = 'none'; // Скрываем затемняющий слой
+});
 
-    // Закрытие модального окна, если клик был за пределами окна
-    window.addEventListener('click', (event) => {
-        if (event.target === modalOverlay) { // Если клик был на затемняющем фоне
-            modalIframe.style.display = 'none'; // Скрываем iframe
-            modalOverlay.style.display = 'none'; // Скрываем фон
-        }
-    });
-}
+// Закрытие модального окна при клике на крестик
+closeModalBtn.addEventListener('click', () => {
+    modalWindow.style.display = 'none'; // Скрываем модальное окно
+    modalOverlay.style.display = 'none'; // Скрываем затемняющий слой
+});
 
-// Закрытие модального окна при клике на крестик, если элемент существует
-if (closeModalBtn) {
-    closeModalBtn.addEventListener('click', () => {
-        modalIframe.style.display = 'none';
-        modalOverlay.style.display = 'none';
-    });
-}
 
 </script>
 
