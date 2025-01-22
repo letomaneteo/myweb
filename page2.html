@@ -387,29 +387,37 @@ nav.addEventListener('click', (event) => {
 
     // Находим элементы
 const openModalButton = document.getElementById('openModal');
-const modalWindow = document.getElementById('modalWindow');
+const modalIframe = document.getElementById('modalIframe');
 const modalOverlay = document.getElementById('modalOverlay');
-const closeModalBtn = document.getElementById('closeModal'); // Кнопка закрытия
+const closeModalBtn = document.getElementById('closeModal'); // Получаем крестик
 
 // Открытие модального окна
 openModalButton.addEventListener('click', () => {
-    modalWindow.style.display = 'block'; // Показываем модальное окно
-    modalOverlay.style.display = 'block'; // Показываем затемняющий слой
+    modalIframe.style.display = 'block'; // Показываем iframe
+    modalOverlay.style.display = 'block'; // Показываем фон
 });
 
 // Закрытие модального окна при клике на фон (вне окна)
 modalOverlay.addEventListener('click', () => {
-    modalWindow.style.display = 'none'; // Скрываем модальное окно
-    modalOverlay.style.display = 'none'; // Скрываем затемняющий слой
+    modalIframe.style.display = 'none'; // Скрываем iframe
+    modalOverlay.style.display = 'none'; // Скрываем фон
+});
+
+// Закрытие модального окна, если клик был за пределами окна
+window.addEventListener('click', (event) => {
+    if (event.target === modalOverlay) { // Если клик был на затемняющем фоне
+        modalIframe.style.display = 'none'; // Скрываем iframe
+        modalOverlay.style.display = 'none'; // Скрываем фон
+    }
 });
 
 // Закрытие модального окна при клике на крестик
-closeModalBtn.addEventListener('click', () => {
-    modalWindow.style.display = 'none'; // Скрываем модальное окно
-    modalOverlay.style.display = 'none'; // Скрываем затемняющий слой
-});
-
-
+if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', () => {
+        modalIframe.style.display = 'none';
+        modalOverlay.style.display = 'none';
+    });
+}
 </script>
 
 </body>
