@@ -172,17 +172,18 @@
 }
 
 .close-btn {
-    position: absolute;
-    top: 10px; /* Расстояние от верхнего края модального окна */
-    right: 10px; /* Расстояние от правого края модального окна */
+    position: absolute; /* Абсолютное позиционирование */
+    top: 10px; /* Отступ от верхнего края окна */
+    right: 10px; /* Отступ от правого края окна */
     font-size: 30px;
     color: #0BA5BE;
     cursor: pointer;
     font-weight: bold;
-    z-index: 1002; /* Убедитесь, что крестик поверх контента */
 }
 
-
+.close-btn:hover {
+    color: #087589;
+}
 
         @media (max-width: 768px) {
             .menu-toggle {
