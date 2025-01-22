@@ -121,6 +121,30 @@
     background-color: #087589; /* Цвет кнопки при клике */
     transform: scale(0.95); /* Легкое уменьшение при клике */
 }
+#modalIframe {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    border: 2px solid #0BA5BE;
+    background: white;
+    z-index: 1001;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+#modalOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
 
         @media (max-width: 768px) {
             .menu-toggle {
@@ -270,6 +294,8 @@
         <button class="modal-button" id="openModal">Открыть окно</button>
        <!-- Iframe для модального окна -->
         <iframe src="modal.html" style="display: none; border: none; width: 100%; height: 100vh;" id="modalIframe"></iframe>
+        <div id="modalOverlay"></div>
+<iframe src="modal.html" id="modalIframe"></iframe>
         <iframe src="tumba.html" title="3D Object"></iframe>
     </div>
 
@@ -330,6 +356,20 @@ nav.addEventListener('click', (event) => {
             if (!modalIframe.contains(event.target) && modalIframe.style.display === 'block') {
                 modalIframe.style.display = 'none';
             }
+const openModal = document.getElementById('openModal');
+const modalIframe = document.getElementById('modalIframe');
+const modalOverlay = document.getElementById('modalOverlay');
+
+openModal.addEventListener('click', () => {
+    modalIframe.style.display = 'block';
+    modalOverlay.style.display = 'block';
+});
+
+modalOverlay.addEventListener('click', () => {
+    modalIframe.style.display = 'none';
+    modalOverlay.style.display = 'none';
+});
+
 </script>
 
 </body>
