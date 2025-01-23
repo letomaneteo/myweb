@@ -330,43 +330,42 @@
     <div class="animation-container">
         <iframe src="tumba.html" title="3D Object"></iframe>
     </div>
+<!-- Контейнер для кнопки, которая открывает первое окно -->
 <div class="button-container">
     <button class="modal-button" id="openModal">Подробно о товаре</button>
 </div>
-<!-- Затемняющий слой модального окна -->
+
+<!-- Затемняющий слой для первого модального окна -->
 <div id="modalOverlay"></div>
 
-<!-- Модальное окно -->
-<div id="modalOverlay"></div> <!-- Затемняющий слой -->
+<!-- Первое модальное окно -->
 <div id="modalWindow">
-    <div id="closeModal" class="close-btn">×</div> <!-- Крестик -->
+    <div id="closeModal" class="close-btn">×</div> <!-- Крестик для первого окна -->
     <iframe src="modal.html" id="modalIframe"></iframe>
-
 </div>
-    <section class="section" id="about">
-        <h2 class="centered-text">Выберите цвет🎨</h2>
-        <p class="centered-text">Цвет имеет значение. Меняйте цвет кликом.</p>
-    </section>
 
-    <!-- Контейнер для 3D-объекта -->
+<section class="section" id="about">
+    <h2 class="centered-text">Выберите цвет🎨</h2>
+    <p class="centered-text">Цвет имеет значение. Меняйте цвет кликом.</p>
+</section>
+
+<!-- Контейнер для 3D-объекта -->
 <div class="animation-container">
-    <!-- Iframe с 3D-объектом -->
     <iframe src="tumba.html" title="3D Object"></iframe>
 </div>
 
-<!-- Контейнер для кнопки, которая будет по центру -->
+<!-- Контейнер для кнопки, которая открывает второе окно -->
 <div class="button-container">
-    <button class="modal-button" id="openModal">Подробно о товаре</button>
+    <button class="modal-button" id="openModal2">Подробно о товаре</button>
 </div>
 
-<!-- Затемняющий слой модального окна -->
-<div id="modalOverlay"></div>
+<!-- Затемняющий слой для второго модального окна -->
+<div id="modalOverlay2"></div>
 
-<!-- Модальное окно -->
-<div id="modalOverlay"></div> <!-- Затемняющий слой -->
-<div id="modalWindow">
-    <div id="closeModal" class="close-btn">×</div> <!-- Крестик -->
-    <iframe src="modal.html" id="modalIframe"></iframe>
+<!-- Второе модальное окно -->
+<div id="modalWindow2">
+    <div id="closeModal2" class="close-btn">×</div> <!-- Крестик для второго окна -->
+    <iframe src="modal.html" id="modalIframe2"></iframe>
 </div>
     
     <section class="video-container">
@@ -418,29 +417,52 @@ nav.addEventListener('click', (event) => {
     event.stopPropagation();
 });
 
-    // Находим элементы
-// Получаем элементы
+// Получаем элементы для первого окна
 const openModalButton = document.getElementById('openModal');
 const modalWindow = document.getElementById('modalWindow'); // Основное окно
 const modalOverlay = document.getElementById('modalOverlay'); // Затемняющий слой
 const closeModalBtn = document.getElementById('closeModal'); // Крестик
 
-// Открытие окна
+// Открытие первого окна
 openModalButton.addEventListener('click', () => {
     modalWindow.style.display = 'block'; // Показываем основное окно
     modalOverlay.style.display = 'block'; // Показываем затемняющий слой
 });
 
-// Закрытие окна по клику на крестик
+// Закрытие первого окна по клику на крестик
 closeModalBtn.addEventListener('click', () => {
     modalWindow.style.display = 'none'; // Скрываем основное окно
     modalOverlay.style.display = 'none'; // Скрываем затемняющий слой
 });
 
-// Закрытие окна по клику на затемняющий слой
+// Закрытие первого окна по клику на затемняющий слой
 modalOverlay.addEventListener('click', () => {
     modalWindow.style.display = 'none'; // Скрываем основное окно
     modalOverlay.style.display = 'none'; // Скрываем затемняющий слой
+});
+
+// Получаем элементы для второго окна
+const openModalButton2 = document.getElementById('openModal2');
+const modalWindow2 = document.getElementById('modalWindow2'); // Второе окно
+const modalOverlay2 = document.getElementById('modalOverlay2'); // Второй затемняющий слой
+const closeModalBtn2 = document.getElementById('closeModal2'); // Второй крестик
+
+// Открытие второго окна
+openModalButton2.addEventListener('click', () => {
+    modalWindow2.style.display = 'block'; // Показываем второе окно
+    modalOverlay2.style.display = 'block'; // Показываем второй затемняющий слой
+});
+
+// Закрытие второго окна по клику на крестик
+closeModalBtn2.addEventListener('click', () => {
+    modalWindow2.style.display = 'none'; // Скрываем второе окно
+    modalOverlay2.style.display = 'none'; // Скрываем второй затемняющий слой
+});
+
+// Закрытие второго окна по клику на второй затемняющий слой
+modalOverlay2.addEventListener('click', () => {
+    modalWindow2.style.display = 'none'; // Скрываем второе окно
+    modalOverlay2.style.display = 'none'; // Скрываем второй затемняющий слой
 });
 
 </script>
