@@ -135,8 +135,8 @@ margin-top: 3px;
     </style>
 </head>
 <body>
-<audio id="backgroundMusic" src="muzeek.mp3" loop autoplay muted></audio>
-<button id="unmuteButton">Включить звук</button>
+<audio id="backgroundMusic" src="muzeek.mp3" loop muted></audio>
+<button id="toggleSound">Включить звук</button>
 <audio id="buttonClickSound" src="click.mp3"></audio>
 <audio id="rowCheckSound" src="ding5.mp3" preload="auto"></audio>
 <audio id="resultSound" src="vic.wav"></audio>
@@ -184,7 +184,7 @@ margin-top: 3px;
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
     <script>
         const backgroundMusic = document.getElementById('backgroundMusic');
-        const unmuteButton = document.getElementById('unmuteButton');
+        const toggleButton = document.getElementById('toggleSound');
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
         const clickCountElement = document.getElementById('clickCount');
@@ -206,16 +206,26 @@ margin-top: 3px;
         let winCount = 0;
         let lossCount = 0;
 
-        unmuteButton.addEventListener('click', () => {
-    backgroundMusic.muted = false; // Отключаем mute
-    backgroundMusic.play()
-        .then(() => {
-            console.log('Музыка воспроизводится со звуком.');
-        })
-        .catch(error => {
-            console.error('Ошибка воспроизведения:', error);
-        });
-});
+       toggleButton.addEventListener('click', () => {
+        if (backgroundMusic.muted || backgroundMusic.paused) {
+            // Убираем mute и включаем воспроизведение
+            backgroundMusic.muted = false;
+            backgroundMusic.play()
+                .then(() => {
+                    toggleButton.textContent = 'Выключить звук'; // Меняем текст кнопки
+                    console.log('Музыка воспроизводится.');
+                })
+                .catch(error => {
+                    console.error('Ошибка воспроизведения:', error);
+                });
+        } else {
+            // Останавливаем воспроизведение и включаем mute
+            backgroundMusic.muted = true;
+            backgroundMusic.pause();
+            toggleButton.textContent = 'Включить звук'; // Меняем текст кнопки
+            console.log('Музыка остановлена.');
+        }
+    });
 
 function updateUserStats() {
     // Проверяем результат игры
