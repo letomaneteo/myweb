@@ -136,21 +136,16 @@ margin-top: 3px;
 <!-- Добавьте блоки для отображения очков и уровня -->
 <h1>Очки: <span id="userScore">0</span></h1>
 <h2>Уровень: <span id="userLevel">1</span></h2>
-
     <!-- Название игры -->
     <div class="game-title">22 КЛИКА</div>
-
     <!-- Правила игры -->
     <div class="game-rules">
         <p>Наберите 200 очков за 22 клика, чтобы победить</p>
         <p>-8 очков за все разные</p>
-       
-    </div>
-
+           </div>
     <h1>Счет: <span id="score">30</span></h1>
     <h2>Счетчик кликов: <span id="clickCount">0</span></h2>
     <h3>Победы: <span id="winCount">0</span> Поражения: <span id="lossCount">0</span></h3>
-
     <div class="grid">
         <div class="cell" id="cell-0"></div>
         <div class="cell" id="cell-1"></div>
@@ -162,9 +157,7 @@ margin-top: 3px;
         <div class="cell" id="cell-7"></div>
         <div class="cell" id="cell-8"></div>
     </div>
-
     <button class="play-button" id="playButton">Играть</button>
-
     <div class="messages">
     <div class="message green" id="horizontalMessage">
         По горизонтали: <span id="horizontalResult"></span>
@@ -180,9 +173,7 @@ margin-top: 3px;
     </div>
     <div class="message" id="endMessage"></div>
 </div>
-
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
-
     <script>
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
