@@ -3,16 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Модальное окно</title>
-    <link rel="stylesheet" href=""> <!-- Подключение стилей -->
+    <title>Страница с текстом, изображением и кнопкой</title>
+    <style>
+        /* Центрирование текста */
+        .centered-text {
+            text-align: center;  /* Центрирует текст по горизонтали */
+            margin: 0;           /* Убирает отступы по умолчанию */
+            padding: 20px;       /* Добавляет отступы вокруг текста */
+            font-size: 20px;     /* Размер текста */
+            color: #333;         /* Цвет текста */
+            font-family: Arial, sans-serif; /* Шрифт */
+        }
+
+        /* Стиль для изображения */
+        .modal-image {
+            display: block;       /* Блочный элемент */
+            margin: 20px auto;    /* Центрирует изображение по горизонтали */
+            width: 80%;           /* Размер изображения (можно настроить) */
+            max-width: 500px;     /* Максимальная ширина изображения */
+        }
+
+        /* Стиль для кнопки */
+        .modal-button {
+            display: inline-block;
+            background-color: green; /* Зеленый фон */
+            color: white;            /* Белый текст */
+            padding: 10px 20px;      /* Отступы */
+            font-size: 18px;         /* Размер текста */
+            text-decoration: none;   /* Без подчеркивания */
+            border-radius: 5px;      /* Скругленные углы */
+            text-align: center;      /* Центрирование текста */
+            margin: 20px auto;       /* Центрирует кнопку */
+            display: block;          /* Блок для центрирования */
+        }
+
+        .modal-button:hover {
+            background-color: #45a049; /* Темнее зеленый при наведении */
+        }
+    </style>
 </head>
 <body>
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <h2>Товар</h2>
-            <p>Стоит очень много денег. Почти все.</p>
-        </div>
-    </div>
-    <script></script> <!-- Подключение скрипта -->
+
+    <h2 class="centered-text">Товар</h2>
+    <p class="centered-text">Стоит очень много денег. Почти все.</p>
+
+    <!-- Изображение -->
+    <img src="https://via.placeholder.com/500" alt="Изображение товара" class="modal-image">
+
+    <!-- Кнопка -->
+    <a href="https://example.com" class="modal-button">Купить</a>
+
 </body>
 </html>
