@@ -136,7 +136,7 @@ margin-top: 3px;
 </head>
 <body>
 <audio id="buttonClickSound" src="button_Klick.mp3"></audio>
-<audio id="rowCheckSound" src="row_check.mp3"></audio>
+<audio id="rowCheckSound" src="row_check5.mp3"></audio>
 <audio id="resultSound" src="result.mp3"></audio>
 <audio id="backgroundMusic" src="muzeek.mp3" loop></audio>
 
@@ -309,13 +309,11 @@ async function checkHorizontal() {
             rowCheckSound.play(); 
             await flashCells(row, 'highlight-green');
             matchInfo.push("+5");
-            rowCheckSound.play(); 
-        } else if (Object.values(counts).includes(2)) {
+           } else if (Object.values(counts).includes(2)) {
             points += 3;
             rowCheckSound.play();
             await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
             matchInfo.push("+3");
-            rowCheckSound.play(); 
         } else {
             matchInfo.push("0");
         }
@@ -342,7 +340,6 @@ async function checkVertical() {
             rowCheckSound.play(); 
             await flashCells(column, 'highlight-blue', 300);
             matchInfo.push("+5");
-            rowCheckSound.play(); 
         } else if (Object.values(counts).includes(2)) {
             points += 3;
             rowCheckSound.play();
@@ -377,7 +374,6 @@ async function checkDiagonal() {
             rowCheckSound.play(); 
             await flashCells(diagonal, 'highlight-yellow', 300);
             matchInfo.push("+6");
-            rowCheckSound.play(); 
         } else if (Object.values(counts).includes(2)) {
             points += 4;
             rowCheckSound.play();
