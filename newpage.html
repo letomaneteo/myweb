@@ -323,27 +323,35 @@ async function checkHorizontal() {
     return points;
 }
 
+const cells = Array.from(document.querySelectorAll('.cell')); // Получаем все ячейки с классом 'cell'
+const rowCheckSound = document.getElementById('rowCheckSound'); // Получаем элемент аудио с идентификатором 'rowCheckSound'
+
 async function checkVertical() {
     let points = 0;
     let matchInfo = [];
+
     for (let i = 0; i < 3; i++) {
-        const column = [cells[i], cells[i + 3], cells[i + 6]];
-        const values = column.map(cell => cell.textContent);
+        const column = [document.getElementById(`cell-${i}`), document.getElementById(`cell-${i + 3}`), document.getElementById(`cell-${i + 6}`)]; // Получаем ячейки колонки
+        const values = column.map(cell => cell.textContent); // Получаем значения текста в ячейках
         const counts = {};
 
         values.forEach(value => {
-            counts[value] = (counts[value] || 0) + 1;
+            counts[value] = (counts[value] || 0) + 1; // Считаем количество каждого значения
         });
 
         if (Object.values(counts).includes(3)) {
             points += 5;
-            rowCheckSound.play(); 
-            await flashCells(column, 'highlight-blue', 300);
+            await flashCells(column, 'highlight-blue', 300); // Подсвечиваем ячейки
+            rowCheckSound.pause(); // Останавливаем воспроизведение звука
+            rowCheckSound.currentTime = 0; // Перематываем звук на начало
+            rowCheckSound.play(); // Воспроизводим звук
             matchInfo.push("+5");
         } else if (Object.values(counts).includes(2)) {
             points += 3;
-            rowCheckSound.play();
-            await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue', 300);
+            await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue', 300); // Подсвечиваем ячейки
+            rowCheckSound.pause(); // Останавливаем воспроизведение звука
+            rowCheckSound.currentTime = 0; // Перематываем звук на начало
+            rowCheckSound.play(); // Воспроизводим звук
             matchInfo.push("+3");
         } else {
             matchInfo.push("0");
@@ -353,6 +361,12 @@ async function checkVertical() {
     document.getElementById('verticalResult').textContent = matchInfo.join(", ");
     return points;
 }
+
+// Пример запуска функции для проверки
+document.getElementById('playButton').addEventListener('click', () => {
+    checkVertical();
+});
+
 
 async function checkDiagonal() {
     let points = 0;
