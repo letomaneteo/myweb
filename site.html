@@ -89,6 +89,20 @@
     display: none;
 }
 
+        .fade-in {
+            opacity: 0; /* Изначально невидимый */
+            animation: fade-in 2s ease-in-out forwards; /* forwards сохраняет конечное состояние */
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0; /* Прозрачность в начале */
+            }
+            to {
+                opacity: 1; /* Полностью видно в конце */
+            }
+        }
+        
 @media (max-width: 768px) {
     .header .nav {
         display: none;
@@ -258,10 +272,7 @@ iframe {
     <div class="animation-container">
         <iframe src="tumba.html" title="3D Object"></iframe>
     </div>
-        <section class="section" id="about">
-        <p class="justified-text">Тематические шоурумы в разных цветах</p>
-    </section> 
-<section class="section" id="video-section">
+    <section class="section" id="video-section">
     <div class="video-container">
         <!-- Локальное видео с автозапуском, без управления и зацикленное -->
         <video width="100%" height="400" autoplay muted loop>
@@ -269,7 +280,8 @@ iframe {
             Ваш браузер не поддерживает видео.
         </video>
         <section class="section" id="about">
-        <p class="justified-text">Тематические шоурумы в разных цветах</p>
+        <p class="fade-in center-text">ТЕМАТИЧЕСКИЕ ШОУРУМЫ В РАЗНЫХ ЦВЕТАХ</p>
+
     </section> 
     </div>
 </section>
