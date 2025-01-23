@@ -353,7 +353,7 @@ async function checkVertical() {
             rowCheckSound.pause();
             rowCheckSound.currentTime = 0;
             await rowCheckSound.play();
-            await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue', 300);
+            await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue');
             matchInfo.push("+3");
         } else {
             matchInfo.push("0");
@@ -391,7 +391,7 @@ async function checkDiagonal() {
             rowCheckSound.pause();
             rowCheckSound.currentTime = 0;
             await rowCheckSound.play();
-            await flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow', 300);
+            await flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow');
             matchInfo.push("+4");
         } else {
             matchInfo.push("0");
