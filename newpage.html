@@ -467,7 +467,13 @@ restartButton.addEventListener('click', () => {
     messages.end.textContent = ''; // Убираем текст "Вы выиграли!" или "Вы проиграли!"
 });
 
-playButton.addEventListener('click', playGame);
+playButton.addEventListener('click', () => {
+    const buttonClickSound = document.getElementById('buttonClickSound');
+    buttonClickSound.pause(); // Сбрасываем звук, если он уже играет
+    buttonClickSound.currentTime = 0; // Возвращаем воспроизведение в начало
+    buttonClickSound.play(); // Проигрываем звук нажатия
+    playGame(); // Запускаем игру
+});
 
     </script>
 </body>
