@@ -156,20 +156,20 @@
     z-index: 1000;
 }
 #modalWindow {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    height: 80%;
-    border: 2px solid #0BA5BE;
-    background: white;
-    z-index: 1001;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    overflow: hidden; /* Убирает возможность прокрутки внутри окна */
-    position: relative; /* Добавляем это */
+    display: none; /* Скрываем окно по умолчанию */
+    position: fixed; /* Фиксируем окно */
+    top: 50%; /* Центрируем по вертикали */
+    left: 50%; /* Центрируем по горизонтали */
+    transform: translate(-50%, -50%); /* Сдвигаем в центр */
+    width: 80%; /* Ширина окна (например, 80% экрана) */
+    height: 80%; /* Высота окна */
+    border: 2px solid #0BA5BE; /* Рамка */
+    background: white; /* Фон окна */
+    z-index: 1001; /* Поверх затемняющего слоя */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Тень */
+    overflow: hidden; /* Убираем прокрутку внутри окна */
 }
+
 .close-btn {
     position: absolute; /* Расположение относительно родителя (модального окна) */
     top: 10px; /* Отступ сверху */
