@@ -135,6 +135,11 @@ margin-top: 3px;
     </style>
 </head>
 <body>
+<audio id="buttonClickSound" src="button_click.mp3"></audio>
+<audio id="rowCheckSound" src="row_check.mp3"></audio>
+<audio id="resultSound" src="result_sound.mp3"></audio>
+<audio id="backgroundMusic" src="background_music.mp3" loop></audio>
+
 <h1 style="margin: 0; padding: 0; line-height: 1;">Очки: <span id="userScore">0</span></h1>
 <h2 style="margin: 0; padding: 0; line-height: 1;">Уровень: <span id="userLevel">1</span></h2>
     <div class="game-title">22 КЛИКА</div>
@@ -174,6 +179,9 @@ margin-top: 3px;
 </div>
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
     <script>
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        backgroundMusic.play(); // Начинаем воспроизведение музыки
+
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
         const clickCountElement = document.getElementById('clickCount');
@@ -282,7 +290,8 @@ if (userLevel !== undefined) {
         }, delay + 300); // Подсветка длится 500 мс
     });
 }
-
+const rowCheckSound = document.getElementById('rowCheckSound');
+        
 async function checkHorizontal() {
     let points = 0;
     let matchInfo = [];
@@ -299,6 +308,7 @@ async function checkHorizontal() {
             points += 5;
             await flashCells(row, 'highlight-green');
             matchInfo.push("+5");
+            rowCheckSound.play(); 
         } else if (Object.values(counts).includes(2)) {
             points += 3;
             await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
@@ -328,6 +338,7 @@ async function checkVertical() {
             points += 5;
             await flashCells(column, 'highlight-blue', 300);
             matchInfo.push("+5");
+            rowCheckSound.play(); 
         } else if (Object.values(counts).includes(2)) {
             points += 3;
             await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue', 300);
@@ -360,6 +371,7 @@ async function checkDiagonal() {
             points += 6;
             await flashCells(diagonal, 'highlight-yellow', 300);
             matchInfo.push("+6");
+            rowCheckSound.play(); 
         } else if (Object.values(counts).includes(2)) {
             points += 4;
             await flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow', 300);
@@ -396,12 +408,13 @@ async function playGame() {
         document.getElementById('totalResult').textContent = "-8 (нет совпадений)";
         updateScore(-8);
     }
-
+    const resultSound = document.getElementById('resultSound');
     // Проверяем состояние игры
     if (score >= 200) {
         winCount++;
         winCountElement.textContent = winCount;
         messages.end.textContent = "Вы выиграли!";
+        resultSound.play(); // Проигрываем звук победы
         playButton.disabled = true;
         restartButton.style.display = 'block';
         updateUserStats(); // Вызовем функцию обновления статистики
@@ -415,6 +428,7 @@ async function playGame() {
             winCount++;
             winCountElement.textContent = winCount;
             messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+            resultSound.play();
         }
         playButton.disabled = true;
         restartButton.style.display = 'block';
