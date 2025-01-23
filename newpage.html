@@ -138,8 +138,9 @@ margin-top: 3px;
 <audio id="buttonClickSound" src="click.mp3"></audio>
 <audio id="rowCheckSound" src="ding5.mp3" preload="auto"></audio>
 <audio id="resultSound" src="vic.wav"></audio>
+<audio id="defSound" src="defeat.wav"></audio>
 <audio id="backgroundMusic" src="muzeek.mp3" loop></audio>
-<audio id="winCheckSound" src="ding2.mp3"></audio>  
+<audio id="winCheckSound" src="ding2.mp3" preload="auto"></audio>  
     
 
 <h1 style="margin: 0; padding: 0; line-height: 1;">Очки: <span id="userScore">0</span></h1>
@@ -426,6 +427,7 @@ async function playGame() {
         updateScore(-8);
     }
     const resultSound = document.getElementById('resultSound');
+    const defSound = document.getElementById('defSound');
     // Проверяем состояние игры
     if (score >= 200) {
         winCount++;
@@ -440,7 +442,7 @@ async function playGame() {
             lossCount++;
             lossCountElement.textContent = lossCount;
             messages.end.textContent = "Вы проиграли! Не хватило очков.";
-
+            defSound.play();
         } else {
             winCount++;
             winCountElement.textContent = winCount;
