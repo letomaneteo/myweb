@@ -306,11 +306,15 @@ async function checkHorizontal() {
 
         if (Object.values(counts).includes(3)) {
             points += 5;
-            rowCheckSound.play(); 
+            rowCheckSound.pause();
+            rowCheckSound.currentTime = 0;
+            rowCheckSound.play();
             await flashCells(row, 'highlight-green');
             matchInfo.push("+5");
            } else if (Object.values(counts).includes(2)) {
             points += 3;
+            rowCheckSound.pause();
+            rowCheckSound.currentTime = 0;
             rowCheckSound.play();
             await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
             matchInfo.push("+3");
@@ -337,11 +341,15 @@ async function checkVertical() {
 
         if (Object.values(counts).includes(3)) {
             points += 5;
+            rowCheckSound.pause();
+            rowCheckSound.currentTime = 0;
             rowCheckSound.play(); 
             await flashCells(column, 'highlight-blue', 300);
             matchInfo.push("+5");
         } else if (Object.values(counts).includes(2)) {
             points += 3;
+            rowCheckSound.pause();
+            rowCheckSound.currentTime = 0;
             rowCheckSound.play();
             await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue', 300);
             matchInfo.push("+3");
@@ -371,11 +379,15 @@ async function checkDiagonal() {
 
         if (Object.values(counts).includes(3)) {
             points += 6;
+            rowCheckSound.pause();
+            rowCheckSound.currentTime = 0;
             rowCheckSound.play(); 
             await flashCells(diagonal, 'highlight-yellow', 300);
             matchInfo.push("+6");
         } else if (Object.values(counts).includes(2)) {
             points += 4;
+            rowCheckSound.pause();
+            rowCheckSound.currentTime = 0;
             rowCheckSound.play();
             await flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow', 300);
             matchInfo.push("+4");
