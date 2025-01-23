@@ -158,7 +158,7 @@ margin-top: 3px;
 </head>
 <body>
 <audio id="backgroundMusic" src="muzeek.mp3" loop muted></audio>
-<button id="toggleSound">Включить звук</button>
+<button id="toggleSound">Музыка</button>
 <audio id="buttonClickSound" src="click.mp3"></audio>
 <audio id="rowCheckSound" src="ding5.mp3" preload="auto"></audio>
 <audio id="resultSound" src="vic.wav"></audio>
@@ -234,7 +234,7 @@ margin-top: 3px;
             backgroundMusic.muted = false;
             backgroundMusic.play()
                 .then(() => {
-                    toggleButton.textContent = 'Выключить звук'; // Меняем текст кнопки
+                    toggleButton.textContent = 'Музыка'; // Меняем текст кнопки
                     console.log('Музыка воспроизводится.');
                 })
                 .catch(error => {
@@ -244,7 +244,7 @@ margin-top: 3px;
             // Останавливаем воспроизведение и включаем mute
             backgroundMusic.muted = true;
             backgroundMusic.pause();
-            toggleButton.textContent = 'Включить звук'; // Меняем текст кнопки
+            toggleButton.textContent = 'Выкл. музыку'; // Меняем текст кнопки
             console.log('Музыка остановлена.');
         }
     });
