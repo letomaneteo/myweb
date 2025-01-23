@@ -395,7 +395,7 @@
 </div>
 
 <script>
-   const menuToggle = document.getElementById('menuToggle');
+  const menuToggle = document.getElementById('menuToggle');
 const nav = document.querySelector('.header .nav');
 const body = document.querySelector('body');
 
@@ -418,51 +418,51 @@ nav.addEventListener('click', (event) => {
 });
 
 // Получаем элементы для первого окна
-const openModalButton = document.getElementById('openModal');
-const modalWindow = document.getElementById('modalWindow'); // Основное окно
-const modalOverlay = document.getElementById('modalOverlay'); // Затемняющий слой
-const closeModalBtn = document.getElementById('closeModal'); // Крестик
+const openModalButton1 = document.getElementById('openModal');
+const modalWindow1 = document.getElementById('modalWindow'); // Первое окно
+const modalOverlay1 = document.getElementById('modalOverlay'); // Затемняющий слой для первого окна
+const closeModalBtn1 = document.getElementById('closeModal'); // Крестик для первого окна
 
 // Открытие первого окна
-openModalButton.addEventListener('click', () => {
-    modalWindow.style.display = 'block'; // Показываем основное окно
-    modalOverlay.style.display = 'block'; // Показываем затемняющий слой
+openModalButton1.addEventListener('click', () => {
+    modalWindow1.style.display = 'block'; // Показываем первое окно
+    modalOverlay1.style.display = 'block'; // Показываем затемняющий слой для первого окна
 });
 
 // Закрытие первого окна по клику на крестик
-closeModalBtn.addEventListener('click', () => {
-    modalWindow.style.display = 'none'; // Скрываем основное окно
-    modalOverlay.style.display = 'none'; // Скрываем затемняющий слой
+closeModalBtn1.addEventListener('click', () => {
+    modalWindow1.style.display = 'none'; // Скрываем первое окно
+    modalOverlay1.style.display = 'none'; // Скрываем затемняющий слой для первого окна
 });
 
 // Закрытие первого окна по клику на затемняющий слой
-modalOverlay.addEventListener('click', () => {
-    modalWindow.style.display = 'none'; // Скрываем основное окно
-    modalOverlay.style.display = 'none'; // Скрываем затемняющий слой
+modalOverlay1.addEventListener('click', () => {
+    modalWindow1.style.display = 'none'; // Скрываем первое окно
+    modalOverlay1.style.display = 'none'; // Скрываем затемняющий слой для первого окна
 });
 
 // Получаем элементы для второго окна
 const openModalButton2 = document.getElementById('openModal2');
 const modalWindow2 = document.getElementById('modalWindow2'); // Второе окно
-const modalOverlay2 = document.getElementById('modalOverlay2'); // Второй затемняющий слой
-const closeModalBtn2 = document.getElementById('closeModal2'); // Второй крестик
+const modalOverlay2 = document.getElementById('modalOverlay2'); // Затемняющий слой для второго окна
+const closeModalBtn2 = document.getElementById('closeModal2'); // Крестик для второго окна
 
 // Открытие второго окна
 openModalButton2.addEventListener('click', () => {
     modalWindow2.style.display = 'block'; // Показываем второе окно
-    modalOverlay2.style.display = 'block'; // Показываем второй затемняющий слой
+    modalOverlay2.style.display = 'block'; // Показываем затемняющий слой для второго окна
 });
 
 // Закрытие второго окна по клику на крестик
 closeModalBtn2.addEventListener('click', () => {
     modalWindow2.style.display = 'none'; // Скрываем второе окно
-    modalOverlay2.style.display = 'none'; // Скрываем второй затемняющий слой
+    modalOverlay2.style.display = 'none'; // Скрываем затемняющий слой для второго окна
 });
 
-// Закрытие второго окна по клику на второй затемняющий слой
+// Закрытие второго окна по клику на затемняющий слой
 modalOverlay2.addEventListener('click', () => {
     modalWindow2.style.display = 'none'; // Скрываем второе окно
-    modalOverlay2.style.display = 'none'; // Скрываем второй затемняющий слой
+    modalOverlay2.style.display = 'none'; // Скрываем затемняющий слой для второго окна
 });
 
 </script>
