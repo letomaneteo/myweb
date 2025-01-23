@@ -234,7 +234,7 @@ margin-top: 3px;
             backgroundMusic.muted = false;
             backgroundMusic.play()
                 .then(() => {
-                    toggleButton.textContent = 'Музыка'; // Меняем текст кнопки
+                    toggleButton.textContent = 'Выкл.музыку'; // Меняем текст кнопки
                     console.log('Музыка воспроизводится.');
                 })
                 .catch(error => {
@@ -244,7 +244,7 @@ margin-top: 3px;
             // Останавливаем воспроизведение и включаем mute
             backgroundMusic.muted = true;
             backgroundMusic.pause();
-            toggleButton.textContent = 'Выкл. музыку'; // Меняем текст кнопки
+            toggleButton.textContent = 'Музыка'; // Меняем текст кнопки
             console.log('Музыка остановлена.');
         }
     });
