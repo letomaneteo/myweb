@@ -130,6 +130,24 @@
     transform: scale(0.95); /* Легкое уменьшение при клике */
 }
 
+#modalWindow {
+    display: block; /* Делаем окно видимым */
+    position: fixed; /* Окно фиксируется относительно экрана */
+    top: 50%; /* Расположено по центру */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Центрируем */
+    width: 80%; /* Ширина окна */
+    max-width: 800px; /* Ограничиваем максимальную ширину */
+    height: 80%; /* Высота окна */
+    max-height: 600px; /* Ограничиваем максимальную высоту */
+    border: 2px solid #0BA5BE; /* Граница */
+    background: white; /* Белый фон */
+    z-index: 1001; /* Приоритет отображения */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Тень */
+    overflow: hidden; /* Отключаем прокрутку внутри окна */
+}
+
+        
 #modalIframe {
     display: none;
     position: fixed;
