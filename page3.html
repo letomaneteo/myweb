@@ -120,6 +120,20 @@
     transition: background-color 0.3s ease, transform 0.2s ease; /* Анимация при наведении */
 }
 
+.modal-button2 {
+    display: inline-block;
+    background-color: #0BA5BE; /* Цвет кнопки */
+    color: white; /* Цвет текста */
+    border: none; /* Убираем обводку */
+    padding: 10px 20px; /* Внутренние отступы */
+    font-size: 16px; /* Размер текста */
+    font-weight: bold; /* Жирный текст */
+    border-radius: 5px; /* Скругленные края */
+    cursor: pointer; /* Курсор указателя */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Тень */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Анимация при наведении */
+}
+        
 .modal-button:hover {
     background-color: #0A8EA5; /* Цвет кнопки при наведении */
     transform: scale(1.05); /* Легкое увеличение */
@@ -146,6 +160,17 @@
     background: rgba(0, 0, 0, 0.6);
     z-index: 1000;
 }
+
+#modalOverlay2 {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
 #modalWindow {
     display: none; /* Скрываем по умолчанию */
     position: fixed;
@@ -161,6 +186,20 @@
     overflow: hidden;
 }
 
+ #modalWindow2 {
+    display: none; /* Скрываем по умолчанию */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* Ширина окна */
+    height: 80%; /* Высота окна */
+    border: 2px solid #0BA5BE;
+    background: white;
+    z-index: 1001;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}       
 .close-btn {
     position: absolute; /* Расположение относительно родителя (модального окна) */
     top: 10px; /* Отступ сверху */
