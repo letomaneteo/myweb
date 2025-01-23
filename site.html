@@ -89,19 +89,22 @@
     display: none;
 }
 
-        .fade-in {
-            opacity: 0; /* Изначально невидимый */
-            animation: fade-in 2s ease-in-out forwards; /* forwards сохраняет конечное состояние */
-        }
+.fade-in-out {
+    opacity: 0; /* Изначально невидимый */
+    animation: fade-in-out 4s ease-in-out infinite; /* Бесконечная анимация */
+}
 
-        @keyframes fade-in {
-            from {
-                opacity: 0; /* Прозрачность в начале */
-            }
-            to {
-                opacity: 1; /* Полностью видно в конце */
-            }
-        }
+@keyframes fade-in-out {
+    0% {
+        opacity: 0; /* Прозрачность в начале */
+    }
+    50% {
+        opacity: 1; /* Полностью видно в середине */
+    }
+    100% {
+        opacity: 0; /* Снова исчезает в конце */
+    }
+}
         
 @media (max-width: 768px) {
     .header .nav {
