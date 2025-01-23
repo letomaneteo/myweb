@@ -156,15 +156,15 @@
     z-index: 1000;
 }
 
-close-btn {
-    position: fixed; /* Меняем на fixed для фиксации к краю окна */
-    top: 20px; /* Расстояние от верхнего края окна */
-    right: 20px; /* Расстояние от правого края окна */
+.close-btn {
+    position: absolute; /* Расположен относительно #modalWindow */
+    top: 10px; /* Отступ сверху */
+    right: 10px; /* Отступ справа */
     font-size: 30px;
     color: #0BA5BE;
     cursor: pointer;
     font-weight: bold;
-    z-index: 1002; /* Убедитесь, что он выше всех других элементов */
+    z-index: 1002; /* Убедитесь, что он выше других элементов */
 }
 
 .close-btn:hover {
