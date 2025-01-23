@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Страница с текстом, изображением и кнопкой</title>
+    <title>Модальное окно</title>
     <style>
         /* Центрирование текста */
         .centered-text {
@@ -40,18 +40,45 @@
         .modal-button:hover {
             background-color: #45a049; /* Темнее зеленый при наведении */
         }
+
+        /* Стиль для кнопки "Назад" */
+        .back-button {
+            background-color: #ff4500; /* Оранжевый фон */
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background-color: #e43f00; /* Темнее оранжевый при наведении */
+        }
     </style>
 </head>
 <body>
 
-    <h2 class="centered-text">Товар</h2>
-    <p class="centered-text">Стоит очень много денег. Почти все.</p>
+    <!-- Кнопка "Назад" для возврата на предыдущую страницу -->
+    <button class="back-button" onclick="window.history.back();">Назад</button>
 
-    <!-- Изображение -->
-    <img src="https://via.placeholder.com/500" alt="Изображение товара" class="modal-image">
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 class="centered-text">Товар</h2>
+            <p class="centered-text">Стоит очень много денег. Почти все.</p>
 
-    <!-- Кнопка -->
-    <a href="https://example.com" class="modal-button">Купить</a>
+            <!-- Изображение -->
+            <img src="https://via.placeholder.com/500" alt="Изображение товара" class="modal-image">
+
+            <!-- Кнопка -->
+            <a href="https://example.com" class="modal-button">Подробнее</a>
+        </div>
+    </div>
+
+    <script>
+        // Здесь можно добавить JavaScript, если нужно открывать или закрывать модальное окно.
+    </script>
 
 </body>
 </html>
