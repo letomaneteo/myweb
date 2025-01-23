@@ -311,6 +311,7 @@ async function checkHorizontal() {
             rowCheckSound.play(); 
         } else if (Object.values(counts).includes(2)) {
             points += 3;
+            rowCheckSound.play();
             await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
             matchInfo.push("+3");
         } else {
@@ -341,6 +342,7 @@ async function checkVertical() {
             rowCheckSound.play(); 
         } else if (Object.values(counts).includes(2)) {
             points += 3;
+            rowCheckSound.play();
             await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue', 300);
             matchInfo.push("+3");
         } else {
@@ -374,6 +376,7 @@ async function checkDiagonal() {
             rowCheckSound.play(); 
         } else if (Object.values(counts).includes(2)) {
             points += 4;
+            rowCheckSound.play();
             await flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow', 300);
             matchInfo.push("+4");
         } else {
