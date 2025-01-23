@@ -135,11 +135,12 @@ margin-top: 3px;
     </style>
 </head>
 <body>
+<audio id="backgroundMusic" src="muzeek.mp3" loop autoplay muted></audio>
+<button id="unmuteButton">Включить звук</button>
 <audio id="buttonClickSound" src="click.mp3"></audio>
 <audio id="rowCheckSound" src="ding5.mp3" preload="auto"></audio>
 <audio id="resultSound" src="vic.wav"></audio>
 <audio id="defSound" src="defeat.wav"></audio>
-<audio id="backgroundMusic" src="muzeek.mp3" loop autoplay></audio>
 <audio id="winCheckSound" src="ding2.mp3" preload="auto"></audio>  
     
 
@@ -183,8 +184,7 @@ margin-top: 3px;
     <button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
     <script>
         const backgroundMusic = document.getElementById('backgroundMusic');
-        backgroundMusic.play(); // Начинаем воспроизведение музыки
-
+        const unmuteButton = document.getElementById('unmuteButton');
         const cells = Array.from(document.querySelectorAll('.cell'));
         const scoreElement = document.getElementById('score');
         const clickCountElement = document.getElementById('clickCount');
@@ -205,6 +205,17 @@ margin-top: 3px;
         let clickCount = 0;
         let winCount = 0;
         let lossCount = 0;
+
+        unmuteButton.addEventListener('click', () => {
+    backgroundMusic.muted = false; // Отключаем mute
+    backgroundMusic.play()
+        .then(() => {
+            console.log('Музыка воспроизводится со звуком.');
+        })
+        .catch(error => {
+            console.error('Ошибка воспроизведения:', error);
+        });
+});
 
 function updateUserStats() {
     // Проверяем результат игры
