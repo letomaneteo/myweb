@@ -49,8 +49,10 @@
             font-size: 18px;
             text-decoration: none;
             border-radius: 5px;
-            margin: 20px;
+            margin: 20px auto;
             cursor: pointer;
+            display: block;
+            text-align: center;
         }
 
         .back-button:hover {
@@ -60,7 +62,7 @@
 </head>
 <body>
 
-    <!-- Кнопка "Назад" для возврата на предыдущую страницу -->
+    <!-- Кнопка "Назад" для выхода из модального окна -->
     <button class="back-button" onclick="window.history.back();">Назад</button>
 
     <div class="modal" id="modal">
