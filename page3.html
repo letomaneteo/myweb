@@ -217,25 +217,24 @@
 
  .fade-in {
   opacity: 0; /* Изначально невидимый */
-  animation: fade-in-out 4s ease-in-out infinite; /* Бесконечная анимация */
-  font-size: 24px; /* Пример стиля для текста */
-  color: #333; /* Цвет текста */
+  animation: fade-in-out 6s ease-in-out infinite; /* Бесконечная анимация с увеличенным временем */
+  font-size: 24px; /* Размер текста */
+  color: #fff; /* Яркий белый цвет текста */
   text-align: center; /* Центрирование текста */
   margin-top: 20px;
 }
 
 @keyframes fade-in-out {
-  0% {
-    opacity: 0; /* Прозрачность в начале */
+  0%, 30% {
+    opacity: 0; /* Прозрачность в начале и в конце */
   }
-  50% {
+  50%, 70% {
     opacity: 1; /* Полностью видно в середине */
   }
   100% {
     opacity: 0; /* Снова исчезает в конце */
   }
-}
-  
+} 
         @media (max-width: 768px) {
             .menu-toggle {
                 display: block;
