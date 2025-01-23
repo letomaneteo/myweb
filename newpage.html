@@ -136,9 +136,11 @@ margin-top: 3px;
 </head>
 <body>
 <audio id="buttonClickSound" src="button_Klick.mp3"></audio>
-<audio id="rowCheckSound" src="ding2.mp3"></audio>
+<audio id="rowCheckSound" src="ding31.mp3"></audio>
 <audio id="resultSound" src="result.mp3"></audio>
 <audio id="backgroundMusic" src="muzeek.mp3" loop></audio>
+<audio id="winCheckSound" src="ding2.mp3"></audio>  
+    
 
 <h1 style="margin: 0; padding: 0; line-height: 1;">Очки: <span id="userScore">0</span></h1>
 <h2 style="margin: 0; padding: 0; line-height: 1;">Уровень: <span id="userLevel">1</span></h2>
@@ -308,7 +310,7 @@ async function checkHorizontal() {
             points += 5;
             rowCheckSound.pause();
             rowCheckSound.currentTime = 0;
-            rowCheckSound.play();
+            winCheckSound.play();
             await flashCells(row, 'highlight-green');
             matchInfo.push("+5");
            } else if (Object.values(counts).includes(2)) {
@@ -343,7 +345,7 @@ async function checkVertical() {
             points += 5;
             rowCheckSound.pause();
             rowCheckSound.currentTime = 0;
-            rowCheckSound.play(); 
+            winCheckSound.play(); 
             await flashCells(column, 'highlight-blue', 300);
             matchInfo.push("+5");
         } else if (Object.values(counts).includes(2)) {
@@ -381,7 +383,7 @@ async function checkDiagonal() {
             points += 6;
             rowCheckSound.pause();
             rowCheckSound.currentTime = 0;
-            rowCheckSound.play(); 
+            winCheckSound.play(); 
             await flashCells(diagonal, 'highlight-yellow', 300);
             matchInfo.push("+6");
         } else if (Object.values(counts).includes(2)) {
