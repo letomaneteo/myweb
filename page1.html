@@ -417,30 +417,25 @@ iframe {
 
 </div>
     <script>
-        window.onload = function() {
-            var header = document.querySelector('.header');
-            var mainContent = document.getElementById('mainContent');
-            
-            // Получаем высоту шапки и устанавливаем отступ для основного контента
-            var headerHeight = header.offsetHeight;
-            mainContent.style.marginTop = headerHeight + 'px';
-        };
-       
-        window.onscroll = function() {
-            var header = document.querySelector('.header');
-            var mainContent = document.getElementById('mainContent');
-            var logo = document.querySelector('.header .container img');
-            
-            if (window.pageYOffset > 50) {
-                header.classList.add('shrink');
-                mainContent.style.marginTop = '90px';
-                logo.style.display = 'none';
-            } else {
-                header.classList.remove('shrink');
-                mainContent.style.marginTop = '180px';
-                logo.style.display = 'block';
-            }
-        };
+        window.onload = function () {
+    var header = document.querySelector('.header');
+    var mainContent = document.getElementById('mainContent');
+
+    // Устанавливаем постоянный отступ для основного контента, равный высоте шапки
+    var headerHeight = header.offsetHeight;
+    mainContent.style.marginTop = headerHeight + 'px';
+};
+
+window.onscroll = function () {
+    var header = document.querySelector('.header');
+
+    // Меняем только стиль шапки при прокрутке
+    if (window.pageYOffset > 50) {
+        header.classList.add('shrink');
+    } else {
+        header.classList.remove('shrink');
+    }
+};
 
         var menuToggle = document.getElementById('menuToggle');
         var nav = document.querySelector('.header .nav');
