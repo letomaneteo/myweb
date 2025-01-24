@@ -172,21 +172,20 @@
     z-index: 1000;
 }
  #modalWindow {
-  position: absolute;
-  top: 50%; /* Центрирование по вертикали */
-  left: 50%; /* Центрирование по горизонтали */
-  transform: translate(-50%, -50%); /* Смещение для центрирования */
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-border: 2px solid rgba(253, 177, 11, 0.8);/* Толщина, цвет и прозрачность рамки */
-  width: 70%; /* Ширина окна */
-  max-width: 800px; /* Максимальная ширина */
-  height: 50%; /* Увеличенная высота */
-  overflow: hidden; /* Убрать прокрутку */
-  z-index: 2;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Тень */
-}
+    display: none; /* Скрываем по умолчанию */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* Ширина окна */
+    height: 80%; /* Высота окна */
+    border: 2px solid #778D45;
+    border-radius: 15px; /* Скругление углов */ 
+    background: white;
+    z-index: 1001;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}       
 
  #modalWindow2 {
     display: none; /* Скрываем по умолчанию */
