@@ -134,8 +134,8 @@
 }
 
 .modal {
-  display: none;
-  position: fixed;
+  display: none; /* Скрыть модальное окно по умолчанию */
+  position: fixed; /* Фиксированное расположение для центрирования */
   top: 0;
   left: 0;
   width: 100%;
@@ -149,24 +149,25 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
   z-index: 1;
 }
 
 .modal-window {
   position: absolute;
-  top: 10%; /* Сместить окно ниже от верхнего края */
+  top: 10%; /* Отступ сверху */
   left: 50%;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, 0); /* Центрирование по горизонтали */
   background: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 90%; /* Ширина 90% от экрана */
+  width: 90%; /* Ширина окна */
   max-width: 800px; /* Максимальная ширина */
-  max-height: 80%; /* Ограничить высоту 80% экрана */
-  overflow-y: auto; /* Прокрутка для длинного содержимого */
+  height: auto; /* Высота по содержимому */
+  max-height: 80%; /* Ограничение по высоте экрана */
+  overflow-y: auto; /* Скролл только если текст превышает окно */
   z-index: 2;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Тень */
 }
 
 .close-btn {
