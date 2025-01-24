@@ -110,8 +110,31 @@
   }
 } 
 
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.modal-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  color: #fff;
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-button:hover {
+  background: #0056b3;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
 .modal {
-  display: none; /* Скрыть модальное окно по умолчанию */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -127,6 +150,7 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
 }
 
 .modal-window {
@@ -137,8 +161,12 @@
   background: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 80%;
-  max-width: 500px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90%;
+  overflow-y: auto;
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .close-btn {
@@ -147,9 +175,18 @@
   right: 10px;
   cursor: pointer;
   font-size: 40px;
+  color: #666;
+  transition: color 0.3s ease;
 }
 
+.close-btn:hover {
+  color: #000;
+}
 
+.centered-text {
+  text-align: center;
+  margin: 10px 0;
+}
         
 @media (max-width: 768px) {
     .header .nav {
@@ -311,6 +348,7 @@ iframe {
     <div class="animation-container">
         <iframe src="tumba.html" title="3D Object"></iframe>
     </div>
+         <!-- Первая кнопка и модальное окно -->
         <div class="button-container">
     <button class="modal-button" data-modal="modal1">Подробно о товаре 1</button>
 </div>
