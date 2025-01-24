@@ -155,16 +155,16 @@
 
 .modal-window {
   position: absolute;
-  top: 50%;
+  top: 10%; /* Сместить окно ниже от верхнего края */
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0);
   background: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90%;
-  overflow-y: auto;
+  width: 90%; /* Ширина 90% от экрана */
+  max-width: 800px; /* Максимальная ширина */
+  max-height: 80%; /* Ограничить высоту 80% экрана */
+  overflow-y: auto; /* Прокрутка для длинного содержимого */
   z-index: 2;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
