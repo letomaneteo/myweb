@@ -452,10 +452,10 @@ iframe {
     document.addEventListener('click', (event) => {
         // Открытие модального окна
         if (event.target.classList.contains('modal-button')) {
-            const modalId = event.target.getAttribute('data-modal'); // Берем ID окна
+            const modalId = event.target.getAttribute('data-modal'); // Получаем ID окна
             const modal = document.getElementById(modalId);
             const iframe = modal.querySelector('.modal-iframe');
-            const pageUrl = event.target.getAttribute('data-src'); // Берем ссылку
+            const pageUrl = event.target.getAttribute('data-src'); // Получаем ссылку
 
             if (modal && iframe) {
                 iframe.src = pageUrl; // Загружаем нужную страницу
@@ -463,15 +463,28 @@ iframe {
             }
         }
 
-        // Закрытие окна по клику на крестик или фон
-        if (event.target.classList.contains('close-btn') || event.target.classList.contains('modal-overlay')) {
+        // Закрытие окна по клику на крестик
+        if (event.target.classList.contains('close-btn')) {
             const modal = event.target.closest('.modal');
             if (modal) {
-                modal.style.display = 'none';
-                modal.querySelector('.modal-iframe').src = ''; // Очищаем iframe
+                closeModal(modal);
+            }
+        }
+
+        // Закрытие окна по клику на оверлей
+        if (event.target.classList.contains('modal-overlay')) {
+            const modal = event.target.parentElement; // Получаем родительский .modal
+            if (modal) {
+                closeModal(modal);
             }
         }
     });
+
+    // Функция закрытия модального окна
+    function closeModal(modal) {
+        modal.style.display = 'none';
+        modal.querySelector('.modal-iframe').src = ''; // Очищаем iframe, чтобы страница не висела в фоне
+    }
 });
     </script>
    
