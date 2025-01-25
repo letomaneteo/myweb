@@ -5,6 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Фиксированная шапка с логотипом</title>
     <style>
+/* Индикатор загрузки */
+/* Индикатор загрузки */
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(237, 158, 21, 0.5); /* Тёмный фон */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* GIF-анимация */
+.gif-loader {
+  width: 100px; /* Размер GIF */
+  height: auto;
+  margin-bottom: 5px; /* Отступ от текста */
+}
+
+/* Стиль текста */
+.loading-text {
+  color: white;
+  font-size: 1.5rem;
+  animation: pulse 1.5s infinite; /* Пульсация текста */
+  text-align: center;
+  margin: 0; /* Убираем дополнительные отступы */
+  line-height: 1; /* Уменьшаем межстрочный интервал */
+}
+
+/* Анимация пульсации текста */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
       body {
     margin: 0;
     font-family: Verdana, Geneva, sans-serif;
@@ -329,7 +375,18 @@ iframe {
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
 </head>
 <body>
+<body>
+ <div id="loader">
+  <img src="sids.apng" alt="Загрузка" class="gif-loader">
+   <p class="loading-text">Секундочку, пожалуйста,</p>   
+  <p class="loading-text">загружаются анимации...</p>
+</div>
 
+<div id="content" style="display: none;">
+  <!-- Основной контент -->
+</div>
+
+</body>
     <header class="header">
         <div class="container">
             <a href="index.html"><img src="2.gif" alt="Логотип" style="width: 100px;"></a>
@@ -482,7 +539,10 @@ document.querySelectorAll('.modal').forEach(modal => {
     });
 });
 
-    </script>
-   
+    window.addEventListener('load', () => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    });
+    </script>   
 </body>
 </html>
