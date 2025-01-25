@@ -420,31 +420,28 @@ body.addEventListener('click', () => {
 nav.addEventListener('click', (event) => {
     event.stopPropagation();
 });
-       document.querySelectorAll('.modal-button').forEach(button => {
+      // Открытие модального окна
+document.querySelectorAll('.modal-button').forEach(button => {
     button.addEventListener('click', () => {
         const modalId = button.getAttribute('data-modal'); // Получаем ID модального окна
         const modal = document.getElementById(modalId);
-        const iframe = modal.querySelector('iframe');
-
-        // Проверяем, открыт ли уже нужный iframe на другой странице (например, st.html)
-        if (iframe.src !== 'modal.html') {
-            iframe.src = 'modal.html'; // Сбрасываем содержимое iframe только если оно изменилось
-        }
-
         modal.style.display = 'block'; // Показываем модальное окно
     });
 });
 
+// Закрытие модального окна + сброс iframe
 document.querySelectorAll('.modal').forEach(modal => {
     const overlay = modal.querySelector('.modal-overlay');
     const closeBtn = modal.querySelector('.close-btn');
-    const iframe = modal.querySelector('iframe');
+    const iframe = modal.querySelector('iframe'); // Получаем iframe
 
     function closeModal() {
         modal.style.display = 'none';
+
+        // Сбрасываем iframe на modal.html, но с небольшой задержкой
         setTimeout(() => {
-            iframe.src = 'modal.html'; // Сбрасываем iframe после закрытия с небольшой задержкой
-        }, 100); // Даем браузеру время на скрытие окна перед сбросом
+            iframe.src = 'modal.html';
+        }, 100); // Ждём 100 мс перед сбросом, чтобы не лагало
     }
 
     // Закрытие по клику на оверлей
@@ -453,7 +450,6 @@ document.querySelectorAll('.modal').forEach(modal => {
     // Закрытие по кнопке-крестику
     closeBtn.addEventListener('click', closeModal);
 });
-
 });
 
 </script>
