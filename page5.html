@@ -437,10 +437,15 @@ document.querySelectorAll('.modal').forEach(modal => {
     function closeModal() {
         modal.style.display = 'none';
 
-        // Проверяем, существует ли iframe перед сбросом
+         // Проверяем, существует ли iframe перед сбросом
         if (iframe) {
             setTimeout(() => {
-                iframe.src = 'modal.html'; // Сбрасываем iframe
+                // Устанавливаем исходный src только для текущего модального окна
+                if (modal.id === "modal") {
+                    iframe.src = 'modal.html';
+                } else if (modal.id === "modal2") {
+                    iframe.src = 'modal2/modal2.html';
+                }
             }, 100);
         }
     }
