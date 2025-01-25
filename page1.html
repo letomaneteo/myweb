@@ -421,7 +421,7 @@ iframe {
     <div class="modal-overlay"></div>
     <div class="modal-window">
         <div class="close-btn">×</div>
-        <iframe src="modal.html"></iframe>
+       <iframe id="modal-iframe" src="modal.html"></iframe>
     </div>
 </div>
     <section class="section" id="about">
@@ -442,9 +442,10 @@ iframe {
     <div class="modal-overlay"></div>
     <div class="modal-window">
         <div class="close-btn">×</div>
-        <iframe src="modal.html"></iframe>
+        <iframe id="modal-iframe" src="modal2/modal2.html"></iframe>
     </div>
 </div>
+         <!--видео -->
    <section class="section" id="video-section">
     <div class="video-container">
         <!-- Локальное видео с автозапуском, без управления и зацикленное -->
@@ -513,9 +514,8 @@ window.onscroll = function () {
                 nav.classList.remove('active');
             }
         });
-
-        // Открытие модального окна
-document.querySelectorAll('.modal-button').forEach(button => {
+ // модал
+        document.querySelectorAll('.modal-button').forEach(button => {
     button.addEventListener('click', () => {
         const modalId = button.getAttribute('data-modal'); // Получаем ID модального окна
         const modal = document.getElementById(modalId);
@@ -523,20 +523,32 @@ document.querySelectorAll('.modal-button').forEach(button => {
     });
 });
 
-// Закрытие модального окна
 document.querySelectorAll('.modal').forEach(modal => {
     const overlay = modal.querySelector('.modal-overlay');
     const closeBtn = modal.querySelector('.close-btn');
+    const iframe = modal.querySelector('iframe'); // Получаем iframe
 
-    // Закрытие по нажатию на оверлей
-    overlay.addEventListener('click', () => {
+    function closeModal() {
         modal.style.display = 'none';
-    });
 
-    // Закрытие по нажатию на крестик
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
+         // Проверяем, существует ли iframe перед сбросом
+        if (iframe) {
+            setTimeout(() => {
+                // Устанавливаем исходный src только для текущего модального окна
+                if (modal.id === "modal1") {
+                    iframe.src = 'modal.html';
+                } else if (modal.id === "modal2") {
+                    iframe.src = 'modal2/modal2.html';
+                }
+            }, 100);
+        }
+    }
+
+    // Закрытие по клику на оверлей
+    overlay?.addEventListener('click', closeModal);
+
+    // Закрытие по кнопке-крестику
+    closeBtn?.addEventListener('click', closeModal);
 });
 
     window.addEventListener('load', () => {
