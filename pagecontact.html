@@ -113,41 +113,40 @@ p {
             color: #333;
         }
 
-        /* Кнопки */
-        .button-container {
-            margin-bottom: 20px;
-        }
+        button-container {
+    text-align: center; /* Центрируем кнопки внутри контейнера */
+    margin-bottom: 20px; /* Отступ снизу для кнопок */
+}
 
-        /* Стили кнопок */
-        .button-container .btn-telegram {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #0088cc; /* Синий цвет для Telegram */
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
+.button-container .btn-telegram {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #0088cc; /* Синий цвет для Telegram */
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
 
-        .button-container .btn-telegram:hover {
-            background-color: #66bce7; /* Более светлый синий при наведении */
-        }
+.button-container .btn-telegram:hover {
+    background-color: #66bce7; /* Более светлый синий при наведении */
+}
 
-        .button-container .btn-whatsapp {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #25d366; /* Зелёный цвет для WhatsApp */
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
+.button-container .btn-whatsapp {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #25d366; /* Зелёный цвет для WhatsApp */
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
 
-        .button-container .btn-whatsapp:hover {
-            background-color: #7ef0a5; /* Более светлый зелёный при наведении */
-        }
+.button-container .btn-whatsapp:hover {
+    background-color: #7ef0a5; /* Более светлый зелёный при наведении */
+}
     </style>
 </head>
 <body>
@@ -176,12 +175,12 @@ p {
 <p>Нажмите кнопку ниже, чтобы перейти к прямому общению с нами в удобном вам формате - голосовому или текстовому общению.</p>
 
         <!-- Кнопки -->
-        <div class="button-container">
-            <a href="http://t.me/consultlgermany" class="btn-telegram">Задавайте нам вопросы в Telegram</a>
-        </div>
-        <div class="button-container">
-            <a href="https://wa.me/380731749030" class="btn-whatsapp">Задавайте нам вопросы в WhatsApp</a>
-        </div>
+       <div class="button-container">
+    <a href="http://t.me/consultlgermany" class="btn-telegram">Задавайте нам вопросы в Telegram</a>
+</div>
+<div class="button-container">
+    <a href="https://wa.me/380731749030" class="btn-whatsapp">Задавайте нам вопросы в WhatsApp</a>
+</div>
     </div>
 
     <script>
