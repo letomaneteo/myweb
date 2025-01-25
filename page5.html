@@ -441,7 +441,7 @@ document.querySelectorAll('.modal').forEach(modal => {
         if (iframe) {
             setTimeout(() => {
                 // Устанавливаем исходный src только для текущего модального окна
-                if (modal.id === "modal") {
+                if (modal.id === "modal1") {
                     iframe.src = 'modal.html';
                 } else if (modal.id === "modal2") {
                     iframe.src = 'modal2/modal2.html';
