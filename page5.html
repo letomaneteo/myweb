@@ -368,9 +368,10 @@ border: 2px solid rgba(173, 169, 186, 0.8);/* Толщина, цвет и про
     <div class="modal-overlay"></div>
     <div class="modal-window">
         <div class="close-btn">×</div>
-        <iframe src="modal.html"></iframe>
+        <iframe id="modal-iframe" src="modal.html"></iframe>
     </div>
 </div>
+
     
     <section class="video-container">
         <video autoplay muted loop>
@@ -420,8 +421,7 @@ body.addEventListener('click', () => {
 nav.addEventListener('click', (event) => {
     event.stopPropagation();
 });
-      // Открытие модального окна
-document.querySelectorAll('.modal-button').forEach(button => {
+    document.querySelectorAll('.modal-button').forEach(button => {
     button.addEventListener('click', () => {
         const modalId = button.getAttribute('data-modal'); // Получаем ID модального окна
         const modal = document.getElementById(modalId);
@@ -429,7 +429,6 @@ document.querySelectorAll('.modal-button').forEach(button => {
     });
 });
 
-// Закрытие модального окна + сброс iframe
 document.querySelectorAll('.modal').forEach(modal => {
     const overlay = modal.querySelector('.modal-overlay');
     const closeBtn = modal.querySelector('.close-btn');
@@ -438,18 +437,19 @@ document.querySelectorAll('.modal').forEach(modal => {
     function closeModal() {
         modal.style.display = 'none';
 
-        // Сбрасываем iframe на modal.html, но с небольшой задержкой
-        setTimeout(() => {
-            iframe.src = 'modal.html';
-        }, 100); // Ждём 100 мс перед сбросом, чтобы не лагало
+        // Проверяем, существует ли iframe перед сбросом
+        if (iframe) {
+            setTimeout(() => {
+                iframe.src = 'modal.html'; // Сбрасываем iframe
+            }, 100);
+        }
     }
 
     // Закрытие по клику на оверлей
-    overlay.addEventListener('click', closeModal);
+    overlay?.addEventListener('click', closeModal);
 
     // Закрытие по кнопке-крестику
-    closeBtn.addEventListener('click', closeModal);
-});
+    closeBtn?.addEventListener('click', closeModal);
 });
 
 </script>
