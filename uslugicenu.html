@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Фиксированная шапка с логотипом</title>
     <style>
+/* Индикатор загрузки */
 #loader {
   position: fixed;
   top: 0;
@@ -14,15 +15,54 @@
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
   z-index: 1000;
+  font-family: Arial, sans-serif;
 }
 
-#content {
-  display: none;
-}   
+/* Анимация спиннера */
+.spinner {
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top: 5px solid white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+/* Пульсация текста */
+.loading-text {
+  animation: pulse 1.5s infinite;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+/* Ключевые кадры для спиннера */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ключевые кадры для пульсации текста */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
       body {
     margin: 0;
     font-family: Verdana, Geneva, sans-serif;
@@ -348,12 +388,16 @@ iframe {
 </head>
 <body>
 <body>
-  <div id="loader">
-    <p>Загружаются анимации...</p>
-  </div>
-  <div id="content" style="display: none;">
-    <!-- Ваш основной контент -->
-  </div>
+ <div id="loader">
+  <div class="spinner"></div>
+  <p class="loading-text">Загружаются анимации...</p>
+</div>
+
+<div id="content" style="display: none;">
+  <!-- Основной контент -->
+  <img src="example.gif" alt="Пример GIF">
+</div>
+
 </body>
     <header class="header">
         <div class="container">
