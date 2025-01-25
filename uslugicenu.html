@@ -6,51 +6,37 @@
     <title>Фиксированная шапка с логотипом</title>
     <style>
 /* Индикатор загрузки */
+/* Индикатор загрузки */
 #loader {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
+  background-color: rgba(237, 158, 21, 0.5); /* Тёмный фон */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  font-family: Arial, sans-serif;
 }
 
-/* Анимация спиннера */
-.spinner {
-  border: 5px solid rgba(255, 255, 255, 0.3);
-  border-top: 5px solid white;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 15px;
+/* GIF-анимация */
+.gif-loader {
+  width: 100px; /* Размер GIF */
+  height: auto;
+  margin-bottom: 15px; /* Отступ от текста */
 }
 
-/* Пульсация текста */
+/* Стиль текста */
 .loading-text {
-  animation: pulse 1.5s infinite;
+  color: white;
   font-size: 1.5rem;
+  animation: pulse 1.5s infinite; /* Пульсация текста */
   text-align: center;
 }
 
-/* Ключевые кадры для спиннера */
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Ключевые кадры для пульсации текста */
+/* Анимация пульсации текста */
 @keyframes pulse {
   0% {
     opacity: 1;
@@ -389,13 +375,12 @@ iframe {
 <body>
 <body>
  <div id="loader">
-  <div class="spinner"></div>
+  <img src="your-gif.gif" alt="Загрузка" class="gif-loader">
   <p class="loading-text">Загружаются анимации...</p>
 </div>
 
 <div id="content" style="display: none;">
   <!-- Основной контент -->
-  <img src="example.gif" alt="Пример GIF">
 </div>
 
 </body>
