@@ -426,8 +426,10 @@ nav.addEventListener('click', (event) => {
         const modal = document.getElementById(modalId);
         const iframe = modal.querySelector('iframe');
 
-        // Сбрасываем iframe на modal.html перед открытием
-        iframe.src = 'modal.html';
+        // Проверяем, открыт ли уже нужный iframe на другой странице (например, st.html)
+        if (iframe.src !== 'modal.html') {
+            iframe.src = 'modal.html'; // Сбрасываем содержимое iframe только если оно изменилось
+        }
 
         modal.style.display = 'block'; // Показываем модальное окно
     });
@@ -440,7 +442,9 @@ document.querySelectorAll('.modal').forEach(modal => {
 
     function closeModal() {
         modal.style.display = 'none';
-        iframe.src = 'modal.html'; // Сбрасываем iframe на modal.html при закрытии
+        setTimeout(() => {
+            iframe.src = 'modal.html'; // Сбрасываем iframe после закрытия с небольшой задержкой
+        }, 100); // Даем браузеру время на скрытие окна перед сбросом
     }
 
     // Закрытие по клику на оверлей
@@ -449,6 +453,7 @@ document.querySelectorAll('.modal').forEach(modal => {
     // Закрытие по кнопке-крестику
     closeBtn.addEventListener('click', closeModal);
 });
+
 });
 
 </script>
