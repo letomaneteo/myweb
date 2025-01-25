@@ -420,29 +420,35 @@ body.addEventListener('click', () => {
 nav.addEventListener('click', (event) => {
     event.stopPropagation();
 });
-        // Открытие модального окна
-document.querySelectorAll('.modal-button').forEach(button => {
+       document.querySelectorAll('.modal-button').forEach(button => {
     button.addEventListener('click', () => {
         const modalId = button.getAttribute('data-modal'); // Получаем ID модального окна
         const modal = document.getElementById(modalId);
+        const iframe = modal.querySelector('iframe');
+
+        // Сбрасываем iframe на modal.html перед открытием
+        iframe.src = 'modal.html';
+
         modal.style.display = 'block'; // Показываем модальное окно
     });
 });
 
-// Закрытие модального окна
 document.querySelectorAll('.modal').forEach(modal => {
     const overlay = modal.querySelector('.modal-overlay');
     const closeBtn = modal.querySelector('.close-btn');
+    const iframe = modal.querySelector('iframe');
 
-    // Закрытие по нажатию на оверлей
-    overlay.addEventListener('click', () => {
+    function closeModal() {
         modal.style.display = 'none';
-    });
+        iframe.src = 'modal.html'; // Сбрасываем iframe на modal.html при закрытии
+    }
 
-    // Закрытие по нажатию на крестик
-  closeBtn.addEventListener('click', () => {
-    window.location.href = 'modal.html';
-    });
+    // Закрытие по клику на оверлей
+    overlay.addEventListener('click', closeModal);
+
+    // Закрытие по кнопке-крестику
+    closeBtn.addEventListener('click', closeModal);
+});
 });
 
 </script>
