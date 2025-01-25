@@ -421,29 +421,31 @@ nav.addEventListener('click', (event) => {
     event.stopPropagation();
 });
         // Открытие модального окна
-document.querySelectorAll('.modal-button').forEach(button => {
-    button.addEventListener('click', () => {
-        const modalId = button.getAttribute('data-modal'); // Получаем ID модального окна
-        const modal = document.getElementById(modalId);
-        modal.style.display = 'block'; // Показываем модальное окно
-    });
-});
-
-// Закрытие модального окна
 document.querySelectorAll('.modal').forEach(modal => {
     const overlay = modal.querySelector('.modal-overlay');
     const closeBtn = modal.querySelector('.close-btn');
 
     // Закрытие по нажатию на оверлей
     overlay.addEventListener('click', () => {
-        modal.style.display = 'none';
+        loadModalContent(modal);
     });
 
     // Закрытие по нажатию на крестик
     closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
+        loadModalContent(modal);
     });
+
+    function loadModalContent(modal) {
+        fetch('modal.html')
+            .then(response => response.text())
+            .then(html => {
+                modal.innerHTML = html;
+                modal.style.display = 'block';
+            })
+            .catch(error => console.error('Ошибка загрузки modal.html:', error));
+    }
 });
+
 </script>
 
 </body>
