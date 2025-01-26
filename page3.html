@@ -98,123 +98,86 @@
     height: 400px; /* или 500px, если хотите больше высоту */
     overflow: hidden; /* Скрывает часть контента, выходящего за пределы */
 }
-       /* Контейнер для кнопки, расположенной под 3D-объектом */
-.button-container {
-    display: flex;
-    justify-content: center; /* Центрирует кнопку по горизонтали */
-    margin-top: 20px; /* Расстояние между 3D-объектом и кнопкой */
-}
-
-/* Кнопка */
-.modal-button {
-    display: inline-block;
-    background-color: #0BA5BE; /* Цвет кнопки */
-    color: white; /* Цвет текста */
-    border: none; /* Убираем обводку */
-    padding: 10px 20px; /* Внутренние отступы */
-    font-size: 16px; /* Размер текста */
-    font-weight: bold; /* Жирный текст */
-    border-radius: 5px; /* Скругленные края */
-    cursor: pointer; /* Курсор указателя */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Тень */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Анимация при наведении */
-}
-
-.modal-button2 {
-    display: inline-block;
-    background-color: #0BA5BE; /* Цвет кнопки */
-    color: white; /* Цвет текста */
-    border: none; /* Убираем обводку */
-    padding: 10px 20px; /* Внутренние отступы */
-    font-size: 16px; /* Размер текста */
-    font-weight: bold; /* Жирный текст */
-    border-radius: 5px; /* Скругленные края */
-    cursor: pointer; /* Курсор указателя */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Тень */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Анимация при наведении */
-}
-        
-.modal-button:hover {
-    background-color: #0A8EA5; /* Цвет кнопки при наведении */
-    transform: scale(1.05); /* Легкое увеличение */
-}
-
-.modal-button:active {
-    background-color: #087589; /* Цвет кнопки при клике */
-    transform: scale(0.95); /* Легкое уменьшение при клике */
-}
        
-#modalIframe {
-    width: 100%; /* Занимает всю ширину модального окна */
-    height: 100%; /* Занимает всю высоту модального окна */
-    border: none;
+/* Контейнер для кнопки, расположенной под 3D-объектом */
+ .button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-#modalOverlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1000;
+.modal-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  color: #fff;
+  background: #778D45;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-#modalOverlay2 {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1000;
-}
-#modalWindow {
-    display: none; /* Скрываем по умолчанию */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%; /* Ширина окна */
-    height: 80%; /* Высота окна */
-    border: 2px solid #0BA5BE;
-    border-radius: 15px; /* Скругление углов */
-    background: white;
-    z-index: 1001;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
+.modal-button:hover {
+  background: #AEC670;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 
- #modalWindow2 {
-    display: none; /* Скрываем по умолчанию */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%; /* Ширина окна */
-    height: 80%; /* Высота окна */
-    border: 2px solid #0BA5BE;
-    border-radius: 15px; /* Скругление углов */ 
-    background: white;
-    z-index: 1001;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-}       
+.modal {
+  display: none; /* Скрыто по умолчанию */
+  position: fixed; /* Фиксированное положение */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+  z-index: 1;
+}
+
+.modal-window {
+  position: absolute;
+  top: 50%; /* Центрирование по вертикали */
+  left: 50%; /* Центрирование по горизонтали */
+  transform: translate(-50%, -50%); /* Смещение для центрирования */
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+border: 2px solid rgba(173, 169, 186, 0.8);/* Толщина, цвет и прозрачность рамки */
+  width: 70%; /* Ширина окна */
+  max-width: 800px; /* Максимальная ширина */
+  height: 50%; /* Увеличенная высота */
+  overflow: hidden; /* Убрать прокрутку */
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Тень */
+}
+
 .close-btn {
-    position: absolute; /* Расположение относительно родителя (модального окна) */
-    top: 10px; /* Отступ сверху */
-    right: 10px; /* Отступ справа */
-    font-size: 30px; /* Размер текста */
-    color: #0BA5BE; /* Цвет крестика */
-    cursor: pointer; /* Указатель курсора */
-    font-weight: bold; /* Жирный шрифт */
-    z-index: 1002; /* Крестик выше других элементов окна */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 40px;
+  color: #8a0606;
+  transition: color 0.3s ease;
 }
 
 .close-btn:hover {
-    color: #087589; /* Цвет крестика при наведении */
+  color: #000;
+}
+
+.modal-window iframe {
+  width: 100%;
+  height: 100%;
+  border: none; /* Убрать границы iframe */
 }
 
  .fade-in {
@@ -357,10 +320,10 @@
             <h1>INTERACTIVE 3D</h1>
             <p class="subtitle">Морской шоурум</p>
             <nav class="nav">
-                <a href="home.html">2D анимация</a>
-                <a href="about.html">О нас</a>
-                <a href="services.html">Услуги и цены</a>
-                <a href="contact.html">Контакты</a>
+                <a href="2danimation.html">2D анимация</a>
+               <!-- <a href="about.html">О нас</a> -->
+                <a href="uslugicenu.html">Услуги и цены</a>
+                <a href="pagecontact.html">Контакты</a>
             </nav>
             <div class="menu-toggle" id="menuToggle">&#9776;</div>
         </div>
@@ -375,18 +338,17 @@
     <div class="animation-container">
         <iframe src="tumba.html" title="3D Object"></iframe>
     </div>
-<!-- Контейнер для кнопки, которая открывает первое окно -->
-<div class="button-container">
-    <button class="modal-button" id="openModal">Подробно о товаре</button>
+ <!-- Первая кнопка и модальное окно -->
+        <div class="button-container">
+    <button class="modal-button" data-modal="modal1">Подробно о товаре</button>
 </div>
 
-<!-- Затемняющий слой для первого модального окна -->
-<div id="modalOverlay"></div>
-
-<!-- Первое модальное окно -->
-<div id="modalWindow">
-    <div id="closeModal" class="close-btn">×</div> <!-- Крестик для первого окна -->
-    <iframe src="modal.html" id="modalIframe"></iframe>
+<div id="modal1" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-window">
+        <div class="close-btn">×</div>
+       <iframe id="modal-iframe" src="modal.html"></iframe>
+    </div>
 </div>
 
 <section class="section" id="about">
@@ -399,18 +361,17 @@
     <iframe src="tumba.html" title="3D Object"></iframe>
 </div>
 
-<!-- Контейнер для кнопки, которая открывает второе окно -->
+<!-- второе окно -->
 <div class="button-container">
-    <button class="modal-button" id="openModal2">Подробно о товаре</button>
+    <button class="modal-button" data-modal="modal2">Подробно о товаре</button>
 </div>
 
-<!-- Затемняющий слой для второго модального окна -->
-<div id="modalOverlay2"></div>
-
-<!-- Второе модальное окно -->
-<div id="modalWindow2">
-    <div id="closeModal2" class="close-btn">×</div> <!-- Крестик для второго окна -->
-    <iframe src="modal.html" id="modalIframe2"></iframe>
+<div id="modal2" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-window">
+        <div class="close-btn">×</div>
+        <iframe id="modal-iframe" src="modal2/modal2.html"></iframe>
+    </div>
 </div>
     
     <section class="video-container">
@@ -462,48 +423,41 @@ nav.addEventListener('click', (event) => {
     event.stopPropagation();
 });
 
-// Получение элементов для первого окна
-const openModalButton1 = document.getElementById("openModal");
-const modalOverlay1 = document.getElementById("modalOverlay");
-const modalWindow1 = document.getElementById("modalWindow");
-const closeModalButton1 = document.getElementById("closeModal");
-
-// Обработчики для первого модального окна
-openModalButton1.addEventListener("click", () => {
-  modalOverlay1.style.display = "block";
-  modalWindow1.style.display = "block";
+// Модальное окно
+ document.querySelectorAll('.modal-button').forEach(button => {
+    button.addEventListener('click', () => {
+        const modalId = button.getAttribute('data-modal'); // Получаем ID модального окна
+        const modal = document.getElementById(modalId);
+        modal.style.display = 'block'; // Показываем модальное окно
+    });
 });
 
-closeModalButton1.addEventListener("click", () => {
-  modalOverlay1.style.display = "none";
-  modalWindow1.style.display = "none";
-});
+document.querySelectorAll('.modal').forEach(modal => {
+    const overlay = modal.querySelector('.modal-overlay');
+    const closeBtn = modal.querySelector('.close-btn');
+    const iframe = modal.querySelector('iframe'); // Получаем iframe
 
-modalOverlay1.addEventListener("click", () => {
-  modalOverlay1.style.display = "none";
-  modalWindow1.style.display = "none";
-});
+    function closeModal() {
+        modal.style.display = 'none';
 
-// Получение элементов для второго окна
-const openModalButton2 = document.getElementById("openModal2");
-const modalOverlay2 = document.getElementById("modalOverlay2");
-const modalWindow2 = document.getElementById("modalWindow2");
-const closeModalButton2 = document.getElementById("closeModal2");
+         // Проверяем, существует ли iframe перед сбросом
+        if (iframe) {
+            setTimeout(() => {
+                // Устанавливаем исходный src только для текущего модального окна
+                if (modal.id === "modal1") {
+                    iframe.src = 'modal.html';
+                } else if (modal.id === "modal2") {
+                    iframe.src = 'modal2/modal2.html';
+                }
+            }, 100);
+        }
+    }
 
-// Обработчики для второго модального окна
-openModalButton2.addEventListener("click", () => {
-  modalOverlay2.style.display = "block";
-  modalWindow2.style.display = "block";
-});
+    // Закрытие по клику на оверлей
+    overlay?.addEventListener('click', closeModal);
 
-closeModalButton2.addEventListener("click", () => {
-  modalOverlay2.style.display = "none";
-  modalWindow2.style.display = "none";
-});
-
-modalOverlay2.addEventListener("click", () => {
-  modalOverlay2.style.display = "none";
-  modalWindow2.style.display = "none";
+    // Закрытие по кнопке-крестику
+    closeBtn?.addEventListener('click', closeModal);
 });
 </script>
 
