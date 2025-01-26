@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Слайд-шоу</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: transparent;
+      padding: 10px;
+    }
+
+    .slideshow {
+      position: relative;
+      width: calc(100% - 20px);
+      max-width: 1200px;
+      height: calc(100vh - 20px);
+      max-height: 800px;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    }
+
+    .active {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="slideshow">
+    <img src="https://i.imgur.com/XsHLU4b.png" alt="Изображение 1" class="slide">
+    <img src="https://i.imgur.com/21CTDEU.png" alt="Изображение 2" class="slide">
+    <img src="https://i.imgur.com/OTxik0u.png" alt="Изображение 3" class="slide">
+    <img src="https://i.imgur.com/u6aWSgC.png" alt="Изображение 4" class="slide">
+    <img src="https://i.imgur.com/HIGRoOs.png" alt="Изображение 5" class="slide">
+    <img src="https://i.imgur.com/g30UBAt.png" alt="Изображение 6" class="slide">
+    <img src="https://i.imgur.com/6fJJTug.png" alt="Изображение 7" class="slide">
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    function showSlide(n) {
+      slides.forEach(slide => slide.classList.remove('active'));
+      slides[n].classList.add('active');
+    }
+
+    function startSlideshow() {
+      showSlide(currentSlide);
+      setInterval(() => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+      }, 3000);
+    }
+
+    window.addEventListener('load', startSlideshow);
+  </script>
+</body>
+</html>
+
