@@ -362,6 +362,24 @@ border: 2px solid rgba(173, 169, 186, 0.8);/* Толщина, цвет и про
     </div>
 </section>
 
+    <!-- Контейнер для 3D-объекта -->
+<div class="animation-container">
+    <iframe src="tumba.html" title="3D Object"></iframe>
+</div>
+
+<!-- второе окно -->
+<div class="button-container">
+    <button class="modal-button" data-modal="modal2">Подробно о товаре</button>
+</div>
+
+<div id="modal2" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-window">
+        <div class="close-btn">×</div>
+        <iframe id="modal-iframe" src="modal2/modal2.html"></iframe>
+    </div>
+</div>
+
     <section class="video-container">
         <video autoplay muted loop>
             <source src="video.mp4" type="video/mp4">
