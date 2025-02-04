@@ -10,28 +10,29 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            justify-content: flex-start; /* Оставляем элементы сверху */
+            align-items: center; /* Центрируем по горизонтали */
             flex-direction: column;
             height: 100vh;
             margin: 0;
-            background-color: rgba(0, 0, 0, 0.05); /* Полупрозрачный фон */
+            padding-top: 20px; /* Отступ сверху */
+            background-color: rgba(0, 0, 0, 0.05);
         }
 
         h2, h3 {
             color: #333;
+            text-align: center; /* Центрирование заголовков */
         }
 
         #reviewForm {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: rgba(255, 255, 255, 0.9); /* Полупрозрачный белый фон */
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 350px; /* Ширина формы */
-            margin-top: 30px; /* Поднято вверх */
+            width: 350px;
         }
 
         input, textarea {
@@ -44,7 +45,7 @@
         }
 
         textarea {
-            height: 150px; /* Увеличенное поле для отзыва */
+            height: 150px;
         }
 
         button {
@@ -80,7 +81,7 @@
         ul {
             list-style-type: none;
             padding: 0;
-            width: 350px; /* Ширина отзывов равна ширине формы */
+            width: 350px;
         }
 
         li {
@@ -111,7 +112,6 @@
     <form id="reviewForm">
         <input type="text" id="name" placeholder="Ваше имя" required><br>
         
-        <!-- Звезды для оценки -->
         <div class="stars" id="stars">
             <span class="star" data-rating="1">★</span>
             <span class="star" data-rating="2">★</span>
@@ -141,13 +141,11 @@
             appId: "1:865152542955:web:abcd1234xyz"
         };
 
-        // Инициализация Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        let selectedRating = 0; // Хранение выбранной оценки
+        let selectedRating = 0;
 
-        // Отображение выбранных звезд
         document.getElementById("stars").addEventListener("click", function(event) {
             if (event.target.classList.contains("star")) {
                 selectedRating = parseInt(event.target.dataset.rating);
@@ -166,7 +164,6 @@
             });
         }
 
-        // Отправка данных
         document.getElementById("reviewForm").addEventListener("submit", function(event) {
             event.preventDefault();
             const name = document.getElementById("name").value;
@@ -181,12 +178,11 @@
                 });
 
                 document.getElementById("reviewForm").reset();
-                selectedRating = 0; // Сбросить рейтинг после отправки
-                updateStars(); // Обновить отображение звезд
+                selectedRating = 0;
+                updateStars();
             }
         });
 
-        // Получение данных
         const reviewsRef = ref(db, 'reviews');
         onChildAdded(reviewsRef, function(snapshot) {
             const data = snapshot.val();
