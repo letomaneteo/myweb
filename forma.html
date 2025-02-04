@@ -6,6 +6,75 @@
     <title>Отзывы</title>
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f7f7f7;
+        }
+
+        h2, h3 {
+            color: #333;
+        }
+
+        #reviewForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input, textarea {
+            width: 300px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-item {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .review-text {
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <h2>Оставьте отзыв</h2>
@@ -19,49 +88,57 @@
     <ul id="reviewsList"></ul>
 
     <script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js';
-  import { getDatabase, ref, push } from 'https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js';
+        import { getDatabase, ref, push, onChildAdded } from 'https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js';
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBfpnnnlKR_qN0kPD6vvZSo40LX-4ernsg",  
-    authDomain: "otzivu.firebaseapp.com",  
-    databaseURL: "https://otzivu-default-rtdb.europe-west1.firebasedatabase.app/",  
-    projectId: "otzivu",  
-    storageBucket: "otzivu.appspot.com",  
-    messagingSenderId: "865152542955",  
-    appId: "1:865152542955:web:abcd1234xyz"
-  };
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfpnnnlKR_qN0kPD6vvZSo40LX-4ernsg",  
+            authDomain: "otzivu.firebaseapp.com",  
+            databaseURL: "https://otzivu-default-rtdb.europe-west1.firebasedatabase.app/",  
+            projectId: "otzivu",  
+            storageBucket: "otzivu.appspot.com",  
+            messagingSenderId: "865152542955",  
+            appId: "1:865152542955:web:abcd1234xyz"
+        };
 
-  // Инициализация Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+        // Инициализация Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-  // Отправка данных
-  document.getElementById("reviewForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const name = document.getElementById("name").value;
-    const review = document.getElementById("review").value;
+        // Отправка данных
+        document.getElementById("reviewForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const name = document.getElementById("name").value;
+            const review = document.getElementById("review").value;
 
-    if (name && review) {
-      push(ref(db, 'reviews'), {
-        name: name,
-        review: review,
-        timestamp: new Date().toISOString()
-      });
+            if (name && review) {
+                push(ref(db, 'reviews'), {
+                    name: name,
+                    review: review,
+                    timestamp: new Date().toISOString()
+                });
 
-      document.getElementById("reviewForm").reset();
-    }
-  });
+                document.getElementById("reviewForm").reset();
+            }
+        });
 
-  // Получение данных
-  const reviewsRef = ref(db, 'reviews');
-  reviewsRef.on('child_added', function(snapshot) {
-    const data = snapshot.val();
-    const li = document.createElement("li");
-    li.textContent = `${data.name}: ${data.review}`;
-    document.getElementById("reviewsList").appendChild(li);
-  });
-</script>
+        // Получение данных
+        const reviewsRef = ref(db, 'reviews');
+        onChildAdded(reviewsRef, function(snapshot) {
+            const data = snapshot.val();
+            const li = document.createElement("li");
+            const nameElement = document.createElement("span");
+            nameElement.classList.add("review-item");
+            nameElement.textContent = `${data.name}: `;
 
+            const reviewElement = document.createElement("span");
+            reviewElement.classList.add("review-text");
+            reviewElement.textContent = data.review;
+
+            li.appendChild(nameElement);
+            li.appendChild(reviewElement);
+            document.getElementById("reviewsList").appendChild(li);
+        });
+    </script>
 </body>
 </html>
