@@ -18,46 +18,50 @@
     <h3>Отзывы:</h3>
     <ul id="reviewsList"></ul>
 
-    <script>
-        // 🔹 Настройки Firebase (замени своими данными из Firebase Console)
-        const firebaseConfig = {
-    apiKey: "AIzaSyBfpnnnlKR_qN0kPD6vvZSo40LX-4ernsg",  // Твой Web API Key
-    authDomain: "otzivu.firebaseapp.com",  // Твой Project ID, так будет выглядеть authDomain
-    databaseURL: "https://otzivu-default-rtdb.europe-west1.firebasedatabase.app/",  // Твой URL базы данных
-    projectId: "otzivu",  // Твой Project ID
-    storageBucket: "otzivu.appspot.com",  // Хранилище, также использует Project ID
-    messagingSenderId: "865152542955",  // Можешь найти в настройках Firebase
-    appId: "1:865152542955:web:abcd1234xyz"  // Твой appId, найди его в Firebase Console
-};
+    <script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js';
+  import { getDatabase, ref, push } from 'https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js';
 
-// Инициализируем Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+  const firebaseConfig = {
+    apiKey: "AIzaSyBfpnnnlKR_qN0kPD6vvZSo40LX-4ernsg",  
+    authDomain: "otzivu.firebaseapp.com",  
+    databaseURL: "https://otzivu-default-rtdb.europe-west1.firebasedatabase.app/",  
+    projectId: "otzivu",  
+    storageBucket: "otzivu.appspot.com",  
+    messagingSenderId: "865152542955",  
+    appId: "1:865152542955:web:abcd1234xyz"
+  };
 
-        // 🔹 Отправка отзыва
-        document.getElementById("reviewForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            const name = document.getElementById("name").value;
-            const review = document.getElementById("review").value;
+  // Инициализация Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-            if (name && review) {
-                db.ref("reviews").push({
-                    name: name,
-                    review: review,
-                    timestamp: new Date().toISOString()
-                });
+  // Отправка данных
+  document.getElementById("reviewForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const name = document.getElementById("name").value;
+    const review = document.getElementById("review").value;
 
-                document.getElementById("reviewForm").reset();
-            }
-        });
+    if (name && review) {
+      push(ref(db, 'reviews'), {
+        name: name,
+        review: review,
+        timestamp: new Date().toISOString()
+      });
 
-        // 🔹 Получение отзывов из Firebase
-        db.ref("reviews").on("child_added", function(snapshot) {
-            const data = snapshot.val();
-            const li = document.createElement("li");
-            li.textContent = `${data.name}: ${data.review}`;
-            document.getElementById("reviewsList").appendChild(li);
-        });
-    </script>
+      document.getElementById("reviewForm").reset();
+    }
+  });
+
+  // Получение данных
+  const reviewsRef = ref(db, 'reviews');
+  reviewsRef.on('child_added', function(snapshot) {
+    const data = snapshot.val();
+    const li = document.createElement("li");
+    li.textContent = `${data.name}: ${data.review}`;
+    document.getElementById("reviewsList").appendChild(li);
+  });
+</script>
+
 </body>
 </html>
