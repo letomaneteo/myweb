@@ -110,12 +110,6 @@ overflow: hidden;
             color: #ff9800;
             font-weight: bold;
         }
-        .review-date {
-            color: #888;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-
 
 @media (max-width: 480px) {
     #reviewForm {
@@ -231,7 +225,7 @@ overflow: hidden;
             }
         });
 
-               const reviewsRef = ref(db, 'reviews');
+        const reviewsRef = ref(db, 'reviews');
         onChildAdded(reviewsRef, function(snapshot) {
             const data = snapshot.val();
             const li = document.createElement("li");
@@ -248,21 +242,12 @@ overflow: hidden;
             ratingElement.classList.add("review-rating");
             ratingElement.textContent = ` ★ ${data.rating}/5`;
 
-            const dateElement = document.createElement("span");
-            dateElement.classList.add("review-date");
-
-            // Форматирование даты
-            const reviewDate = new Date(data.timestamp);
-            dateElement.textContent = ` (${reviewDate.toLocaleDateString()} ${reviewDate.toLocaleTimeString()})`;
-
             li.appendChild(nameElement);
             li.appendChild(reviewElement);
             li.appendChild(ratingElement);
-            li.appendChild(dateElement); // Добавляем дату
 
             document.getElementById("reviewsList").appendChild(li);
         });
-
     </script>
 </body>
 </html>
