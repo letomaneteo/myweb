@@ -16,7 +16,8 @@
             height: 100vh;
             margin: 0;
             padding-top: 20px; /* Отступ сверху */
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: transparent !important;;
+overflow: hidden;
         }
 
         h2, h3 {
@@ -25,15 +26,16 @@
         }
 
         #reviewForm {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 350px;
-        }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9) url('https://i.imgur.com/TGA1wWF.jpeg') no-repeat center center;
+    background-size: cover;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 350px;
+}
 
         input, textarea {
             width: 100%;
@@ -45,8 +47,11 @@
         }
 
         textarea {
-            height: 150px;
-        }
+    height: 150px;
+    max-width: 300px; /* Ограничение ширины */
+    min-width: 300px; /* Фиксированная ширина */
+    resize: vertical; /* Разрешить только изменение высоты */
+}
 
         button {
             padding: 10px 20px;
@@ -105,10 +110,53 @@
             color: #ff9800;
             font-weight: bold;
         }
+        .review-date {
+            color: #888;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+
+@media (max-width: 480px) {
+    #reviewForm {
+        width: 90%; /* Делаем форму адаптивной */
+        padding: 15px;
+    }
+
+    textarea, input {
+        max-width: 100%; /* Заполняет всю доступную ширину */
+        min-width: auto;
+    }
+}
+@media (max-width: 480px) {
+    ul {
+        width: 90%; /* Отзывы на всю ширину экрана */
+    }
+
+    li {
+        padding: 8px;
+        font-size: 14px;
+        margin: 3px 0;
+    }
+
+    .review-item {
+        font-size: 14px;
+    }
+
+    .review-text {
+        font-size: 13px;
+    }
+
+    .review-rating {
+        font-size: 14px;
+    }
+}
+
     </style>
 </head>
 <body>
     <h2>Оставьте отзыв</h2>
+    <h3>Поставьте оценку</h3>
     <form id="reviewForm">
         <input type="text" id="name" placeholder="Ваше имя" required><br>
         
@@ -183,7 +231,7 @@
             }
         });
 
-        const reviewsRef = ref(db, 'reviews');
+               const reviewsRef = ref(db, 'reviews');
         onChildAdded(reviewsRef, function(snapshot) {
             const data = snapshot.val();
             const li = document.createElement("li");
@@ -200,12 +248,21 @@
             ratingElement.classList.add("review-rating");
             ratingElement.textContent = ` ★ ${data.rating}/5`;
 
+            const dateElement = document.createElement("span");
+            dateElement.classList.add("review-date");
+
+            // Форматирование даты
+            const reviewDate = new Date(data.timestamp);
+            dateElement.textContent = ` (${reviewDate.toLocaleDateString()} ${reviewDate.toLocaleTimeString()})`;
+
             li.appendChild(nameElement);
             li.appendChild(reviewElement);
             li.appendChild(ratingElement);
+            li.appendChild(dateElement); // Добавляем дату
 
             document.getElementById("reviewsList").appendChild(li);
         });
+
     </script>
 </body>
 </html>
