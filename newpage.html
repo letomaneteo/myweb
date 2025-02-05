@@ -257,10 +257,11 @@ function updateUserStats() {
         userScore = userScore - 10; // Уменьшаем очки
     }
 
-    // Каждые три победы увеличиваем уровень
-    if (winCount % 3 === 0 && winCount > 0) {
-        userLevel = userLevel + 1;
-    }
+    // Проверяем, если количество побед кратно 3 и это новая тройка побед
+if (winCount > 0 && winCount % 3 === 0 && (winCount / 3) > userLevel) {
+    userLevel++; // Увеличиваем уровень
+}
+
 
     // Обновляем значения на странице
     document.getElementById('userScore').textContent = userScore;
