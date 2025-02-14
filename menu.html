@@ -155,7 +155,28 @@
         animateReset();
     }
 
-    // 11. Обработка клика по сцене
+    // 11. Функция отдаления камеры
+    function zoomOutCamera() {
+        if (!currentTarget) return; // Если уже в центре - ничего не делаем
+        currentTarget = null;
+
+        // Включаем вращение камеры обратно
+        controls.enableRotate = true;
+
+        let progress = 0;
+        const zoomOutPosition = new THREE.Vector3(0, 0, radius * 1.5); // Отдаляем камеру
+        function animateZoomOut() {
+            if (progress < 1) {
+                progress += 0.02;
+                camera.position.lerp(zoomOutPosition, progress); // Отдаляем камеру
+                controls.target.lerp(new THREE.Vector3(0, 0, 0), progress);
+                requestAnimationFrame(animateZoomOut);
+            }
+        }
+        animateZoomOut();
+    }
+
+    // 12. Обработка клика по сцене
     function onDocumentClick(event) {
         event.preventDefault();
 
@@ -174,7 +195,22 @@
         }
     }
 
-    // 12. Обработка касания для мобильных устройств
+    // 13. Обработка двойного клика мышкой
+    function onDocumentDoubleClick(event) {
+        event.preventDefault();
+
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planes);
+
+        if (intersects.length > 0) {
+            zoomOutCamera();
+        }
+    }
+
+    // 14. Обработка касания для мобильных устройств
     function onDocumentTouch(event) {
         event.preventDefault();
 
@@ -194,15 +230,42 @@
         }
     }
 
-    window.addEventListener('click', onDocumentClick, false);
-    window.addEventListener('touchstart', onDocumentTouch, false);
+    // 15. Обработка пинч-свайпа для мобильных устройств
+    let initialDistance = 0;
+    let currentDistance = 0;
 
-    // 13. Инвертирование вращения на мобильных устройствах
+    function onDocumentTouchStart(event) {
+        if (event.touches.length === 2) {
+            const touch1 = event.touches[0];
+            const touch2 = event.touches[1];
+            initialDistance = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY);
+        }
+    }
+
+    function onDocumentTouchMove(event) {
+        if (event.touches.length === 2) {
+            const touch1 = event.touches[0];
+            const touch2 = event.touches[1];
+            currentDistance = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY);
+
+            if (currentDistance < initialDistance) {
+                zoomOutCamera();
+            }
+        }
+    }
+
+    window.addEventListener('click', onDocumentClick, false);
+    window.addEventListener('dblclick', onDocumentDoubleClick, false);
+    window.addEventListener('touchstart', onDocumentTouch, false);
+    window.addEventListener('touchstart', onDocumentTouchStart, false);
+    window.addEventListener('touchmove', onDocumentTouchMove, false);
+
+    // 16. Инвертирование вращения на мобильных устройствах
     if ('ontouchstart' in window) {
         controls.rotateSpeed = -1.0; // Инвертируем вращение
     }
 
-    // 14. Анимация сцены
+    // 17. Анимация сцены
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
@@ -211,7 +274,7 @@
 
     animate();
 
-    // 15. Адаптивность экрана
+    // 18. Адаптивность экрана
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
