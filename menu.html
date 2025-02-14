@@ -164,7 +164,7 @@
         controls.enableRotate = true;
 
         let progress = 0;
-        const zoomOutPosition = new THREE.Vector3(0, 0, radius * 1.5); // Отдаляем камеру
+        const zoomOutPosition = new THREE.Vector3().copy(camera.position).normalize().multiplyScalar(radius * 1.5); // Отдаляем камеру
         function animateZoomOut() {
             if (progress < 1) {
                 progress += 0.02;
