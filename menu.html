@@ -188,6 +188,57 @@ const textures = [
         renderer.render(scene, camera);
     }
 
+let touchStartX = 0, touchStartY = 0;
+let touchEndX = 0, touchEndY = 0;
+let isSwiping = false;
+
+// Обработка начала касания
+window.addEventListener("touchstart", (event) => {
+    if (event.touches.length === 1) {
+        touchStartX = event.touches[0].clientX;
+        touchStartY = event.touches[0].clientY;
+        isSwiping = false;
+    }
+}, false);
+
+// Обработка движения пальца
+window.addEventListener("touchmove", (event) => {
+    if (event.touches.length === 1) {
+        isSwiping = true;
+        touchEndX = event.touches[0].clientX;
+        touchEndY = event.touches[0].clientY;
+        
+        let deltaX = (touchEndX - touchStartX) * 0.005;
+        let deltaY = (touchEndY - touchStartY) * 0.005;
+
+        controls.rotateLeft(-deltaX);
+        controls.rotateUp(-deltaY);
+        controls.update();
+        
+        touchStartX = touchEndX;
+        touchStartY = touchEndY;
+    }
+}, false);
+
+// Обработка завершения касания (тап)
+window.addEventListener("touchend", (event) => {
+    if (!isSwiping) {
+        let touch = event.changedTouches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+        
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planes);
+
+        if (intersects.length > 0) {
+            previousCameraPosition.copy(camera.position);
+            moveToPlane(intersects[0].object);
+        } else {
+            resetCamera();
+        }
+    }
+}, false);
+
     animate();
 
     // 13. Адаптивность экрана
@@ -201,4 +252,3 @@ const textures = [
 
 </body>
 </html>
-
