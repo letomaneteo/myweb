@@ -197,7 +197,12 @@
     window.addEventListener('click', onDocumentClick, false);
     window.addEventListener('touchstart', onDocumentTouch, false);
 
-    // 13. Анимация сцены
+    // 13. Инвертирование вращения на мобильных устройствах
+    if ('ontouchstart' in window) {
+        controls.rotateSpeed = -1.0; // Инвертируем вращение
+    }
+
+    // 14. Анимация сцены
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
@@ -206,7 +211,7 @@
 
     animate();
 
-    // 14. Адаптивность экрана
+    // 15. Адаптивность экрана
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
