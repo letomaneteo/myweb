@@ -29,30 +29,24 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
+    // HDRI Фон (EXR)
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
 
-// HDRI Фон (EXR)
-const pmremGenerator = new THREE.PMREMGenerator(renderer);
-pmremGenerator.compileEquirectangularShader();
-
-new THREE.EXRLoader()
-    .load('https://raw.githubusercontent.com/letomaneteo/21/main/lonely_road_afternoon_puresky_2k.exr', function (texture) {
-        const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
-        scene.environment = hdrTexture; // Добавляем окружение
-        scene.background = hdrTexture; // Устанавливаем фон
-    });
-
-
+    new THREE.EXRLoader()
+        .load('https://raw.githubusercontent.com/letomaneteo/21/main/lonely_road_afternoon_puresky_2k.exr', function (texture) {
+            const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
+            scene.environment = hdrTexture; // Добавляем окружение
+            scene.background = hdrTexture; // Устанавливаем фон
+        });
 
     // 4. Управление камерой (только вращение)
-   // 4. Управление камерой (только вращение)
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enablePan = false; // Запрещаем перемещение
-controls.enableZoom = false; // Отключаем зум
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.rotateSpeed = 1.0;
-controls.touchRotate = true; // Включаем поддержку сенсорного вращения
-
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enablePan = false; // Запрещаем перемещение
+    controls.enableZoom = false; // Отключаем зум
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.rotateSpeed = 1.0;
 
     // 5. Создаём массив плоскостей
     const planes = [];
@@ -72,12 +66,12 @@ controls.touchRotate = true; // Включаем поддержку сенсор
         scene.add(plane);
         planes.push(plane);
 
-       new THREE.TextureLoader().load(textureUrl, (texture) => {
-    material.map = texture;
-    material.transparent = true;  // Включаем поддержку прозрачности
-    material.alphaTest = 0.5;     // Отсекаем полупрозрачные пиксели
-    material.needsUpdate = true;
-});
+        new THREE.TextureLoader().load(textureUrl, (texture) => {
+            material.map = texture;
+            material.transparent = true;  // Включаем поддержку прозрачности
+            material.alphaTest = 0.5;     // Отсекаем полупрозрачные пиксели
+            material.needsUpdate = true;
+        });
 
         return plane;
     }
@@ -105,63 +99,61 @@ controls.touchRotate = true; // Включаем поддержку сенсор
     const totalPlanes = 50;
     const radius = 10;
     const positions = fibonacciSphere(totalPlanes, radius);
-    
-const textures = [
-    'https://i.imgur.com/XdFK6x3.png',
-    'https://i.imgur.com/7RmDFNW.png',
-    'https://i.imgur.com/8Hg0fls.png',
-    // Добавьте остальные URL-адреса для текстур
-];
+
+    const textures = [
+        'https://i.imgur.com/XdFK6x3.png',
+        'https://i.imgur.com/7RmDFNW.png',
+        'https://i.imgur.com/8Hg0fls.png',
+        // Добавьте остальные URL-адреса для текстур
+    ];
 
     positions.forEach((pos, i) => {
-    const textureUrl = textures[i % textures.length]; // Это гарантирует, что, если текстур меньше, они будут повторяться
-    createPlane(textureUrl, pos);
-});
+        const textureUrl = textures[i % textures.length]; // Это гарантирует, что, если текстур меньше, они будут повторяться
+        createPlane(textureUrl, pos);
+    });
 
     // 9. Функция плавного приближения камеры к плоскости
     function moveToPlane(target) {
-    if (currentTarget === target) return; // Если уже приближены - ничего не делаем
-    currentTarget = target;
+        if (currentTarget === target) return; // Если уже приближены - ничего не делаем
+        currentTarget = target;
 
-    // Отключаем вращение камеры
-    controls.enableRotate = false;
+        // Отключаем вращение камеры
+        controls.enableRotate = false;
 
-    const targetDirection = new THREE.Vector3().copy(target.position).normalize();
-    const targetPosition = targetDirection.multiplyScalar(radius * 0.85); // Чуть ближе к центру
+        const targetDirection = new THREE.Vector3().copy(target.position).normalize();
+        const targetPosition = targetDirection.multiplyScalar(radius * 0.85); // Чуть ближе к центру
 
-    let progress = 0;
-    function animateMove() {
-        if (progress < 1) {
-            progress += 0.02;
-            camera.position.lerp(targetPosition, progress);
-            controls.target.lerp(target.position, progress);
-            requestAnimationFrame(animateMove);
+        let progress = 0;
+        function animateMove() {
+            if (progress < 1) {
+                progress += 0.02;
+                camera.position.lerp(targetPosition, progress);
+                controls.target.lerp(target.position, progress);
+                requestAnimationFrame(animateMove);
+            }
         }
+        animateMove();
     }
-    animateMove();
-}
-
 
     // 10. Функция возврата камеры в центр с сохранением угла
     function resetCamera() {
-    if (!currentTarget) return; // Если уже в центре - ничего не делаем
-    currentTarget = null;
+        if (!currentTarget) return; // Если уже в центре - ничего не делаем
+        currentTarget = null;
 
-    // Включаем вращение камеры обратно
-    controls.enableRotate = true;
+        // Включаем вращение камеры обратно
+        controls.enableRotate = true;
 
-    let progress = 0;
-    function animateReset() {
-        if (progress < 1) {
-            progress += 0.02;
-            camera.position.lerp(previousCameraPosition, progress); // Сохраняем угол
-            controls.target.lerp(new THREE.Vector3(0, 0, 0), progress);
-            requestAnimationFrame(animateReset);
+        let progress = 0;
+        function animateReset() {
+            if (progress < 1) {
+                progress += 0.02;
+                camera.position.lerp(previousCameraPosition, progress); // Сохраняем угол
+                controls.target.lerp(new THREE.Vector3(0, 0, 0), progress);
+                requestAnimationFrame(animateReset);
+            }
         }
+        animateReset();
     }
-    animateReset();
-}
-
 
     // 11. Обработка клика по сцене
     function onDocumentClick(event) {
@@ -182,9 +174,30 @@ const textures = [
         }
     }
 
-    window.addEventListener('click', onDocumentClick, false);
+    // 12. Обработка касания для мобильных устройств
+    function onDocumentTouch(event) {
+        event.preventDefault();
 
-    // 12. Анимация сцены
+        const touch = event.touches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planes);
+
+        if (intersects.length > 0) {
+            // Сохраняем текущее положение камеры перед приближением
+            previousCameraPosition.copy(camera.position);
+            moveToPlane(intersects[0].object);
+        } else {
+            resetCamera();
+        }
+    }
+
+    window.addEventListener('click', onDocumentClick, false);
+    window.addEventListener('touchstart', onDocumentTouch, false);
+
+    // 13. Анимация сцены
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
@@ -193,7 +206,7 @@ const textures = [
 
     animate();
 
-    // 13. Адаптивность экрана
+    // 14. Адаптивность экрана
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
