@@ -7,248 +7,155 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
-
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
     </style>
 </head>
 <body>
-
 <script>
-    // 1. Создаём сцену
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x222222); // Серый фон
-
-    // 2. Камера в центре сцены (фиксирована)
+    scene.background = new THREE.Color(0x222222);
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 0); // Камера в центре
-
-    // 3. Рендерер
+    camera.position.set(0, 0, 10);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-
-// HDRI Фон (EXR)
-const pmremGenerator = new THREE.PMREMGenerator(renderer);
-pmremGenerator.compileEquirectangularShader();
-
-new THREE.EXRLoader()
-    .load('https://raw.githubusercontent.com/letomaneteo/21/main/lonely_road_afternoon_puresky_2k.exr', function (texture) {
-        const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
-        scene.environment = hdrTexture; // Добавляем окружение
-        scene.background = hdrTexture; // Устанавливаем фон
-    });
-
-
-
-    // 4. Управление камерой (только вращение)
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enablePan = false; // Запрещаем перемещение
-    controls.enableZoom = false; // Отключаем зум
+    controls.enablePan = false;
+    controls.enableZoom = false;
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.rotateSpeed = 1.0;
 
-    // 5. Создаём массив плоскостей
-    const planes = [];
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-    let currentTarget = null; // Текущая выбранная плоскость
-    let previousCameraPosition = new THREE.Vector3(0, 0, 0); // Переменная для сохранения положения камеры
+    let currentTarget = null;
+    let previousCameraPosition = new THREE.Vector3();
+    const planes = [];
 
-    // 6. Функция создания плоскости, смотрящей на центр
     function createPlane(textureUrl, position) {
         const geometry = new THREE.PlaneGeometry(3, 2);
         const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
-
         const plane = new THREE.Mesh(geometry, material);
-        plane.position.set(position.x, position.y, position.z);
-        plane.lookAt(new THREE.Vector3(0, 0, 0)); // Поворачиваем нормалью к центру
+        plane.position.copy(position);
+        plane.lookAt(new THREE.Vector3(0, 0, 0));
         scene.add(plane);
         planes.push(plane);
-
-       new THREE.TextureLoader().load(textureUrl, (texture) => {
-    material.map = texture;
-    material.transparent = true;  // Включаем поддержку прозрачности
-    material.alphaTest = 0.5;     // Отсекаем полупрозрачные пиксели
-    material.needsUpdate = true;
-});
-
+        new THREE.TextureLoader().load(textureUrl, (texture) => {
+            material.map = texture;
+            material.transparent = true;
+            material.alphaTest = 0.5;
+            material.needsUpdate = true;
+        });
         return plane;
     }
 
-    // 7. Функция для равномерного распределения точек на сфере (Fibonacci Sphere)
     function fibonacciSphere(samples, radius) {
         let points = [];
-        const phi = Math.PI * (3 - Math.sqrt(5)); // Золотое сечение
-
+        const phi = Math.PI * (3 - Math.sqrt(5));
         for (let i = 0; i < samples; i++) {
-            let y = 1 - (i / (samples - 1)) * 2; // y идет от 1 до -1
-            let r = Math.sqrt(1 - y * y); // Радиус круга на высоте y
-
-            let theta = phi * i; // Угол по золотому сечению
+            let y = 1 - (i / (samples - 1)) * 2;
+            let r = Math.sqrt(1 - y * y);
+            let theta = phi * i;
             let x = Math.cos(theta) * r;
             let z = Math.sin(theta) * r;
-
             points.push(new THREE.Vector3(x * radius, y * radius, z * radius));
         }
-
         return points;
     }
 
-    // 8. Создаём 50 плоскостей равномерно на сфере
     const totalPlanes = 50;
     const radius = 10;
     const positions = fibonacciSphere(totalPlanes, radius);
-    
-const textures = [
-    'https://i.imgur.com/XdFK6x3.png',
-    'https://i.imgur.com/7RmDFNW.png',
-    'https://i.imgur.com/8Hg0fls.png',
-    // Добавьте остальные URL-адреса для текстур
-];
+    const textures = [
+        'https://i.imgur.com/XdFK6x3.png',
+        'https://i.imgur.com/7RmDFNW.png',
+        'https://i.imgur.com/8Hg0fls.png',
+    ];
+    positions.forEach((pos, i) => createPlane(textures[i % textures.length], pos));
 
-    positions.forEach((pos, i) => {
-    const textureUrl = textures[i % textures.length]; // Это гарантирует, что, если текстур меньше, они будут повторяться
-    createPlane(textureUrl, pos);
-});
-
-    // 9. Функция плавного приближения камеры к плоскости
     function moveToPlane(target) {
-    if (currentTarget === target) return; // Если уже приближены - ничего не делаем
-    currentTarget = target;
-
-    // Отключаем вращение камеры
-    controls.enableRotate = false;
-
-    const targetDirection = new THREE.Vector3().copy(target.position).normalize();
-    const targetPosition = targetDirection.multiplyScalar(radius * 0.85); // Чуть ближе к центру
-
-    let progress = 0;
-    function animateMove() {
-        if (progress < 1) {
-            progress += 0.02;
-            camera.position.lerp(targetPosition, progress);
-            controls.target.lerp(target.position, progress);
-            requestAnimationFrame(animateMove);
+        if (currentTarget === target) return;
+        currentTarget = target;
+        controls.enableRotate = false;
+        previousCameraPosition.copy(camera.position);
+        const targetDirection = target.position.clone().normalize();
+        const targetPosition = targetDirection.multiplyScalar(radius * 0.85);
+        let progress = 0;
+        function animateMove() {
+            if (progress < 1) {
+                progress += 0.02;
+                camera.position.lerp(targetPosition, progress);
+                controls.target.lerp(target.position, progress);
+                requestAnimationFrame(animateMove);
+            }
         }
+        animateMove();
     }
-    animateMove();
-}
 
-
-    // 10. Функция возврата камеры в центр с сохранением угла
     function resetCamera() {
-    if (!currentTarget) return; // Если уже в центре - ничего не делаем
-    currentTarget = null;
-
-    // Включаем вращение камеры обратно
-    controls.enableRotate = true;
-
-    let progress = 0;
-    function animateReset() {
-        if (progress < 1) {
-            progress += 0.02;
-            camera.position.lerp(previousCameraPosition, progress); // Сохраняем угол
-            controls.target.lerp(new THREE.Vector3(0, 0, 0), progress);
-            requestAnimationFrame(animateReset);
+        if (!currentTarget) return;
+        currentTarget = null;
+        controls.enableRotate = true;
+        let progress = 0;
+        function animateReset() {
+            if (progress < 1) {
+                progress += 0.02;
+                camera.position.lerp(previousCameraPosition, progress);
+                controls.target.lerp(new THREE.Vector3(0, 0, 0), progress);
+                requestAnimationFrame(animateReset);
+            }
         }
+        animateReset();
     }
-    animateReset();
-}
 
-
-    // 11. Обработка клика по сцене
-    function onDocumentClick(event) {
-        event.preventDefault();
-
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
+    function onTap(x, y) {
+        mouse.x = (x / window.innerWidth) * 2 - 1;
+        mouse.y = -(y / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(planes);
-
         if (intersects.length > 0) {
-            // Сохраняем текущее положение камеры перед приближением
-            previousCameraPosition.copy(camera.position);
             moveToPlane(intersects[0].object);
         } else {
             resetCamera();
         }
     }
 
-    window.addEventListener('click', onDocumentClick, false);
+    let lastTap = 0;
+    function onTouchStart(event) {
+        if (event.touches.length === 1) {
+            let now = Date.now();
+            if (now - lastTap < 300) {
+                resetCamera();
+            } else {
+                onTap(event.touches[0].clientX, event.touches[0].clientY);
+            }
+            lastTap = now;
+        }
+    }
 
-    // 12. Анимация сцены
+    function onTouchMove(event) {
+        if (event.touches.length === 1) {
+            controls.handleTouchMoveRotate(event);
+        }
+    }
+
+    renderer.domElement.addEventListener('click', (event) => onTap(event.clientX, event.clientY));
+    renderer.domElement.addEventListener('touchstart', onTouchStart);
+    renderer.domElement.addEventListener('touchmove', onTouchMove);
+
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
         renderer.render(scene, camera);
     }
-
-let touchStartX = 0, touchStartY = 0;
-let touchEndX = 0, touchEndY = 0;
-let isSwiping = false;
-
-// Обработка начала касания
-window.addEventListener("touchstart", (event) => {
-    if (event.touches.length === 1) {
-        touchStartX = event.touches[0].clientX;
-        touchStartY = event.touches[0].clientY;
-        isSwiping = false;
-    }
-}, false);
-
-// Обработка движения пальца
-window.addEventListener("touchmove", (event) => {
-    if (event.touches.length === 1) {
-        isSwiping = true;
-        touchEndX = event.touches[0].clientX;
-        touchEndY = event.touches[0].clientY;
-        
-        let deltaX = (touchEndX - touchStartX) * 0.005;
-        let deltaY = (touchEndY - touchStartY) * 0.005;
-
-        controls.rotateLeft(-deltaX);
-        controls.rotateUp(-deltaY);
-        controls.update();
-        
-        touchStartX = touchEndX;
-        touchStartY = touchEndY;
-    }
-}, false);
-
-// Обработка завершения касания (тап)
-window.addEventListener("touchend", (event) => {
-    if (!isSwiping) {
-        let touch = event.changedTouches[0];
-        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
-        
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(planes);
-
-        if (intersects.length > 0) {
-            previousCameraPosition.copy(camera.position);
-            moveToPlane(intersects[0].object);
-        } else {
-            resetCamera();
-        }
-    }
-}, false);
-
     animate();
 
-    // 13. Адаптивность экрана
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
 </script>
-
 </body>
 </html>
