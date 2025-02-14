@@ -44,36 +44,14 @@ new THREE.EXRLoader()
 
 
     // 4. Управление камерой (только вращение)
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enablePan = false; // Запрещаем перемещение
-    controls.enableZoom = false; // Отключаем зум
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.rotateSpeed = 1.0;
-let touchX, touchY;
-
-function onTouchStart(event) {
-    if (event.touches.length === 1) {
-        touchX = event.touches[0].clientX;
-        touchY = event.touches[0].clientY;
-    }
-}
-
-function onTouchMove(event) {
-    if (event.touches.length === 1) {
-        let deltaX = (event.touches[0].clientX - touchX) * 0.002;
-        let deltaY = (event.touches[0].clientY - touchY) * 0.002;
-
-        controls.rotateLeft(deltaX);
-        controls.rotateUp(deltaY);
-
-        touchX = event.touches[0].clientX;
-        touchY = event.touches[0].clientY;
-    }
-}
-
-window.addEventListener('touchstart', onTouchStart, false);
-window.addEventListener('touchmove', onTouchMove, false);
+   // 4. Управление камерой (только вращение)
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enablePan = false; // Запрещаем перемещение
+controls.enableZoom = false; // Отключаем зум
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.rotateSpeed = 1.0;
+controls.touchRotate = true; // Включаем поддержку сенсорного вращения
 
 
     // 5. Создаём массив плоскостей
@@ -186,39 +164,25 @@ const textures = [
 
 
     // 11. Обработка клика по сцене
-   function onDocumentClick(event) {
-    event.preventDefault();
+    function onDocumentClick(event) {
+        event.preventDefault();
 
-    let clientX, clientY;
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    if (event.touches) {
-        // Если это тач-событие (телефон)
-        clientX = event.touches[0].clientX;
-        clientY = event.touches[0].clientY;
-    } else {
-        // Если это клик мышью (ПК)
-        clientX = event.clientX;
-        clientY = event.clientY;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planes);
+
+        if (intersects.length > 0) {
+            // Сохраняем текущее положение камеры перед приближением
+            previousCameraPosition.copy(camera.position);
+            moveToPlane(intersects[0].object);
+        } else {
+            resetCamera();
+        }
     }
 
-    mouse.x = (clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(planes);
-
-    if (intersects.length > 0) {
-        previousCameraPosition.copy(camera.position);
-        moveToPlane(intersects[0].object);
-    } else {
-        resetCamera();
-    }
-}
-
-// Добавляем обработчик для кликов и тачей
-window.addEventListener('click', onDocumentClick, false);
-window.addEventListener('touchstart', onDocumentClick, false);
-
+    window.addEventListener('click', onDocumentClick, false);
 
     // 12. Анимация сцены
     function animate() {
