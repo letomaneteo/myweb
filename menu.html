@@ -48,16 +48,6 @@
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 1.0;
 
-renderer.domElement.addEventListener('touchstart', function (event) {
-    if (event.touches.length === 2) controls.enableZoom = true;
-});
-
-renderer.domElement.addEventListener('touchend', function () {
-    controls.enableZoom = false;
-});
-
-
-
     // 5. Создаём массив плоскостей
     const planes = [];
     const raycaster = new THREE.Raycaster();
