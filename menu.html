@@ -55,26 +55,70 @@
     let currentTarget = null; // Текущая выбранная плоскость
     let previousCameraPosition = new THREE.Vector3(0, 0, 0); // Переменная для сохранения положения камеры
 
+function createLink(url) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.textContent = "Перейти";
+    link.style.position = "absolute";
+    link.style.display = "none";
+    link.style.color = "white";
+    link.style.background = "rgba(0, 0, 0, 0.8)";
+    link.style.padding = "5px 10px";
+    link.style.borderRadius = "5px";
+    link.style.textDecoration = "none";
+    document.body.appendChild(link);
+    return link;
+}
+
+function updateLinkPositions() {
+    planes.forEach((plane) => {
+        const link = plane.userData.link;
+        if (!link) return;
+
+        const distance = camera.position.distanceTo(plane.position);
+        if (distance < 3) { // Если камера близко - показываем ссылку
+            const vector = plane.position.clone().project(camera);
+            const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+            const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
+
+            link.style.left = `${x}px`;
+            link.style.top = `${y}px`;
+            link.style.display = "block";
+        } else {
+            link.style.display = "none"; // Если далеко - скрываем
+        }
+    });
+}
+
+
+
     // 6. Функция создания плоскости, смотрящей на центр
-    function createPlane(textureUrl, position) {
-        const geometry = new THREE.PlaneGeometry(2, 3);
-        const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+    function createPlane(textureObj, position) {
+    const geometry = new THREE.PlaneGeometry(2, 3);
+    const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
 
-        const plane = new THREE.Mesh(geometry, material);
-        plane.position.set(position.x, position.y, position.z);
-        plane.lookAt(new THREE.Vector3(0, 0, 0)); // Поворачиваем нормалью к центру
-        scene.add(plane);
-        planes.push(plane);
+    const plane = new THREE.Mesh(geometry, material);
+    plane.position.set(position.x, position.y, position.z);
+    plane.lookAt(new THREE.Vector3(0, 0, 0));
+    scene.add(plane);
+    planes.push(plane);
 
-        new THREE.TextureLoader().load(textureUrl, (texture) => {
-            material.map = texture;
-            material.transparent = true;  // Включаем поддержку прозрачности
-            material.alphaTest = 0.5;     // Отсекаем полупрозрачные пиксели
-            material.needsUpdate = true;
-        });
+    new THREE.TextureLoader().load(textureObj.texture, (texture) => {
+        material.map = texture;
+        material.transparent = true;
+        material.alphaTest = 0.5;
+        material.needsUpdate = true;
+    });
 
-        return plane;
-    }
+    // Создаём и привязываем ссылку к плоскости
+    const link = createLink(textureObj.link);
+    plane.userData.link = link;
+
+    return plane;
+}
+
+
 
     // 7. Функция для равномерного распределения точек на сфере (Fibonacci Sphere)
     function fibonacciSphere(samples, radius) {
@@ -102,17 +146,28 @@
     const radius = 10;
     const positions = fibonacciSphere(totalPlanes, radius);
 
-    const textures = [
-        'https://i.imgur.com/XdFK6x3.png',
-        'https://i.imgur.com/7RmDFNW.png',
-        'https://i.imgur.com/8Hg0fls.png',
-        // Добавьте остальные URL-адреса для текстур
-    ];
+    const texturesWithLinks = [
+    {
+        texture: 'https://i.imgur.com/XdFK6x3.png',
+        link: 'https://app.leonardo.ai/'
+    },
+    {
+        texture: 'https://i.imgur.com/7RmDFNW.png',
+        link: 'https://app.leonardo.ai/'
+    },
+    {
+        texture: 'https://i.imgur.com/8Hg0fls.png',
+        link: 'https://app.leonardo.ai/'
+    }
+    // Добавьте остальные объекты с текстурами и ссылками
+];
 
-    positions.forEach((pos, i) => {
-        const textureUrl = textures[i % textures.length]; // Это гарантирует, что, если текстур меньше, они будут повторяться
-        createPlane(textureUrl, pos);
-    });
+
+   positions.forEach((pos, i) => {
+    const textureObj = texturesWithLinks[i % texturesWithLinks.length];  // Получаем объект с текстурой и ссылкой
+    createPlane(textureObj, pos);
+});
+
 
     // 9. Функция плавного приближения камеры к плоскости
     function moveToPlane(target) {
@@ -249,10 +304,11 @@ function onDocumentTouch(event) {
 
     // 14. Анимация сцены
     function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-    }
+    requestAnimationFrame(animate);
+    controls.update();
+    updateLinkPositions(); // Обновляем позиции ссылок
+    renderer.render(scene, camera);
+}
 
     animate();
 
