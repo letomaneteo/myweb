@@ -59,7 +59,7 @@ function createLink(url) {
     const link = document.createElement("a");
     link.href = url; // Устанавливаем ссылку
     link.target = "_blank";  // Ссылка открывается в новой вкладке
-    link.textContent = "Войти"; // Текст ссылки
+    link.textContent = "Перейти"; // Текст ссылки
     link.style.position = "absolute";
     link.style.display = "none";  // Скрываем ссылку по умолчанию
     link.style.color = "white";
@@ -89,10 +89,11 @@ function updateLinkPositions() {
         if (distance < 3) { // Если камера близка - показываем ссылку
             const vector = plane.position.clone().project(camera); // Проектируем позицию плоскости в 2D
             const x = (vector.x * 0.5 + 0.5) * window.innerWidth; // Переводим координаты в пиксели по оси X
+            const y = (-vector.y * 0.5 + 0.5) * window.innerHeight; // Переводим координаты в пиксели по оси Y
 
-            // Позиционируем ссылку внизу экрана
+            // Позиционируем ссылку в 2D-координатах
             link.style.left = `${x}px`;
-            link.style.bottom = "70px"; // Устанавливаем ссылку на 20px выше нижней части экрана
+            link.style.top = `${y+230}px`;
             link.style.display = "block"; // Показываем ссылку
         } else {
             link.style.display = "none"; // Если камера далеко - скрываем ссылку
