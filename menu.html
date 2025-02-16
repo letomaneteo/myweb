@@ -57,7 +57,7 @@
 
     // 6. Функция создания плоскости, смотрящей на центр
     function createPlane(textureUrl, position) {
-        const geometry = new THREE.PlaneGeometry(3, 2);
+        const geometry = new THREE.PlaneGeometry(2, 3);
         const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
 
         const plane = new THREE.Mesh(geometry, material);
