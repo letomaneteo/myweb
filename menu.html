@@ -167,51 +167,70 @@
 
 
     // 11. Обработка клика по сцене
-    // Удаляем весь блок onDocumentTouch, так как он уже не нужен.
-
-    // Изменяем onDocumentClick:
     let lastClickedPlane = null;
-    let clickCount = 0;
-    let clickTimer = null;
+let clickCount = 0;
+let clickTimer = null;
 
-    function onDocumentClick(event) {
+function onDocumentClick(event) {
+    event.preventDefault();
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(planes);
+
+    if (intersects.length > 0) {
+        const clickedPlane = intersects[0].object;
+
+        if (clickedPlane === lastClickedPlane) {
+            clickCount++;
+        } else {
+            clickCount = 1;
+            lastClickedPlane = clickedPlane;
+        }
+
+        if (clickCount === 2) {
+            resetCamera(); // Вызываем resetCamera() при двойном клике
+            clickCount = 0;
+            lastClickedPlane = null;
+        } else {
+            previousCameraPosition.copy(camera.position);
+            moveToPlane(clickedPlane);
+        }
+
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+            lastClickedPlane = null;
+        }, 400); // Уменьшил таймер для более удобного двойного клика
+    }
+}
+
+
+
+    // 12. Обработка касания для мобильных устройств
+    function onDocumentTouch(event) {
         event.preventDefault();
 
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        const touch = event.touches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(planes);
 
         if (intersects.length > 0) {
-            const clickedPlane = intersects[0].object;
-
-            if (clickedPlane === lastClickedPlane) {
-                clickCount++;
-            } else {
-                clickCount = 1;
-                lastClickedPlane = clickedPlane;
-            }
-
-            if (clickCount === 2) {
-                resetCamera(); // Вызываем resetCamera() при двойном клике
-                clickCount = 0;
-                lastClickedPlane = null;
-            } else {
-                previousCameraPosition.copy(camera.position);
-                moveToPlane(clickedPlane);
-            }
-
-            clearTimeout(clickTimer);
-            clickTimer = setTimeout(() => {
-                clickCount = 0;
-                lastClickedPlane = null;
-            }, 400);
+            // Сохраняем текущее положение камеры перед приближением
+            previousCameraPosition.copy(camera.position);
+            moveToPlane(intersects[0].object);
+        } else {
+            resetCamera();
         }
     }
 
     window.addEventListener('click', onDocumentClick, false);
-
+    window.addEventListener('touchstart', onDocumentTouch, false);
 
     // 13. Инвертирование вращения на мобильных устройствах
     if ('ontouchstart' in window) {
