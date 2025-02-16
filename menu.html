@@ -123,7 +123,7 @@
         controls.enableRotate = false;
 
         const targetDirection = new THREE.Vector3().copy(target.position).normalize();
-        const targetPosition = targetDirection.multiplyScalar(radius * 0.95); // Чуть ближе к центру
+        const targetPosition = targetDirection.multiplyScalar(radius * 0.75); // Чуть ближе к центру
 
         let progress = 0;
         function animateMove() {
