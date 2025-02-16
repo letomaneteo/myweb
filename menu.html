@@ -59,7 +59,7 @@ function createLink(url) {
     const link = document.createElement("a");
     link.href = url; // Устанавливаем ссылку
     link.target = "_blank";  // Ссылка открывается в новой вкладке
-    link.textContent = "Перейти"; // Текст ссылки
+    link.textContent = "Войти"; // Текст ссылки
     link.style.position = "absolute";
     link.style.display = "none";  // Скрываем ссылку по умолчанию
     link.style.color = "white";
@@ -93,7 +93,7 @@ function updateLinkPositions() {
 
             // Позиционируем ссылку в 2D-координатах
             link.style.left = `${x}px`;
-            link.style.top = `${y+330}px`;
+            link.style.top = `${y+180}px`;
             link.style.display = "block"; // Показываем ссылку
         } else {
             link.style.display = "none"; // Если камера далеко - скрываем ссылку
