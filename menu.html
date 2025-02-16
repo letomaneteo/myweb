@@ -57,40 +57,49 @@
 
 function createLink(url) {
     const link = document.createElement("a");
-    link.href = url;
-    link.target = "_blank";
-    link.textContent = "Перейти";
+    link.href = url; // Устанавливаем ссылку
+    link.target = "_blank";  // Ссылка открывается в новой вкладке
+    link.textContent = "Перейти"; // Текст ссылки
     link.style.position = "absolute";
-    link.style.display = "none";
+    link.style.display = "none";  // Скрываем ссылку по умолчанию
     link.style.color = "white";
     link.style.background = "rgba(0, 0, 0, 0.8)";
     link.style.padding = "5px 10px";
     link.style.borderRadius = "5px";
     link.style.textDecoration = "none";
+    link.style.zIndex = 1000; // Устанавливаем высокий z-индекс
     document.body.appendChild(link);
+
+    link.addEventListener('click', (event) => {
+        event.stopPropagation(); // Прекращаем всплытие события, чтобы оно не перехватывалось Three.js
+    });
+
     return link;
 }
+
 
 function updateLinkPositions() {
     planes.forEach((plane) => {
         const link = plane.userData.link;
         if (!link) return;
 
+        // Получаем расстояние от камеры до плоскости
         const distance = camera.position.distanceTo(plane.position);
-        if (distance < 3) { // Если камера близко - показываем ссылку
-            const vector = plane.position.clone().project(camera);
-            const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
-            const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
+        
+        if (distance < 3) { // Если камера близка - показываем ссылку
+            const vector = plane.position.clone().project(camera); // Проектируем позицию плоскости в 2D
+            const x = (vector.x * 0.5 + 0.5) * window.innerWidth; // Переводим координаты в пиксели по оси X
+            const y = (-vector.y * 0.5 + 0.5) * window.innerHeight; // Переводим координаты в пиксели по оси Y
 
+            // Позиционируем ссылку в 2D-координатах
             link.style.left = `${x}px`;
             link.style.top = `${y}px`;
-            link.style.display = "block";
+            link.style.display = "block"; // Показываем ссылку
         } else {
-            link.style.display = "none"; // Если далеко - скрываем
+            link.style.display = "none"; // Если камера далеко - скрываем ссылку
         }
     });
 }
-
 
 
     // 6. Функция создания плоскости, смотрящей на центр
