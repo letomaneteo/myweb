@@ -26,8 +26,10 @@
 
     // 3. Рендерер
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
