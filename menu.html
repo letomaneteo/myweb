@@ -275,6 +275,14 @@ window.addEventListener('touchmove', function (event) {
     }
 }, { passive: false });
 
+
+window.addEventListener('touchend', function (event) {
+    if (event.touches.length < 2) {
+        initialPinchDistance = null;
+    }
+}, { passive: false });
+
+
     // 15. Адаптивность экрана
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -286,4 +294,3 @@ window.addEventListener('touchmove', function (event) {
 
 </body>
 </html>
-
