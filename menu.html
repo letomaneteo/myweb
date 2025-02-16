@@ -22,7 +22,10 @@
 
     // 2. Камера в центре сцены (фиксирована)
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 0); // Камера в центре
+    camera.position.set(0, 0, 5); // Камера в центре
+
+let initialPinchDistance = null;
+let initialCameraDistance = camera.position.length();
 
     // 3. Рендерер
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -78,22 +81,24 @@
 
     // 7. Функция для равномерного распределения точек на сфере (Fibonacci Sphere)
     function fibonacciSphere(samples, radius) {
-        let points = [];
-        const phi = Math.PI * (3 - Math.sqrt(5)); // Золотое сечение
+    let points = [];
+    const phi = Math.PI * (3 - Math.sqrt(5)); // Золотое сечение
 
-        for (let i = 0; i < samples; i++) {
-            let y = 1 - (i / (samples - 1)) * 2; // y идет от 1 до -1
-            let r = Math.sqrt(1 - y * y); // Радиус круга на высоте y
+    for (let i = 0; i < samples; i++) {
+        let y = 1 - (i / (samples - 1)) * 2; // y от -1 до 1
 
-            let theta = phi * i; // Угол по золотому сечению
-            let x = Math.cos(theta) * r;
-            let z = Math.sin(theta) * r;
+        if (Math.abs(y) > 0.9) continue; // Игнорируем точки ближе к полюсам
 
-            points.push(new THREE.Vector3(x * radius, y * radius, z * radius));
-        }
+        let r = Math.sqrt(1 - y * y); // Радиус круга на данной высоте
+        let theta = phi * i; // Угол по золотому сечению
+        let x = Math.cos(theta) * r;
+        let z = Math.sin(theta) * r;
 
-        return points;
+        points.push(new THREE.Vector3(x * radius, y * radius, z * radius));
     }
+
+    return points;
+}
 
     // 8. Создаём 50 плоскостей равномерно на сфере
     const totalPlanes = 50;
@@ -137,42 +142,80 @@
 
     // 10. Функция возврата камеры в центр с сохранением угла
     function resetCamera() {
-        if (!currentTarget) return; // Если уже в центре - ничего не делаем
-        currentTarget = null;
+    if (!currentTarget) return;
+    currentTarget = null;
 
-        // Включаем вращение камеры обратно
-        controls.enableRotate = true;
+    controls.enableRotate = true;
 
-        let progress = 0;
-        function animateReset() {
-            if (progress < 1) {
-                progress += 0.02;
-                camera.position.lerp(previousCameraPosition, progress); // Сохраняем угол
-                controls.target.lerp(new THREE.Vector3(0, 0, 0), progress);
-                requestAnimationFrame(animateReset);
-            }
+    let startPos = camera.position.clone();
+    let direction = startPos.clone().sub(controls.target).normalize(); // Вычисляем направление от центра
+    let targetPos = direction.multiplyScalar(radius); // Сохраняем направление и масштабируем
+    
+    let progress = 0;
+
+    function animateReset() {
+        if (progress < 1) {
+            progress += 0.02;
+            camera.position.lerpVectors(startPos, targetPos, progress);
+            requestAnimationFrame(animateReset);
+        } else {
+            controls.target.set(0, 0, 0); // Центр сцены, но угол камеры сохраняется
         }
-        animateReset();
     }
+    animateReset();
+}
+
+
+function getPinchDistance(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+
 
     // 11. Обработка клика по сцене
-    function onDocumentClick(event) {
-        event.preventDefault();
+    let lastClickedPlane = null;
+let clickCount = 0;
+let clickTimer = null;
 
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+function onDocumentClick(event) {
+    event.preventDefault();
 
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(planes);
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        if (intersects.length > 0) {
-            // Сохраняем текущее положение камеры перед приближением
-            previousCameraPosition.copy(camera.position);
-            moveToPlane(intersects[0].object);
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(planes);
+
+    if (intersects.length > 0) {
+        const clickedPlane = intersects[0].object;
+
+        if (clickedPlane === lastClickedPlane) {
+            clickCount++;
         } else {
-            resetCamera();
+            clickCount = 1;
+            lastClickedPlane = clickedPlane;
         }
+
+        if (clickCount === 2) {
+            resetCamera(); // Вызываем resetCamera() при двойном клике
+            clickCount = 0;
+            lastClickedPlane = null;
+        } else {
+            previousCameraPosition.copy(camera.position);
+            moveToPlane(clickedPlane);
+        }
+
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+            lastClickedPlane = null;
+        }, 400); // Уменьшил таймер для более удобного двойного клика
     }
+}
+
+
 
     // 12. Обработка касания для мобильных устройств
     function onDocumentTouch(event) {
@@ -211,6 +254,27 @@
 
     animate();
 
+window.addEventListener('touchstart', function (event) {
+    if (event.touches.length === 2) {
+        initialPinchDistance = getPinchDistance(event.touches);
+        initialCameraDistance = camera.position.length();
+    }
+}, { passive: false });
+
+window.addEventListener('touchmove', function (event) {
+    if (event.touches.length === 2) {
+        event.preventDefault();
+        const newDistance = getPinchDistance(event.touches);
+        const scale = newDistance / initialPinchDistance;
+
+        const direction = camera.position.clone().normalize();
+        const newCameraPosition = direction.multiplyScalar(initialCameraDistance / scale);
+
+        camera.position.copy(newCameraPosition);
+        camera.updateProjectionMatrix();
+    }
+}, { passive: false });
+
     // 15. Адаптивность экрана
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -222,3 +286,4 @@
 
 </body>
 </html>
+
