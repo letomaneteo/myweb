@@ -36,7 +36,7 @@ document.body.appendChild(renderer.domElement);
     pmremGenerator.compileEquirectangularShader();
 
     new THREE.EXRLoader()
-        .load('https://e.pcloud.link/publink/show?code=XZpQylZhlObLWpxIT4HPMoeFnlL6R9dKPW7', function (texture) {
+        .load('https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4', function (texture) {
             const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
             scene.environment = hdrTexture; // Добавляем окружение
             scene.background = hdrTexture; // Устанавливаем фон
