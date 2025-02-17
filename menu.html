@@ -50,6 +50,35 @@ document.body.appendChild(renderer.domElement);
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 1.0;
 
+const videos = [
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" }
+];
+
+// Создаём HTML-видео элементы
+const videoElements = videos.map(videoData => {
+    const video = document.createElement('video');
+    video.src = videoData.url;
+    video.crossOrigin = "anonymous";
+    video.loop = true;
+    video.muted = true;
+    video.play(); // Запускаем воспроизведение
+    return { element: video, link: videoData.link };
+});
+
+// Теперь создаём текстуры
+const videoTextures = videoElements.map(videoObj => {
+    const texture = new THREE.VideoTexture(videoObj.element);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.format = THREE.RGBAFormat;
+    return { texture, link: videoObj.link };
+});
+
+
+
+
     // 5. Создаём массив плоскостей
     const planes = [];
     const raycaster = new THREE.Raycaster();
@@ -105,9 +134,14 @@ function updateLinkPositions() {
 
 
     // 6. Функция создания плоскости, смотрящей на центр
-    function createPlane(textureObj, position) {
+    function createPlane(videoObj, position) {
     const geometry = new THREE.PlaneGeometry(2, 3);
-    const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+    const videoTexture = videoObj.texture;
+    videoTexture.minFilter = THREE.LinearFilter;
+    videoTexture.magFilter = THREE.LinearFilter;
+    videoTexture.format = THREE.RGBAFormat;
+
+    const material = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
 
     const plane = new THREE.Mesh(geometry, material);
     plane.position.set(position.x, position.y, position.z);
@@ -115,15 +149,8 @@ function updateLinkPositions() {
     scene.add(plane);
     planes.push(plane);
 
-    new THREE.TextureLoader().load(textureObj.texture, (texture) => {
-        material.map = texture;
-        material.transparent = true;
-        material.alphaTest = 0.5;
-        material.needsUpdate = true;
-    });
-
     // Создаём и привязываем ссылку к плоскости
-    const link = createLink(textureObj.link);
+    const link = createLink(videoObj.link);
     plane.userData.link = link;
 
     return plane;
@@ -157,27 +184,13 @@ function updateLinkPositions() {
     const radius = 10;
     const positions = fibonacciSphere(totalPlanes, radius);
 
-    const texturesWithLinks = [
-    {
-        texture: 'https://i.imgur.com/XdFK6x3.png',
-        link: 'https://app.leonardo.ai/'
-    },
-    {
-        texture: 'https://i.imgur.com/7RmDFNW.png',
-        link: 'https://app.leonardo.ai/'
-    },
-    {
-        texture: 'https://i.imgur.com/8Hg0fls.png',
-        link: 'https://app.leonardo.ai/'
-    }
-    // Добавьте остальные объекты с текстурами и ссылками
-];
-
-
-   positions.forEach((pos, i) => {
-    const textureObj = texturesWithLinks[i % texturesWithLinks.length];  // Получаем объект с текстурой и ссылкой
-    createPlane(textureObj, pos);
+  
+  positions.forEach((pos, i) => {
+    const videoObj = videoTextures[i % videoTextures.length]; // Берем уже созданные текстуры
+    createPlane(videoObj, pos);
 });
+
+
 
 
     // 9. Функция плавного приближения камеры к плоскости
