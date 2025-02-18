@@ -68,7 +68,7 @@ videoTexture.format = THREE.RGBAFormat;
 const planeGeometry = new THREE.PlaneGeometry(10, 5); // Размер плоскости
 const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
 const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-videoPlane.position.set(12, 0, 0); // Расположение справа за сферой
+videoPlane.position.set(12, 0, 9); // Расположение справа за сферой
 videoPlane.rotation.y = -Math.PI / 2;
 scene.add(videoPlane);
 
@@ -348,13 +348,11 @@ function onDocumentClick(event) {
 
 
     // 12. Обработка касания для мобильных устройств
-  let lastTouchTime = 0;
+   let lastTouchTime = 0;
 let lastTouchedPlane = null;
 
 function onDocumentTouch(event) {
     event.preventDefault();
-
-    if (event.touches.length > 1) return; // Игнорируем жесты двумя пальцами
 
     const touch = event.touches[0];
     mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
@@ -377,7 +375,6 @@ function onDocumentTouch(event) {
         }
     }
 }
-
 
 
     window.addEventListener('click', onDocumentClick, false);
