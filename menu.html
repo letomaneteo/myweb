@@ -31,47 +31,48 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Загрузка текстуры-видео
-// Загрузка текстуры-видео
+// Создаём отдельный слой для видео
+const videoLayer = 1;
+
+// Включаем видимость обоих слоёв
+camera.layers.enable(0); // Основной слой
+camera.layers.enable(videoLayer); // Слой с видео
+
+// Загружаем видео
 const video = document.createElement('video');
-video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; // Замени на ссылку из pCloud
+video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; 
 video.crossOrigin = 'anonymous';
 video.loop = true;
 video.muted = false;
 video.playsInline = true;
+
 const texture = new THREE.VideoTexture(video);
 texture.minFilter = THREE.LinearFilter;
 texture.magFilter = THREE.LinearFilter;
-texture.format = THREE.RGBAFormat;
+texture.needsUpdate = true;
 
-// Создание плоскости
+// Создаём плоскость с видео
 const videoPlaneGeometry = new THREE.PlaneGeometry(10, 5);
-const videoPlaneMaterial = new THREE.MeshBasicMaterial({
-    map: texture,
-    side: THREE.DoubleSide,
-    transparent: true, // Убирает проблемы с рендерингом
-});
-
-// Создаём плоскость и добавляем её в сцену
+const videoPlaneMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
 const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
-videoPlane.position.set(0, 0, -5); // Перед камерой
-videoPlane.layers.set(1); // Переводим плоскость на слой 1
 
+// Назначаем плоскости новый слой
+videoPlane.layers.set(videoLayer);
 scene.add(videoPlane);
 
-// Камера видит оба слоя (0 и 1)
-camera.layers.enable(1);
+// Размещаем плоскость в нужной позиции
+videoPlane.position.set(12, 9, -3);
+videoPlane.lookAt(new THREE.Vector3(0, 0, 0));
 
-// Отключаем плоскость из рейкастера
-raycaster.layers.set(0); // Рейкастер видит только слой 0
-
-// Запуск видео по первому клику/тачу
+// Запуск видео при клике
 let videoStarted = false;
 renderer.domElement.addEventListener('pointerdown', () => {
-    if (!videoStarted) {
-        video.play();
-        videoStarted = true;
-    }
+  if (!videoStarted) {
+    video.play();
+    videoStarted = true;
+  }
 });
+
 
 
     // HDRI Фон (EXR)
