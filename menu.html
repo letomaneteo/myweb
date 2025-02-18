@@ -30,36 +30,6 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-    // Загрузка текстуры-видео
-const video = document.createElement('video');
-video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4';
-video.crossOrigin = 'anonymous';
-video.loop = true;
-video.muted = true; // mute для корректного запуска на iOS
-video.playsInline = true;
-video.autoplay = true;
-
-const texture = new THREE.VideoTexture(video);
-texture.minFilter = THREE.LinearFilter;
-texture.magFilter = THREE.LinearFilter;
-texture.format = THREE.RGBFormat; // Исправляем формат для мобильных
-
-// Создание плоскости
-const videoPlaneGeometry = new THREE.PlaneGeometry(10, 5);
-const videoPlaneMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
-
-// Позиционирование плоскости
-videoPlane.position.set(12, 9, -3);
-videoPlane.rotation.y = Math.PI; // Уходим от багов с lookAt
-scene.add(videoPlane);
-
-// Включаем звук по клику (если нужно)
-renderer.domElement.addEventListener('click', () => {
-    video.muted = false;
-    video.play().catch(e => console.error('Ошибка запуска видео:', e));
-});
-
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -72,6 +42,7 @@ renderer.domElement.addEventListener('click', () => {
             scene.background = hdrTexture; // Устанавливаем фон
         });
 
+
     // 4. Управление камерой (только вращение)
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enablePan = false; // Запрещаем перемещение
@@ -80,9 +51,62 @@ renderer.domElement.addEventListener('click', () => {
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 1.0;
 
+
+// Добавляем видео как текстуру для большой плоскости
+const video = document.createElement('video');
+video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4'; // Путь к вашему видео
+video.loop = true;
+video.muted = true; // ОБЯЗАТЕЛЬНО muted = true, иначе мобильные браузеры блокируют автозапуск
+video.playsInline = true; // Для мобильных устройств
+video.autoplay = true; // Попытка автостарта
+
+const videoTexture = new THREE.VideoTexture(video);
+videoTexture.minFilter = THREE.LinearFilter;
+videoTexture.magFilter = THREE.LinearFilter;
+videoTexture.format = THREE.RGBAFormat;
+
+const planeGeometry = new THREE.PlaneGeometry(50, 28); // Размер плоскости
+const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
+const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+videoPlane.position.set(60, 0, 0); // Расположение справа за сферой
+videoPlane.rotation.y = -Math.PI / 2;
+scene.add(videoPlane);
+
+// Флаг для запуска видео
+let videoStarted = false;
+let lastRotation = new THREE.Euler();
+
+// Проверяем, изменился ли угол камеры
+controls.addEventListener('change', () => {
+  const currentRotation = camera.rotation;
+
+  if (!videoStarted) {
+    const rotationChanged = Math.abs(currentRotation.x - lastRotation.x) > 0.01 ||
+                            Math.abs(currentRotation.y - lastRotation.y) > 0.01 ||
+                            Math.abs(currentRotation.z - lastRotation.z) > 0.01;
+    console.log("Попытка запуска видео...");
+video.play().then(() => {
+  console.log("Видео запущено успешно!");
+}).catch(err => console.error("Ошибка воспроизведения видео:", err));
+
+    if (rotationChanged) {
+      video.play().catch(err => console.error("Ошибка воспроизведения видео:", err));
+      videoStarted = true;
+    }
+  }
+
+  // Обновляем данные о предыдущем положении камеры
+  lastRotation.copy(currentRotation);
+});
+
+
+
+
+
+
 const videos = [
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" }
 ];
 
@@ -171,7 +195,12 @@ function updateLinkPositions() {
     videoTexture.magFilter = THREE.LinearFilter;
     videoTexture.format = THREE.RGBAFormat;
 
-    const material = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
+    const material = new THREE.MeshBasicMaterial({
+    map: videoTexture,
+    side: THREE.DoubleSide,
+    transparent: true,        // Включаем прозрачность
+    alphaTest: 0.1            // Устанавливаем порог для прозрачных пикселей
+});
 
     const plane = new THREE.Mesh(geometry, material);
     plane.position.set(position.x, position.y, position.z);
@@ -325,8 +354,6 @@ let lastTouchedPlane = null;
 function onDocumentTouch(event) {
     event.preventDefault();
 
-    if (event.touches.length > 1) return; // Игнорируем жесты двумя пальцами
-
     const touch = event.touches[0];
     mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
@@ -348,7 +375,6 @@ function onDocumentTouch(event) {
         }
     }
 }
-
 
 
     window.addEventListener('click', onDocumentClick, false);
