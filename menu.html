@@ -31,33 +31,50 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Загрузка текстуры-видео
-const video = document.createElement('video');
-video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; // Замени на ссылку из pCloud
-video.crossOrigin = 'anonymous';
-video.loop = true;
-video.muted = false;
-video.playsInline = true;
-const texture = new THREE.VideoTexture(video);
+// Добавляем новую большую плоскость с видео
+const bigVideo = document.createElement('video');
+bigVideo.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4';
+bigVideo.crossOrigin = 'anonymous';
+bigVideo.loop = true;
+bigVideo.muted = true; // mute для автозапуска
+bigVideo.playsInline = true;
+bigVideo.autoplay = true;
+document.body.appendChild(bigVideo);
 
-// Создание плоскости
-const videoPlaneGeometry = new THREE.PlaneGeometry(10, 5);
-const videoPlaneMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
+const bigTexture = new THREE.VideoTexture(bigVideo);
+bigTexture.minFilter = THREE.LinearFilter;
+bigTexture.magFilter = THREE.LinearFilter;
+bigTexture.format = THREE.RGBFormat;
 
-// Позиционирование плоскости
-videoPlane.position.set(12, 9, -3); // Справа за сферой
-videoPlane.lookAt(new THREE.Vector3(0, 0, 0)); // Поворот в центр сцены
-
-scene.add(videoPlane);
-
-// Запуск видео при первом тапе
-let videoStarted = false;
-renderer.domElement.addEventListener('pointerdown', () => {
-  if (!videoStarted) {
-    video.play();
-    videoStarted = true;
-  }
+const bigPlaneGeometry = new THREE.PlaneGeometry(10, 5);
+const bigPlaneMaterial = new THREE.MeshBasicMaterial({
+    map: bigTexture,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.999
 });
+
+const bigPlane = new THREE.Mesh(bigPlaneGeometry, bigPlaneMaterial);
+bigPlane.position.set(12, 5, -5); // Смещаем, чтобы не перекрывать маленькие
+bigPlane.lookAt(new THREE.Vector3(0, 0, 0));
+
+// Игнорируем клики Raycaster'ом
+bigPlane.userData.ignoreRaycast = true;
+
+scene.add(bigPlane);
+
+// Включаем звук при первом клике
+let soundActivated = false;
+renderer.domElement.addEventListener('pointerdown', () => {
+    if (!soundActivated) {
+        bigVideo.muted = false;
+        bigVideo.play().then(() => {
+            console.log('🎙️ Видео со звуком запущено');
+        }).catch(err => console.error('🔇 Ошибка включения звука:', err));
+        soundActivated = true;
+    }
+});
+
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
