@@ -40,12 +40,12 @@ video.playsInline = true;
 const texture = new THREE.VideoTexture(video);
 
 // Создание плоскости
-const videoPlaneGeometry = new THREE.PlaneGeometry(5, 10);
+const videoPlaneGeometry = new THREE.PlaneGeometry(10, 5);
 const videoPlaneMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
 const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
 
 // Позиционирование плоскости
-videoPlane.position.set(7, 0, 0); // Справа за сферой
+videoPlane.position.set(12, 0, 0); // Справа за сферой
 videoPlane.lookAt(new THREE.Vector3(0, 0, 0)); // Поворот в центр сцены
 
 scene.add(videoPlane);
