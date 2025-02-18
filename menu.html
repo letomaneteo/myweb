@@ -362,15 +362,16 @@ function onDocumentTouch(event) {
         const now = Date.now();
 
         if (touchedPlane === lastTouchedPlane && now - lastTouchTime < 400) {
-            resetCamera(); // Двойной тап возвращает камеру
+            resetCamera(); // Двойной тап по той же плоскости возвращает камеру
             lastTouchedPlane = null;
         } else {
             lastTouchedPlane = touchedPlane;
             lastTouchTime = now;
-            moveToPlane(touchedPlane); // Один тап приближает
+            moveToPlane(touchedPlane);
         }
     }
 }
+
 
     window.addEventListener('click', onDocumentClick, false);
     window.addEventListener('touchstart', onDocumentTouch, false);
