@@ -72,7 +72,7 @@ videoTexture.format = THREE.RGBAFormat;
 const planeGeometry = new THREE.PlaneGeometry(50, 28);
 const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
 const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-videoPlane.position.set(60, 40, 0);
+videoPlane.position.set(60, 0, 0);
 videoPlane.rotation.y = -Math.PI / 2;
 scene.add(videoPlane);
 
