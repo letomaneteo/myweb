@@ -30,6 +30,34 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Загрузка текстуры-видео
+const video = document.createElement('video');
+video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; // Замени на ссылку из pCloud
+video.crossOrigin = 'anonymous';
+video.loop = true;
+video.muted = false;
+video.playsInline = true;
+const texture = new THREE.VideoTexture(video);
+
+// Создание плоскости
+const videoPlaneGeometry = new THREE.PlaneGeometry(10, 5);
+const videoPlaneMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
+
+// Позиционирование плоскости
+videoPlane.position.set(12, 9, -3); // Справа за сферой
+videoPlane.lookAt(new THREE.Vector3(0, 0, 0)); // Поворот в центр сцены
+
+scene.add(videoPlane);
+
+// Запуск видео при первом тапе
+let videoStarted = false;
+renderer.domElement.addEventListener('pointerdown', () => {
+  if (!videoStarted) {
+    video.play();
+    videoStarted = true;
+  }
+});
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -42,7 +70,6 @@ document.body.appendChild(renderer.domElement);
             scene.background = hdrTexture; // Устанавливаем фон
         });
 
-
     // 4. Управление камерой (только вращение)
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enablePan = false; // Запрещаем перемещение
@@ -51,13 +78,9 @@ document.body.appendChild(renderer.domElement);
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 1.0;
 
-
-
-
-
 const videos = [
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" }
 ];
 
@@ -146,12 +169,7 @@ function updateLinkPositions() {
     videoTexture.magFilter = THREE.LinearFilter;
     videoTexture.format = THREE.RGBAFormat;
 
-    const material = new THREE.MeshBasicMaterial({
-    map: videoTexture,
-    side: THREE.DoubleSide,
-    transparent: true,        // Включаем прозрачность
-    alphaTest: 0.1            // Устанавливаем порог для прозрачных пикселей
-});
+    const material = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
 
     const plane = new THREE.Mesh(geometry, material);
     plane.position.set(position.x, position.y, position.z);
