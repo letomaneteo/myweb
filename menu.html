@@ -43,8 +43,9 @@ const video = document.createElement('video');
 video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; 
 video.crossOrigin = 'anonymous';
 video.loop = true;
-video.muted = true;
+video.muted = true; // Должно быть true для корректного запуска на мобильных устройствах
 video.playsInline = true;
+video.setAttribute('playsinline', ''); // Важно для мобильных устройств
 
 const texture = new THREE.VideoTexture(video);
 texture.minFilter = THREE.LinearFilter;
@@ -64,20 +65,31 @@ scene.add(videoPlane);
 videoPlane.position.set(12, 9, -3);
 videoPlane.lookAt(new THREE.Vector3(0, 0, 0));
 
-// Запуск видео при клике
+// Ожидание загрузки видео перед воспроизведением
+video.addEventListener('canplay', () => {
+  console.log('Видео загружено и готово к воспроизведению');
+});
+
+// Запуск видео при клике (для ПК)
 let videoStarted = false;
-renderer.domElement.addEventListener('pointerdown', () => {
+function startVideo() {
   if (!videoStarted) {
     video.play().then(() => {
       console.log('Видео запущено!');
+      setTimeout(() => {
+        video.muted = false; // Включаем звук после запуска
+        video.volume = 1.0;
+      }, 100); // Небольшая задержка для обхода блокировки
     }).catch(e => {
       console.warn('Не удалось запустить видео:', e);
     });
     videoStarted = true;
   }
-});
-video.muted = false;
-video.volume = 1.0;
+}
+renderer.domElement.addEventListener('pointerdown', startVideo);
+
+// Дополнительный обработчик для мобильных устройств
+renderer.domElement.addEventListener('touchstart', startVideo, { passive: true });
 
 
 
