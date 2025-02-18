@@ -45,11 +45,15 @@ document.body.appendChild(renderer.domElement);
 
     // 4. Управление камерой (только вращение)
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enablePan = false; // Запрещаем перемещение
-    controls.enableZoom = false; // Отключаем зум
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.rotateSpeed = 1.0;
+controls.enablePan = false; // Запрещаем перемещение
+controls.enableZoom = false; // Отключаем зум
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.rotateSpeed = 1.0;
+controls.touches = {
+    ONE: THREE.TOUCH.ROTATE, // Одним пальцем вращение
+    TWO: THREE.TOUCH.NONE     // Отключаем зум через два пальца
+};
 
 
 // Добавляем видео как текстуру для большой плоскости
@@ -72,8 +76,8 @@ videoTexture.format = THREE.RGBAFormat;
 const planeGeometry = new THREE.PlaneGeometry(50, 28);
 const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
 const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-videoPlane.position.set(60, 0, 0);
-videoPlane.rotation.y = -Math.PI / 2;
+videoPlane.position.set(60, 40, 0);
+videoPlane.lookAt(new THREE.Vector3(0, 0, 0)); // Плоскость смотрит в центр
 scene.add(videoPlane);
 
 // Запускаем видео без звука при вращении камеры
@@ -102,7 +106,7 @@ window.addEventListener('click', () => {
 
 const videos = [
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/plane2.mp4", link: "https://letomaneteo.github.io/myweb/page1.html" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" }
 ];
 
