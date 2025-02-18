@@ -345,13 +345,14 @@ function onDocumentClick(event) {
 
     // 12. Обработка касания для мобильных устройств
 // Обработчик тапа на мобильных устройствах
-let lastTouchTime = 0;
-let lastTouchedPlane = null;
+let lastTouchTime = 0; // Время последнего тапа
+let lastTouchedPlane = null; // Последняя затронутая плоскость
+let tapCount = 0; // Счётчик тапов
 
 function onDocumentTouch(event) {
-    event.preventDefault(); // Отменяем стандартное поведение браузера
+    event.preventDefault();
 
-    const touch = event.changedTouches[0]; // Берём первое касание при отпускании
+    const touch = event.changedTouches[0];
     mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
@@ -362,17 +363,20 @@ function onDocumentTouch(event) {
         const touchedPlane = intersects[0].object;
         const now = Date.now();
 
-        // Проверяем, был ли это двойной тап
         if (touchedPlane === lastTouchedPlane && now - lastTouchTime < 400) {
-            resetCamera(); // Возвращаем камеру в центр при двойном тапе
-            lastTouchedPlane = null; // Сбрасываем состояние
+            // Если это тот же объект и время между тапами меньше 400ms - двойной тап (отдаление)
+            resetCamera(); // Отдаляем камеру
+            tapCount = 0; // Сбрасываем счётчик
         } else {
-            lastTouchedPlane = touchedPlane;
-            lastTouchTime = now;
-            moveToPlane(touchedPlane); // Перемещаем камеру к плоскости
+            // Одиночный тап (приближение)
+            lastTouchedPlane = touchedPlane; // Обновляем последнюю затронутую плоскость
+            lastTouchTime = now; // Обновляем время последнего тапа
+            moveToPlane(touchedPlane); // Приближаем камеру к плоскости
+            tapCount++; // Увеличиваем счётчик
         }
     }
 }
+
 
 // Обработка только тапа на мобильных устройствах
 if ('ontouchstart' in window) {
