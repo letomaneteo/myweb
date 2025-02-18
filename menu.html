@@ -22,14 +22,12 @@
 
     // 2. Камера в центре сцены (фиксирована)
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 5); // Камера в центре
+    camera.position.set(0, 0, 0); // Камера в центре
 
     // 3. Рендерер
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -42,80 +40,20 @@ document.body.appendChild(renderer.domElement);
             scene.background = hdrTexture; // Устанавливаем фон
         });
 
-    // 4. Управление камерой (только вращение)
-   // 4. Управление камерой (только вращение)
-// 4. Управление камерой (только вращение)
-// 4. Управление камерой (только вращение)
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enablePan = false; // Запрещаем перемещение
-controls.enableZoom = false; // Отключаем зум
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.rotateSpeed = 1.0;
+    // 4. Управление камерой (авто-вращение при запуске)
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enablePan = false; // Запрещаем перемещение
+    controls.enableZoom = false; // Отключаем зум
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.rotateSpeed = 1.0;
 
-// Отключаем все жесты, кроме вращения
-controls.touchRotate = THREE.TOUCH.ROTATE; // Одним пальцем вращение
-controls.touchZoom = THREE.TOUCH.NONE; // Отключаем зум
-controls.touchPan = THREE.TOUCH.NONE; // Отключаем панорамирование
+    // Включаем авто-вращение
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
 
-// Останавливаем зум при свайпе двумя пальцами
-window.addEventListener('touchmove', (event) => {
-    if (event.touches.length > 1) {
-        event.preventDefault(); // Останавливаем зум при свайпе двумя пальцами
-    }
-}, { passive: false });
-
-// Останавливаем зум при начале свайпа двумя пальцами
-window.addEventListener('touchstart', (event) => {
-    if (event.touches.length > 1) {
-        event.preventDefault(); // Останавливаем зум при начале свайпа двумя пальцами
-    }
-}, { passive: false });
-
-// Отменяем зумирование даже при близости камеры к плоскости
-controls.addEventListener('start', function (event) {
-    // Блокируем любые события зума
-    if (event.type === 'wheel') {
-        event.preventDefault();
-    }
-});
-
-window.addEventListener('wheel', (event) => {
-    event.preventDefault(); // Останавливаем зум через колесо мыши
-}, { passive: false });
-
-
-
-
-    
-const videos = [
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" }
-];
-
-// Создаём HTML-видео элементы
-const videoElements = videos.map(videoData => {
-    const video = document.createElement('video');
-    video.src = videoData.url;
-    video.crossOrigin = "anonymous";
-    video.loop = true;
-    video.muted = true;
-    video.play(); // Запускаем воспроизведение
-    return { element: video, link: videoData.link };
-});
-
-// Теперь создаём текстуры
-const videoTextures = videoElements.map(videoObj => {
-    const texture = new THREE.VideoTexture(videoObj.element);
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.format = THREE.RGBAFormat;
-    return { texture, link: videoObj.link };
-});
-
-
-
+    let autoRotateEnabled = true; // Флаг для авто-вращения
+    let firstClick = false; // Флаг, отслеживающий первый клик
 
     // 5. Создаём массив плоскостей
     const planes = [];
@@ -124,123 +62,78 @@ const videoTextures = videoElements.map(videoObj => {
     let currentTarget = null; // Текущая выбранная плоскость
     let previousCameraPosition = new THREE.Vector3(0, 0, 0); // Переменная для сохранения положения камеры
 
-function createLink(url) {
-    const link = document.createElement("a");
-    link.href = url; // Устанавливаем ссылку
-    link.target = "_blank";  // Ссылка открывается в новой вкладке
-    link.textContent = "Войти"; // Текст ссылки
-    link.style.position = "absolute";
-    link.style.display = "none";  // Скрываем ссылку по умолчанию
-    link.style.color = "white";
-    link.style.background = "rgba(0, 0, 0, 0.8)";
-    link.style.padding = "5px 10px";
-    link.style.borderRadius = "5px";
-    link.style.textDecoration = "none";
-    link.style.zIndex = 1000; // Устанавливаем высокий z-индекс
-    document.body.appendChild(link);
-
-    link.addEventListener('click', (event) => {
-        event.stopPropagation(); // Прекращаем всплытие события, чтобы оно не перехватывалось Three.js
-    });
-
-    return link;
-}
-
-
-function updateLinkPositions() {
-    planes.forEach((plane) => {
-        const link = plane.userData.link;
-        if (!link) return;
-
-        // Получаем расстояние от камеры до плоскости
-        const distance = camera.position.distanceTo(plane.position);
-        
-        if (distance < 3) { // Если камера близка - показываем ссылку
-            const vector = plane.position.clone().project(camera); // Проектируем позицию плоскости в 2D
-            const x = (vector.x * 0.5 + 0.5) * window.innerWidth; // Переводим координаты в пиксели по оси X
-            const y = (-vector.y * 0.5 + 0.5) * window.innerHeight; // Переводим координаты в пиксели по оси Y
-
-            // Позиционируем ссылку в 2D-координатах
-            link.style.left = `${x}px`;
-            link.style.top = `${y+180}px`;
-            link.style.display = "block"; // Показываем ссылку
-        } else {
-            link.style.display = "none"; // Если камера далеко - скрываем ссылку
-        }
-    });
-}
-
-
     // 6. Функция создания плоскости, смотрящей на центр
-    function createPlane(videoObj, position) {
-    const geometry = new THREE.PlaneGeometry(2, 3);
-    const videoTexture = videoObj.texture;
-    videoTexture.minFilter = THREE.LinearFilter;
-    videoTexture.magFilter = THREE.LinearFilter;
-    videoTexture.format = THREE.RGBAFormat;
+    function createPlane(textureUrl, position) {
+        const geometry = new THREE.PlaneGeometry(3, 2);
+        const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
 
-    const material = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
+        const plane = new THREE.Mesh(geometry, material);
+        plane.position.set(position.x, position.y, position.z);
+        plane.lookAt(new THREE.Vector3(0, 0, 0)); // Поворачиваем нормалью к центру
+        scene.add(plane);
+        planes.push(plane);
 
-    const plane = new THREE.Mesh(geometry, material);
-    plane.position.set(position.x, position.y, position.z);
-    plane.lookAt(new THREE.Vector3(0, 0, 0));
-    scene.add(plane);
-    planes.push(plane);
+        new THREE.TextureLoader().load(textureUrl, (texture) => {
+            material.map = texture;
+            material.transparent = true;  // Включаем поддержку прозрачности
+            material.alphaTest = 0.5;     // Отсекаем полупрозрачные пиксели
+            material.needsUpdate = true;
+        });
 
-    // Создаём и привязываем ссылку к плоскости
-    const link = createLink(videoObj.link);
-    plane.userData.link = link;
-
-    return plane;
-}
-
-
+        return plane;
+    }
 
     // 7. Функция для равномерного распределения точек на сфере (Fibonacci Sphere)
     function fibonacciSphere(samples, radius) {
-    let points = [];
-    const phi = Math.PI * (3 - Math.sqrt(5)); // Золотое сечение
+        let points = [];
+        const phi = Math.PI * (3 - Math.sqrt(5)); // Золотое сечение
 
-    for (let i = 0; i < samples; i++) {
-        let y = 1 - (i / (samples - 1)) * 2; // y от -1 до 1
+        for (let i = 0; i < samples; i++) {
+            let y = 1 - (i / (samples - 1)) * 2; // y идет от 1 до -1
+            let r = Math.sqrt(1 - y * y); // Радиус круга на высоте y
 
-        if (Math.abs(y) > 0.9) continue; // Игнорируем точки ближе к полюсам
+            let theta = phi * i; // Угол по золотому сечению
+            let x = Math.cos(theta) * r;
+            let z = Math.sin(theta) * r;
 
-        let r = Math.sqrt(1 - y * y); // Радиус круга на данной высоте
-        let theta = phi * i; // Угол по золотому сечению
-        let x = Math.cos(theta) * r;
-        let z = Math.sin(theta) * r;
+            points.push(new THREE.Vector3(x * radius, y * radius, z * radius));
+        }
 
-        points.push(new THREE.Vector3(x * radius, y * radius, z * radius));
+        return points;
     }
-
-    return points;
-}
 
     // 8. Создаём 50 плоскостей равномерно на сфере
     const totalPlanes = 50;
     const radius = 10;
     const positions = fibonacciSphere(totalPlanes, radius);
 
-  
-  positions.forEach((pos, i) => {
-    const videoObj = videoTextures[i % videoTextures.length]; // Берем уже созданные текстуры
-    createPlane(videoObj, pos);
-});
+    const textures = [
+        'https://i.imgur.com/XdFK6x3.png',
+        'https://i.imgur.com/7RmDFNW.png',
+        'https://i.imgur.com/8Hg0fls.png',
+        // Добавьте остальные URL-адреса для текстур
+    ];
 
-
-
+    positions.forEach((pos, i) => {
+        const textureUrl = textures[i % textures.length]; // Это гарантирует, что, если текстур меньше, они будут повторяться
+        createPlane(textureUrl, pos);
+    });
 
     // 9. Функция плавного приближения камеры к плоскости
     function moveToPlane(target) {
-        if (currentTarget === target) return; // Если уже приближены - ничего не делаем
+        if (currentTarget === target) return;
         currentTarget = target;
 
-        // Отключаем вращение камеры
-        controls.enableRotate = false;
+        // Выключаем авто-вращение при первом клике
+        if (autoRotateEnabled) {
+            autoRotateEnabled = false;
+            controls.autoRotate = false;
+        }
+
+        controls.enableRotate = true; // Разрешаем вращение
 
         const targetDirection = new THREE.Vector3().copy(target.position).normalize();
-        const targetPosition = targetDirection.multiplyScalar(radius * 0.75); // Чуть ближе к центру
+        const targetPosition = targetDirection.multiplyScalar(radius * 0.85);
 
         let progress = 0;
         function animateMove() {
@@ -256,105 +149,89 @@ function updateLinkPositions() {
 
     // 10. Функция возврата камеры в центр с сохранением угла
     function resetCamera() {
-    if (!currentTarget) return;
-    currentTarget = null;
+        if (!currentTarget) return;
+        currentTarget = null;
 
-    controls.enableRotate = true;
+        controls.enableRotate = true;
 
-    let startPos = camera.position.clone();
-    let direction = startPos.clone().sub(controls.target).normalize(); // Вычисляем направление от центра
-    let targetPos = direction.multiplyScalar(radius); // Сохраняем направление и масштабируем
-    
-    let progress = 0;
+        let startPos = camera.position.clone();
+        let direction = startPos.clone().sub(controls.target).normalize(); // Вычисляем направление от центра
+        let targetPos = direction.multiplyScalar(radius); // Сохраняем направление и масштабируем
 
-    function animateReset() {
-        if (progress < 1) {
-            progress += 0.02;
-            camera.position.lerpVectors(startPos, targetPos, progress);
-            requestAnimationFrame(animateReset);
-        } else {
-            controls.target.set(0, 0, 0); // Центр сцены, но угол камеры сохраняется
+        let progress = 0;
+
+        function animateReset() {
+            if (progress < 1) {
+                progress += 0.02;
+                camera.position.lerpVectors(startPos, targetPos, progress);
+                requestAnimationFrame(animateReset);
+            } else {
+                controls.target.set(0, 0, 0); // Центр сцены, но угол камеры сохраняется
+            }
         }
+        animateReset();
     }
-    animateReset();
-}
-
-
-
-
 
     // 11. Обработка клика по сцене
     let lastClickedPlane = null;
-let clickCount = 0;
-let clickTimer = null;
+    let clickCount = 0;
+    let clickTimer = null;
 
-function onDocumentClick(event) {
-    event.preventDefault();
+    function onDocumentClick(event) {
+        event.preventDefault();
 
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(planes);
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planes);
 
-    if (intersects.length > 0) {
-        const clickedPlane = intersects[0].object;
+        if (intersects.length > 0) {
+            const clickedPlane = intersects[0].object;
 
-        if (clickedPlane === lastClickedPlane) {
-            clickCount++;
-        } else {
-            clickCount = 1;
-            lastClickedPlane = clickedPlane;
+            if (clickedPlane === lastClickedPlane) {
+                clickCount++;
+            } else {
+                clickCount = 1;
+                lastClickedPlane = clickedPlane;
+            }
+
+            if (clickCount === 2) {
+                resetCamera(); // Вызываем resetCamera() при двойном клике
+                clickCount = 0;
+                lastClickedPlane = null;
+            } else {
+                previousCameraPosition.copy(camera.position);
+                moveToPlane(clickedPlane);
+            }
+
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+                lastClickedPlane = null;
+            }, 400); // Уменьшил таймер для более удобного двойного клика
         }
-
-        if (clickCount === 2) {
-            resetCamera(); // Вызываем resetCamera() при двойном клике
-            clickCount = 0;
-            lastClickedPlane = null;
-        } else {
-            previousCameraPosition.copy(camera.position);
-            moveToPlane(clickedPlane);
-        }
-
-        clearTimeout(clickTimer);
-        clickTimer = setTimeout(() => {
-            clickCount = 0;
-            lastClickedPlane = null;
-        }, 400); // Уменьшил таймер для более удобного двойного клика
     }
-}
-
-
 
     // 12. Обработка касания для мобильных устройств
-   let lastTouchTime = 0;
-let lastTouchedPlane = null;
+    function onDocumentTouch(event) {
+        event.preventDefault();
 
-function onDocumentTouch(event) {
-    event.preventDefault();
+        const touch = event.touches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
-    const touch = event.touches[0];
-    mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planes);
 
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(planes);
-
-    if (intersects.length > 0) {
-        const touchedPlane = intersects[0].object;
-        const now = Date.now();
-
-        if (touchedPlane === lastTouchedPlane && now - lastTouchTime < 400) {
-            resetCamera(); // Двойной тап по той же плоскости возвращает камеру
-            lastTouchedPlane = null;
+        if (intersects.length > 0) {
+            // Сохраняем текущее положение камеры перед приближением
+            previousCameraPosition.copy(camera.position);
+            moveToPlane(intersects[0].object);
         } else {
-            lastTouchedPlane = touchedPlane;
-            lastTouchTime = now;
-            moveToPlane(touchedPlane);
+            resetCamera();
         }
     }
-}
-
 
     window.addEventListener('click', onDocumentClick, false);
     window.addEventListener('touchstart', onDocumentTouch, false);
@@ -366,11 +243,14 @@ function onDocumentTouch(event) {
 
     // 14. Анимация сцены
     function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    updateLinkPositions(); // Обновляем позиции ссылок
-    renderer.render(scene, camera);
-}
+        requestAnimationFrame(animate);
+
+        // Обновляем контроллеры камеры
+        controls.update();
+
+        // Рендерим сцену
+        renderer.render(scene, camera);
+    }
 
     animate();
 
@@ -380,7 +260,6 @@ function onDocumentTouch(event) {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
 </script>
 
 </body>
