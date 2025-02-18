@@ -344,38 +344,44 @@ function onDocumentClick(event) {
 
 
     // 12. Обработка касания для мобильных устройств
- let lastTouchTime = 0;
+// Обработчик тапа на мобильных устройствах
+let lastTouchTime = 0;
 let lastTouchedPlane = null;
 
 function onDocumentTouch(event) {
-    event.preventDefault(); // Предотвращаем стандартное поведение (например, прокрутка)
+    event.preventDefault(); // Отменяем стандартное поведение браузера
 
-    const touch = event.touches[0];  // Получаем первое касание
+    const touch = event.changedTouches[0]; // Берём первое касание при отпускании
     mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
-    raycaster.setFromCamera(mouse, camera);  // Создаем луч от камеры
-    const intersects = raycaster.intersectObjects(planes);  // Проверяем, есть ли пересечения с плоскостью
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(planes);
 
     if (intersects.length > 0) {
         const touchedPlane = intersects[0].object;
         const now = Date.now();
 
-        // Проверяем, если это тот же объект, на который тапали
+        // Проверяем, был ли это двойной тап
         if (touchedPlane === lastTouchedPlane && now - lastTouchTime < 400) {
-            resetCamera();  // Если это двойной тап на той же плоскости - сбрасываем камеру
-            lastTouchedPlane = null;
+            resetCamera(); // Возвращаем камеру в центр при двойном тапе
+            lastTouchedPlane = null; // Сбрасываем состояние
         } else {
             lastTouchedPlane = touchedPlane;
             lastTouchTime = now;
-            moveToPlane(touchedPlane);  // При одиночном тапе - двигаем камеру к плоскости
+            moveToPlane(touchedPlane); // Перемещаем камеру к плоскости
         }
     }
 }
 
+// Обработка только тапа на мобильных устройствах
+if ('ontouchstart' in window) {
+    window.addEventListener('touchend', onDocumentTouch, { passive: false });
+}
+
+
 
     window.addEventListener('click', onDocumentClick, false);
-    window.addEventListener('touchstart', onDocumentTouch, false);
 
     // 13. Инвертирование вращения на мобильных устройствах
     if ('ontouchstart' in window) {
