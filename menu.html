@@ -208,24 +208,36 @@ function onDocumentClick(event) {
 
 
     // 12. Обработка касания для мобильных устройств
-    function onDocumentTouch(event) {
-        event.preventDefault();
+    let lastTouchTime = 0;
+let lastTouchedPlane = null;
 
-        const touch = event.touches[0];
-        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+function onDocumentTouch(event) {
+    event.preventDefault();
 
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(planes);
+    const touch = event.touches[0];
+    mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
-        if (intersects.length > 0) {
-            // Сохраняем текущее положение камеры перед приближением
-            previousCameraPosition.copy(camera.position);
-            moveToPlane(intersects[0].object);
-        } else {
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(planes);
+
+    if (intersects.length > 0) {
+        const touchedPlane = intersects[0].object;
+        const now = Date.now();
+
+        if (touchedPlane === lastTouchedPlane && now - lastTouchTime < 400) {
+            // Двойной тап на той же плоскости сбрасывает камеру
             resetCamera();
+            lastTouchedPlane = null;
+        } else {
+            // Одиночный тап приближает камеру к плоскости
+            lastTouchedPlane = touchedPlane;
+            lastTouchTime = now;
+            moveToPlane(touchedPlane);
         }
     }
+    // Если касание не на плоскости, можно ничего не делать или обработать по-другому
+}
 
     window.addEventListener('click', onDocumentClick, false);
     window.addEventListener('touchstart', onDocumentTouch, false);
