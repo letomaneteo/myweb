@@ -341,6 +341,30 @@ function onDocumentClick(event) {
     }
 }
 
+let lastTap = 0;
+
+function onDocumentTap(event) {
+    event.preventDefault();
+
+    mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(planes);
+
+    if (intersects.length > 0) {
+        const tappedPlane = intersects[0].object;
+        let now = Date.now();
+
+        if (now - lastTap < 400) {
+            resetCamera(); // Двойной тап возвращает камеру
+        } else {
+            moveToPlane(tappedPlane); // Одинарный тап приближает
+        }
+
+        lastTap = now;
+    }
+}
 
 
     // 12. Обработка касания для мобильных устройств
