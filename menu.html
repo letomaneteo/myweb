@@ -50,9 +50,21 @@ document.body.appendChild(renderer.domElement);
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 1.0;
 
+// Отключаем зум при свайпе на мобильных устройствах
+window.addEventListener('touchmove', (event) => {
+    event.preventDefault(); // Останавливаем зум
+}, { passive: false });
+
+window.addEventListener('touchstart', (event) => {
+    event.preventDefault(); // Останавливаем зум
+}, { passive: false });
+
+
+
+    
 const videos = [
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/plane2.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" }
 ];
 
@@ -289,10 +301,8 @@ function onDocumentClick(event) {
 
 
     // 12. Обработка касания для мобильных устройств
-  let lastTouchTime = 0;
+   let lastTouchTime = 0;
 let lastTouchedPlane = null;
-let tapCount = 0;
-let tapTimer = null;
 
 function onDocumentTouch(event) {
     event.preventDefault();
@@ -308,33 +318,16 @@ function onDocumentTouch(event) {
         const touchedPlane = intersects[0].object;
         const now = Date.now();
 
-        // Обработка одиночного и двойного тапа
         if (touchedPlane === lastTouchedPlane && now - lastTouchTime < 400) {
-            tapCount++;
-        } else {
-            tapCount = 1;
-            lastTouchedPlane = touchedPlane;
-        }
-
-        if (tapCount === 2) {
-            // Два тапа — отдаляем камеру от плоскости
-            resetCamera();
-            tapCount = 0; // Сбросить счетчик
+            resetCamera(); // Двойной тап по той же плоскости возвращает камеру
             lastTouchedPlane = null;
-        } else if (tapCount === 1) {
-            // Один тап — приближаем к плоскости
+        } else {
+            lastTouchedPlane = touchedPlane;
+            lastTouchTime = now;
             moveToPlane(touchedPlane);
         }
-
-        clearTimeout(tapTimer);
-        tapTimer = setTimeout(() => {
-            tapCount = 0;
-            lastTouchedPlane = null;
-        }, 400); // Уменьшаем таймер для удобного определения двойного тапа
     }
 }
-
-
 
 
     window.addEventListener('click', onDocumentClick, false);
