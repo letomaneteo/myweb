@@ -45,11 +45,12 @@ document.body.appendChild(renderer.domElement);
 
     // 4. Управление камерой (только вращение)
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enablePan = false; // Запрещаем перемещение
-    controls.enableZoom = false; // Отключаем зум
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.rotateSpeed = 1.0;
+    controls.enableZoom = false;
+controls.enablePan = false;
+controls.touches = {
+    ONE: THREE.TOUCH.ROTATE, // Один палец — вращение (как мышкой)
+    TWO: THREE.TOUCH.NONE    // Два пальца — ничего (убираем зум)
+};
 
 
 // Добавляем видео как текстуру для большой плоскости
@@ -341,40 +342,19 @@ function onDocumentClick(event) {
     }
 }
 
-let lastTap = 0;
 
-function onDocumentTap(event) {
-    event.preventDefault();
-
-    mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(planes);
-
-    if (intersects.length > 0) {
-        const tappedPlane = intersects[0].object;
-        let now = Date.now();
-
-        if (now - lastTap < 400) {
-            resetCamera(); // Двойной тап возвращает камеру
-        } else {
-            moveToPlane(tappedPlane); // Одинарный тап приближает
-        }
-
-        lastTap = now;
-    }
-}
 
 
     // 12. Обработка касания для мобильных устройств
-  let lastTouchTime = 0;
-let lastTouchedPlane = null;
+ let lastTapTime = 0;
+let lastTappedPlane = null;
 
 function onDocumentTouch(event) {
     event.preventDefault();
+    
+    let touch = event.touches[0];
+    let now = Date.now();
 
-    const touch = event.touches[0];
     mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
@@ -382,24 +362,23 @@ function onDocumentTouch(event) {
     const intersects = raycaster.intersectObjects(planes);
 
     if (intersects.length > 0) {
-        const touchedPlane = intersects[0].object;
-        const now = Date.now();
+        const tappedPlane = intersects[0].object;
 
-        if (touchedPlane === lastTouchedPlane && now - lastTouchTime < 400) {
-            resetCamera(); // Двойной тап по той же плоскости возвращает камеру
-            lastTouchedPlane = null;
+        if (lastTappedPlane === tappedPlane && (now - lastTapTime) < 400) {
+            resetCamera(); // Двойной тап отдаляет
+            lastTappedPlane = null;
         } else {
-            lastTouchedPlane = touchedPlane;
-            lastTouchTime = now;
-            moveToPlane(touchedPlane);
+            moveToPlane(tappedPlane); // Одиночный тап приближает
+            lastTappedPlane = tappedPlane;
         }
+
+        lastTapTime = now;
     }
 }
 
-
-    window.addEventListener('click', onDocumentClick, false);
-    window.addEventListener('touchstart', onDocumentTouch, false);
-
+// Убираем возможные конфликты и вешаем нужный обработчик
+window.removeEventListener('touchstart', onDocumentTouch);
+window.addEventListener('touchstart', onDocumentTouch, false);
     // 13. Инвертирование вращения на мобильных устройствах
     if ('ontouchstart' in window) {
         controls.rotateSpeed = -1.0; // Инвертируем вращение
