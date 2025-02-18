@@ -31,7 +31,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Загрузка текстуры-видео
-// Добавляем новую большую плоскость с видео
+// Создаем видео для большой плоскости
 const bigVideo = document.createElement('video');
 bigVideo.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4';
 bigVideo.crossOrigin = 'anonymous';
@@ -41,11 +41,13 @@ bigVideo.playsInline = true;
 bigVideo.autoplay = true;
 document.body.appendChild(bigVideo);
 
+// Создаем текстуру для видео
 const bigTexture = new THREE.VideoTexture(bigVideo);
 bigTexture.minFilter = THREE.LinearFilter;
 bigTexture.magFilter = THREE.LinearFilter;
 bigTexture.format = THREE.RGBFormat;
 
+// Создаем плоскость
 const bigPlaneGeometry = new THREE.PlaneGeometry(10, 5);
 const bigPlaneMaterial = new THREE.MeshBasicMaterial({
     map: bigTexture,
@@ -53,27 +55,36 @@ const bigPlaneMaterial = new THREE.MeshBasicMaterial({
     transparent: true,
     opacity: 0.999
 });
-
 const bigPlane = new THREE.Mesh(bigPlaneGeometry, bigPlaneMaterial);
-bigPlane.position.set(12, 5, -5); // Смещаем, чтобы не перекрывать маленькие
+bigPlane.position.set(12, 5, -3);
 bigPlane.lookAt(new THREE.Vector3(0, 0, 0));
 
-// Игнорируем клики Raycaster'ом
-bigPlane.userData.ignoreRaycast = true;
-
+// Переводим в другой слой, чтобы Raycaster не трогал
+bigPlane.layers.set(2);
 scene.add(bigPlane);
 
-// Включаем звук при первом клике
-let soundActivated = false;
-renderer.domElement.addEventListener('pointerdown', () => {
-    if (!soundActivated) {
-        bigVideo.muted = false;
-        bigVideo.play().then(() => {
-            console.log('🎙️ Видео со звуком запущено');
-        }).catch(err => console.error('🔇 Ошибка включения звука:', err));
-        soundActivated = true;
-    }
+// Переключаем Raycaster на слой с маленькими плоскостями
+raycaster.layers.set(1);
+
+// Кнопка для включения звука
+const startButton = document.createElement('button');
+startButton.textContent = "▶️ Включить видео со звуком";
+startButton.style.position = "absolute";
+startButton.style.top = "20px";
+startButton.style.left = "20px";
+startButton.style.padding = "10px 20px";
+startButton.style.fontSize = "18px";
+startButton.style.zIndex = 1000;
+document.body.appendChild(startButton);
+
+startButton.addEventListener('click', () => {
+    bigVideo.muted = false;
+    bigVideo.play().then(() => {
+        console.log("🎙️ Видео со звуком запущено");
+        startButton.style.display = 'none';
+    }).catch(err => console.error("🚫 Ошибка включения звука:", err));
 });
+
 
 
     // HDRI Фон (EXR)
