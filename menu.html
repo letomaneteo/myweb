@@ -31,6 +31,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Загрузка текстуры-видео
+// Загрузка текстуры-видео
 const video = document.createElement('video');
 video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; // Замени на ссылку из pCloud
 video.crossOrigin = 'anonymous';
@@ -38,26 +39,40 @@ video.loop = true;
 video.muted = false;
 video.playsInline = true;
 const texture = new THREE.VideoTexture(video);
+texture.minFilter = THREE.LinearFilter;
+texture.magFilter = THREE.LinearFilter;
+texture.format = THREE.RGBAFormat;
 
 // Создание плоскости
 const videoPlaneGeometry = new THREE.PlaneGeometry(10, 5);
-const videoPlaneMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
+const videoPlaneMaterial = new THREE.MeshBasicMaterial({
+    map: texture,
+    side: THREE.DoubleSide,
+    transparent: true, // Убирает проблемы с рендерингом
+});
 
-// Позиционирование плоскости
-videoPlane.position.set(12, 9, -3); // Справа за сферой
-videoPlane.lookAt(new THREE.Vector3(0, 0, 0)); // Поворот в центр сцены
+// Создаём плоскость и добавляем её в сцену
+const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
+videoPlane.position.set(0, 0, -5); // Перед камерой
+videoPlane.layers.set(1); // Переводим плоскость на слой 1
 
 scene.add(videoPlane);
 
-// Запуск видео при первом тапе
+// Камера видит оба слоя (0 и 1)
+camera.layers.enable(1);
+
+// Отключаем плоскость из рейкастера
+raycaster.layers.set(0); // Рейкастер видит только слой 0
+
+// Запуск видео по первому клику/тачу
 let videoStarted = false;
 renderer.domElement.addEventListener('pointerdown', () => {
-  if (!videoStarted) {
-    video.play();
-    videoStarted = true;
-  }
+    if (!videoStarted) {
+        video.play();
+        videoStarted = true;
+    }
 });
+
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
