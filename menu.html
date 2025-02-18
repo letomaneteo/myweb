@@ -289,8 +289,10 @@ function onDocumentClick(event) {
 
 
     // 12. Обработка касания для мобильных устройств
-   let lastTouchTime = 0;
+  let lastTouchTime = 0;
 let lastTouchedPlane = null;
+let tapCount = 0;
+let tapTimer = null;
 
 function onDocumentTouch(event) {
     event.preventDefault();
@@ -306,16 +308,32 @@ function onDocumentTouch(event) {
         const touchedPlane = intersects[0].object;
         const now = Date.now();
 
+        // Обработка одиночного и двойного тапа
         if (touchedPlane === lastTouchedPlane && now - lastTouchTime < 400) {
-            resetCamera(); // Двойной тап по той же плоскости возвращает камеру
-            lastTouchedPlane = null;
+            tapCount++;
         } else {
+            tapCount = 1;
             lastTouchedPlane = touchedPlane;
-            lastTouchTime = now;
+        }
+
+        if (tapCount === 2) {
+            // Два тапа — отдаляем камеру от плоскости
+            resetCamera();
+            tapCount = 0; // Сбросить счетчик
+            lastTouchedPlane = null;
+        } else if (tapCount === 1) {
+            // Один тап — приближаем к плоскости
             moveToPlane(touchedPlane);
         }
+
+        clearTimeout(tapTimer);
+        tapTimer = setTimeout(() => {
+            tapCount = 0;
+            lastTouchedPlane = null;
+        }, 400); // Уменьшаем таймер для удобного определения двойного тапа
     }
 }
+
 
 
     window.addEventListener('click', onDocumentClick, false);
