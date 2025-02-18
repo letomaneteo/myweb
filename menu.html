@@ -62,7 +62,7 @@
   videoTexture.magFilter = THREE.LinearFilter;
   videoTexture.format = THREE.RGBAFormat;
 
-  const planeGeometry = new THREE.PlaneGeometry(50, 28);
+  const planeGeometry = new THREE.PlaneGeometry(10, 5);
   const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
   const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
   videoPlane.position.set(60, 40, 0);
