@@ -30,54 +30,6 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Загрузка текстуры-видео
-// Создаем видео элемент
-const video = document.createElement('video');
-video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; // Путь к видео
-video.load(); // Загружаем видео
-video.loop = true; // Зацикливаем видео
-video.muted = true; // Отключаем звук по умолчанию
-
-// Создаем текстуру из видео
-// Создаем видео элемент
-const video = document.createElement('video');
-video.src = 'path_to_video.mp4'; // Путь к видео
-video.load(); // Загружаем видео
-video.loop = true; // Зацикливаем видео
-video.muted = true; // Отключаем звук по умолчанию
-
-// Создаем текстуру из видео
-const videoTexture = new THREE.VideoTexture(video);
-videoTexture.minFilter = THREE.LinearFilter;
-videoTexture.magFilter = THREE.LinearFilter;
-videoTexture.format = THREE.RGBFormat;
-
-// Материал для плоскости
-const planeMaterial = new THREE.MeshBasicMaterial({
-    map: videoTexture,
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 1
-});
-
-// Геометрия плоскости
-const planeGeometry = new THREE.PlaneGeometry(5, 10); // Размер плоскости
-
-// Создаем плоскость и добавляем её в сцену
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.position.set(10, 0, 0); // Позиционируем плоскость
-scene.add(plane);
-
-// Обработчик событий для запуска видео по тапу
-let videoPlayed = false;
-plane.addEventListener('click', function () {
-    if (!videoPlayed) {
-        video.play(); // Запуск видео
-        video.muted = false; // Включаем звук только по тапу
-        videoPlayed = true;
-    }
-});
-
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
