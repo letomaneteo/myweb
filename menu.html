@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Равномерные плоскости сферой - Three.js</title>
+    <title>3D Gallery</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
@@ -352,7 +352,23 @@ function onDocumentClick(event) {
     }
 }
 
+function onPlaneTouch(event) {
+    event.preventDefault();
 
+    // Определяем координаты касания
+    const touch = event.touches[0];
+    mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+
+    // Проверяем пересечение с плоскостями
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(planes);
+
+    if (intersects.length > 0) {
+        const touchedPlane = intersects[0].object;
+        moveToPlane(touchedPlane); // Приближаем камеру к плоскости
+    }
+}
 
     // 12. Обработка касания для мобильных устройств
    let lastTouchTime = 0;
@@ -385,7 +401,8 @@ function onDocumentTouch(event) {
 
 
     window.addEventListener('click', onDocumentClick, false);
-    window.addEventListener('touchstart', onDocumentTouch, false);
+    window.addEventListener('touchstart', onPlaneTouch, { passive: false });
+
 
     // 13. Инвертирование вращения на мобильных устройствах
     if ('ontouchstart' in window) {
