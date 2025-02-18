@@ -52,51 +52,6 @@ document.body.appendChild(renderer.domElement);
     controls.rotateSpeed = 1.0;
 
 
-// Добавляем видео как текстуру для большой плоскости
-// Создаем видео-элемент
-const video = document.createElement('video');
-video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4';
-video.loop = true;
-video.muted = true; // Запускаем без звука
-video.playsInline = true;
-video.crossOrigin = "anonymous"; 
-document.body.appendChild(video); 
-
-// Создаем текстуру для видео
-const videoTexture = new THREE.VideoTexture(video);
-videoTexture.minFilter = THREE.LinearFilter;
-videoTexture.magFilter = THREE.LinearFilter;
-videoTexture.format = THREE.RGBAFormat;
-
-// Создаем плоскость с видео
-const planeGeometry = new THREE.PlaneGeometry(50, 28);
-const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
-const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-videoPlane.position.set(60, 0, 0);
-videoPlane.rotation.y = -Math.PI / 2;
-scene.add(videoPlane);
-
-// Запускаем видео без звука при вращении камеры
-controls.addEventListener('change', () => {
-    if (video.paused) {
-        video.play().then(() => {
-            console.log('🎬 Видео запущено без звука при вращении.');
-        }).catch(err => console.error('❌ Ошибка запуска видео:', err));
-    }
-});
-
-// Включаем звук при клике
-let soundEnabled = false;
-window.addEventListener('click', () => {
-    if (!soundEnabled) {
-        video.muted = false;
-        video.play().then(() => {
-            console.log('🔊 Звук включен при клике!');
-            soundEnabled = true;
-        }).catch(err => console.error('⚠️ Не удалось включить звук:', err));
-    }
-});
-
 
 
 
