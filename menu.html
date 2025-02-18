@@ -44,6 +44,7 @@ document.body.appendChild(renderer.domElement);
 
     // 4. Управление камерой (только вращение)
    // 4. Управление камерой (только вращение)
+// 4. Управление камерой (только вращение)
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enablePan = false; // Запрещаем перемещение
 controls.enableZoom = false; // Отключаем зум
@@ -56,13 +57,17 @@ controls.touchRotate = THREE.TOUCH.ROTATE; // Одним пальцем вращ
 controls.touchZoom = THREE.TOUCH.NONE; // Отключаем зум
 controls.touchPan = THREE.TOUCH.NONE; // Отключаем панорамирование
 
-// Отключаем зум при свайпе на мобильных устройствах
+// Останавливаем зум и панорамирование при свайпе двумя пальцами
 window.addEventListener('touchmove', (event) => {
-    event.preventDefault(); // Останавливаем зум
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Останавливаем зум при свайпе двумя пальцами
+    }
 }, { passive: false });
 
 window.addEventListener('touchstart', (event) => {
-    event.preventDefault(); // Останавливаем зум
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Останавливаем зум при начале свайпа двумя пальцами
+    }
 }, { passive: false });
 
 
