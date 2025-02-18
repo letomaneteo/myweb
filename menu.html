@@ -29,19 +29,16 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
+    // HDRI Фон (EXR)
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
 
-// HDRI Фон (EXR)
-const pmremGenerator = new THREE.PMREMGenerator(renderer);
-pmremGenerator.compileEquirectangularShader();
-
-new THREE.EXRLoader()
-    .load('https://raw.githubusercontent.com/letomaneteo/21/main/lonely_road_afternoon_puresky_2k.exr', function (texture) {
-        const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
-        scene.environment = hdrTexture; // Добавляем окружение
-        scene.background = hdrTexture; // Устанавливаем фон
-    });
-
-
+    new THREE.EXRLoader()
+        .load('https://raw.githubusercontent.com/letomaneteo/21/main/lonely_road_afternoon_puresky_2k.exr', function (texture) {
+            const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
+            scene.environment = hdrTexture; // Добавляем окружение
+            scene.background = hdrTexture; // Устанавливаем фон
+        });
 
     // 4. Управление камерой (только вращение)
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -69,12 +66,12 @@ new THREE.EXRLoader()
         scene.add(plane);
         planes.push(plane);
 
-       new THREE.TextureLoader().load(textureUrl, (texture) => {
-    material.map = texture;
-    material.transparent = true;  // Включаем поддержку прозрачности
-    material.alphaTest = 0.5;     // Отсекаем полупрозрачные пиксели
-    material.needsUpdate = true;
-});
+        new THREE.TextureLoader().load(textureUrl, (texture) => {
+            material.map = texture;
+            material.transparent = true;  // Включаем поддержку прозрачности
+            material.alphaTest = 0.5;     // Отсекаем полупрозрачные пиксели
+            material.needsUpdate = true;
+        });
 
         return plane;
     }
@@ -102,70 +99,121 @@ new THREE.EXRLoader()
     const totalPlanes = 50;
     const radius = 10;
     const positions = fibonacciSphere(totalPlanes, radius);
-    
-const textures = [
-    'https://raw.githubusercontent.com/letomaneteo/myweb/main/earth2.gif',
-    'https://i.imgur.com/7RmDFNW.png',
-    'https://i.imgur.com/8Hg0fls.png',
-    // Добавьте остальные URL-адреса для текстур
-];
+
+    const textures = [
+        'https://i.imgur.com/XdFK6x3.png',
+        'https://i.imgur.com/7RmDFNW.png',
+        'https://i.imgur.com/8Hg0fls.png',
+        // Добавьте остальные URL-адреса для текстур
+    ];
 
     positions.forEach((pos, i) => {
-    const textureUrl = textures[i % textures.length]; // Это гарантирует, что, если текстур меньше, они будут повторяться
-    createPlane(textureUrl, pos);
-});
+        const textureUrl = textures[i % textures.length]; // Это гарантирует, что, если текстур меньше, они будут повторяться
+        createPlane(textureUrl, pos);
+    });
 
     // 9. Функция плавного приближения камеры к плоскости
     function moveToPlane(target) {
-    if (currentTarget === target) return; // Если уже приближены - ничего не делаем
-    currentTarget = target;
+        if (currentTarget === target) return; // Если уже приближены - ничего не делаем
+        currentTarget = target;
 
-    // Отключаем вращение камеры
-    controls.enableRotate = false;
+        // Отключаем вращение камеры
+        controls.enableRotate = false;
 
-    const targetDirection = new THREE.Vector3().copy(target.position).normalize();
-    const targetPosition = targetDirection.multiplyScalar(radius * 0.85); // Чуть ближе к центру
+        const targetDirection = new THREE.Vector3().copy(target.position).normalize();
+        const targetPosition = targetDirection.multiplyScalar(radius * 0.85); // Чуть ближе к центру
 
-    let progress = 0;
-    function animateMove() {
-        if (progress < 1) {
-            progress += 0.02;
-            camera.position.lerp(targetPosition, progress);
-            controls.target.lerp(target.position, progress);
-            requestAnimationFrame(animateMove);
+        let progress = 0;
+        function animateMove() {
+            if (progress < 1) {
+                progress += 0.02;
+                camera.position.lerp(targetPosition, progress);
+                controls.target.lerp(target.position, progress);
+                requestAnimationFrame(animateMove);
+            }
         }
+        animateMove();
     }
-    animateMove();
-}
-
 
     // 10. Функция возврата камеры в центр с сохранением угла
     function resetCamera() {
-    if (!currentTarget) return; // Если уже в центре - ничего не делаем
+    if (!currentTarget) return;
     currentTarget = null;
 
-    // Включаем вращение камеры обратно
     controls.enableRotate = true;
 
+    let startPos = camera.position.clone();
+    let direction = startPos.clone().sub(controls.target).normalize(); // Вычисляем направление от центра
+    let targetPos = direction.multiplyScalar(radius); // Сохраняем направление и масштабируем
+    
     let progress = 0;
+
     function animateReset() {
         if (progress < 1) {
             progress += 0.02;
-            camera.position.lerp(previousCameraPosition, progress); // Сохраняем угол
-            controls.target.lerp(new THREE.Vector3(0, 0, 0), progress);
+            camera.position.lerpVectors(startPos, targetPos, progress);
             requestAnimationFrame(animateReset);
+        } else {
+            controls.target.set(0, 0, 0); // Центр сцены, но угол камеры сохраняется
         }
     }
     animateReset();
 }
 
 
+
+
+
     // 11. Обработка клика по сцене
-    function onDocumentClick(event) {
+    let lastClickedPlane = null;
+let clickCount = 0;
+let clickTimer = null;
+
+function onDocumentClick(event) {
+    event.preventDefault();
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(planes);
+
+    if (intersects.length > 0) {
+        const clickedPlane = intersects[0].object;
+
+        if (clickedPlane === lastClickedPlane) {
+            clickCount++;
+        } else {
+            clickCount = 1;
+            lastClickedPlane = clickedPlane;
+        }
+
+        if (clickCount === 2) {
+            resetCamera(); // Вызываем resetCamera() при двойном клике
+            clickCount = 0;
+            lastClickedPlane = null;
+        } else {
+            previousCameraPosition.copy(camera.position);
+            moveToPlane(clickedPlane);
+        }
+
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+            lastClickedPlane = null;
+        }, 400); // Уменьшил таймер для более удобного двойного клика
+    }
+}
+
+
+
+    // 12. Обработка касания для мобильных устройств
+    function onDocumentTouch(event) {
         event.preventDefault();
 
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        const touch = event.touches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(planes);
@@ -180,8 +228,14 @@ const textures = [
     }
 
     window.addEventListener('click', onDocumentClick, false);
+    window.addEventListener('touchstart', onDocumentTouch, false);
 
-    // 12. Анимация сцены
+    // 13. Инвертирование вращения на мобильных устройствах
+    if ('ontouchstart' in window) {
+        controls.rotateSpeed = -1.0; // Инвертируем вращение
+    }
+
+    // 14. Анимация сцены
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
@@ -190,7 +244,7 @@ const textures = [
 
     animate();
 
-    // 13. Адаптивность экрана
+    // 15. Адаптивность экрана
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
