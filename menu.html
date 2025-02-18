@@ -30,6 +30,32 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Загрузка текстуры-видео
+const video = document.createElement('video');
+video.src = 'https://link-to-your-video.mp4'; // Замени на ссылку из pCloud
+video.crossOrigin = 'anonymous';
+video.loop = true;
+video.muted = false;
+video.playsInline = true;
+const texture = new THREE.VideoTexture(video);
+
+// Создание плоскости
+const videoPlaneGeometry = new THREE.PlaneGeometry(5, 10);
+const videoPlaneMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
+
+// Позиционирование плоскости
+videoPlane.position.set(7, 0, 0); // Справа за сферой
+scene.add(videoPlane);
+
+// Запуск видео при первом тапе
+let videoStarted = false;
+renderer.domElement.addEventListener('pointerdown', () => {
+  if (!videoStarted) {
+    video.play();
+    videoStarted = true;
+  }
+});
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
