@@ -55,79 +55,26 @@
     let currentTarget = null; // Текущая выбранная плоскость
     let previousCameraPosition = new THREE.Vector3(0, 0, 0); // Переменная для сохранения положения камеры
 
-function createLink(url) {
-    const link = document.createElement("a");
-    link.href = url; // Устанавливаем ссылку
-    link.target = "_blank";  // Ссылка открывается в новой вкладке
-    link.textContent = "Войти"; // Текст ссылки
-    link.style.position = "absolute";
-    link.style.display = "none";  // Скрываем ссылку по умолчанию
-    link.style.color = "white";
-    link.style.background = "rgba(0, 0, 0, 0.8)";
-    link.style.padding = "5px 10px";
-    link.style.borderRadius = "5px";
-    link.style.textDecoration = "none";
-    link.style.zIndex = 1000; // Устанавливаем высокий z-индекс
-    document.body.appendChild(link);
-
-    link.addEventListener('click', (event) => {
-        event.stopPropagation(); // Прекращаем всплытие события, чтобы оно не перехватывалось Three.js
-    });
-
-    return link;
-}
-
-
-function updateLinkPositions() {
-    planes.forEach((plane) => {
-        const link = plane.userData.link;
-        if (!link) return;
-
-        // Получаем расстояние от камеры до плоскости
-        const distance = camera.position.distanceTo(plane.position);
-        
-        if (distance < 3) { // Если камера близка - показываем ссылку
-            const vector = plane.position.clone().project(camera); // Проектируем позицию плоскости в 2D
-            const x = (vector.x * 0.5 + 0.5) * window.innerWidth; // Переводим координаты в пиксели по оси X
-            const y = (-vector.y * 0.5 + 0.5) * window.innerHeight; // Переводим координаты в пиксели по оси Y
-
-            // Позиционируем ссылку в 2D-координатах
-            link.style.left = `${x}px`;
-            link.style.top = `${y+180}px`;
-            link.style.display = "block"; // Показываем ссылку
-        } else {
-            link.style.display = "none"; // Если камера далеко - скрываем ссылку
-        }
-    });
-}
-
-
     // 6. Функция создания плоскости, смотрящей на центр
-    function createPlane(textureObj, position) {
-    const geometry = new THREE.PlaneGeometry(2, 3);
-    const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+    function createPlane(textureUrl, position) {
+        const geometry = new THREE.PlaneGeometry(3, 2);
+        const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
 
-    const plane = new THREE.Mesh(geometry, material);
-    plane.position.set(position.x, position.y, position.z);
-    plane.lookAt(new THREE.Vector3(0, 0, 0));
-    scene.add(plane);
-    planes.push(plane);
+        const plane = new THREE.Mesh(geometry, material);
+        plane.position.set(position.x, position.y, position.z);
+        plane.lookAt(new THREE.Vector3(0, 0, 0)); // Поворачиваем нормалью к центру
+        scene.add(plane);
+        planes.push(plane);
 
-    new THREE.TextureLoader().load(textureObj.texture, (texture) => {
-        material.map = texture;
-        material.transparent = true;
-        material.alphaTest = 0.5;
-        material.needsUpdate = true;
-    });
+        new THREE.TextureLoader().load(textureUrl, (texture) => {
+            material.map = texture;
+            material.transparent = true;  // Включаем поддержку прозрачности
+            material.alphaTest = 0.5;     // Отсекаем полупрозрачные пиксели
+            material.needsUpdate = true;
+        });
 
-    // Создаём и привязываем ссылку к плоскости
-    const link = createLink(textureObj.link);
-    plane.userData.link = link;
-
-    return plane;
-}
-
-
+        return plane;
+    }
 
     // 7. Функция для равномерного распределения точек на сфере (Fibonacci Sphere)
     function fibonacciSphere(samples, radius) {
@@ -155,28 +102,17 @@ function updateLinkPositions() {
     const radius = 10;
     const positions = fibonacciSphere(totalPlanes, radius);
 
-    const texturesWithLinks = [
-    {
-        texture: 'https://i.imgur.com/XdFK6x3.png',
-        link: 'https://app.leonardo.ai/'
-    },
-    {
-        texture: 'https://i.imgur.com/7RmDFNW.png',
-        link: 'https://app.leonardo.ai/'
-    },
-    {
-        texture: 'https://i.imgur.com/8Hg0fls.png',
-        link: 'https://app.leonardo.ai/'
-    }
-    // Добавьте остальные объекты с текстурами и ссылками
-];
+    const textures = [
+        'https://i.imgur.com/XdFK6x3.png',
+        'https://i.imgur.com/7RmDFNW.png',
+        'https://i.imgur.com/8Hg0fls.png',
+        // Добавьте остальные URL-адреса для текстур
+    ];
 
-
-   positions.forEach((pos, i) => {
-    const textureObj = texturesWithLinks[i % texturesWithLinks.length];  // Получаем объект с текстурой и ссылкой
-    createPlane(textureObj, pos);
-});
-
+    positions.forEach((pos, i) => {
+        const textureUrl = textures[i % textures.length]; // Это гарантирует, что, если текстур меньше, они будут повторяться
+        createPlane(textureUrl, pos);
+    });
 
     // 9. Функция плавного приближения камеры к плоскости
     function moveToPlane(target) {
@@ -187,7 +123,7 @@ function updateLinkPositions() {
         controls.enableRotate = false;
 
         const targetDirection = new THREE.Vector3().copy(target.position).normalize();
-        const targetPosition = targetDirection.multiplyScalar(radius * 0.75); // Чуть ближе к центру
+        const targetPosition = targetDirection.multiplyScalar(radius * 0.85); // Чуть ближе к центру
 
         let progress = 0;
         function animateMove() {
@@ -274,34 +210,24 @@ function onDocumentClick(event) {
 
 
     // 12. Обработка касания для мобильных устройств
-   let lastTouchTime = 0;
-let lastTouchedPlane = null;
+    function onDocumentTouch(event) {
+        event.preventDefault();
 
-function onDocumentTouch(event) {
-    event.preventDefault();
+        const touch = event.touches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
-    const touch = event.touches[0];
-    mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planes);
 
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(planes);
-
-    if (intersects.length > 0) {
-        const touchedPlane = intersects[0].object;
-        const now = Date.now();
-
-        if (touchedPlane === lastTouchedPlane && now - lastTouchTime < 400) {
-            resetCamera(); // Двойной тап по той же плоскости возвращает камеру
-            lastTouchedPlane = null;
+        if (intersects.length > 0) {
+            // Сохраняем текущее положение камеры перед приближением
+            previousCameraPosition.copy(camera.position);
+            moveToPlane(intersects[0].object);
         } else {
-            lastTouchedPlane = touchedPlane;
-            lastTouchTime = now;
-            moveToPlane(touchedPlane);
+            resetCamera();
         }
     }
-}
-
 
     window.addEventListener('click', onDocumentClick, false);
     window.addEventListener('touchstart', onDocumentTouch, false);
@@ -313,11 +239,10 @@ function onDocumentTouch(event) {
 
     // 14. Анимация сцены
     function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    updateLinkPositions(); // Обновляем позиции ссылок
-    renderer.render(scene, camera);
-}
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
 
     animate();
 
