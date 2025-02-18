@@ -40,13 +40,20 @@
             scene.background = hdrTexture; // Устанавливаем фон
         });
 
-    // 4. Управление камерой (только вращение)
+    // 4. Управление камерой (авто-вращение при запуске)
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enablePan = false; // Запрещаем перемещение
     controls.enableZoom = false; // Отключаем зум
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 1.0;
+
+    // Включаем авто-вращение
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+
+    let autoRotateEnabled = true; // Флаг для авто-вращения
+    let firstClick = false; // Флаг, отслеживающий первый клик
 
     // 5. Создаём массив плоскостей
     const planes = [];
@@ -114,14 +121,19 @@
 
     // 9. Функция плавного приближения камеры к плоскости
     function moveToPlane(target) {
-        if (currentTarget === target) return; // Если уже приближены - ничего не делаем
+        if (currentTarget === target) return;
         currentTarget = target;
 
-        // Отключаем вращение камеры
-        controls.enableRotate = false;
+        // Выключаем авто-вращение при первом клике
+        if (autoRotateEnabled) {
+            autoRotateEnabled = false;
+            controls.autoRotate = false;
+        }
+
+        controls.enableRotate = true; // Разрешаем вращение
 
         const targetDirection = new THREE.Vector3().copy(target.position).normalize();
-        const targetPosition = targetDirection.multiplyScalar(radius * 0.85); // Чуть ближе к центру
+        const targetPosition = targetDirection.multiplyScalar(radius * 0.85);
 
         let progress = 0;
         function animateMove() {
@@ -137,75 +149,69 @@
 
     // 10. Функция возврата камеры в центр с сохранением угла
     function resetCamera() {
-    if (!currentTarget) return;
-    currentTarget = null;
+        if (!currentTarget) return;
+        currentTarget = null;
 
-    controls.enableRotate = true;
+        controls.enableRotate = true;
 
-    let startPos = camera.position.clone();
-    let direction = startPos.clone().sub(controls.target).normalize(); // Вычисляем направление от центра
-    let targetPos = direction.multiplyScalar(radius); // Сохраняем направление и масштабируем
-    
-    let progress = 0;
+        let startPos = camera.position.clone();
+        let direction = startPos.clone().sub(controls.target).normalize(); // Вычисляем направление от центра
+        let targetPos = direction.multiplyScalar(radius); // Сохраняем направление и масштабируем
 
-    function animateReset() {
-        if (progress < 1) {
-            progress += 0.02;
-            camera.position.lerpVectors(startPos, targetPos, progress);
-            requestAnimationFrame(animateReset);
-        } else {
-            controls.target.set(0, 0, 0); // Центр сцены, но угол камеры сохраняется
+        let progress = 0;
+
+        function animateReset() {
+            if (progress < 1) {
+                progress += 0.02;
+                camera.position.lerpVectors(startPos, targetPos, progress);
+                requestAnimationFrame(animateReset);
+            } else {
+                controls.target.set(0, 0, 0); // Центр сцены, но угол камеры сохраняется
+            }
         }
+        animateReset();
     }
-    animateReset();
-}
-
-
-
-
 
     // 11. Обработка клика по сцене
     let lastClickedPlane = null;
-let clickCount = 0;
-let clickTimer = null;
+    let clickCount = 0;
+    let clickTimer = null;
 
-function onDocumentClick(event) {
-    event.preventDefault();
+    function onDocumentClick(event) {
+        event.preventDefault();
 
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(planes);
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planes);
 
-    if (intersects.length > 0) {
-        const clickedPlane = intersects[0].object;
+        if (intersects.length > 0) {
+            const clickedPlane = intersects[0].object;
 
-        if (clickedPlane === lastClickedPlane) {
-            clickCount++;
-        } else {
-            clickCount = 1;
-            lastClickedPlane = clickedPlane;
+            if (clickedPlane === lastClickedPlane) {
+                clickCount++;
+            } else {
+                clickCount = 1;
+                lastClickedPlane = clickedPlane;
+            }
+
+            if (clickCount === 2) {
+                resetCamera(); // Вызываем resetCamera() при двойном клике
+                clickCount = 0;
+                lastClickedPlane = null;
+            } else {
+                previousCameraPosition.copy(camera.position);
+                moveToPlane(clickedPlane);
+            }
+
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+                lastClickedPlane = null;
+            }, 400); // Уменьшил таймер для более удобного двойного клика
         }
-
-        if (clickCount === 2) {
-            resetCamera(); // Вызываем resetCamera() при двойном клике
-            clickCount = 0;
-            lastClickedPlane = null;
-        } else {
-            previousCameraPosition.copy(camera.position);
-            moveToPlane(clickedPlane);
-        }
-
-        clearTimeout(clickTimer);
-        clickTimer = setTimeout(() => {
-            clickCount = 0;
-            lastClickedPlane = null;
-        }, 400); // Уменьшил таймер для более удобного двойного клика
     }
-}
-
-
 
     // 12. Обработка касания для мобильных устройств
     function onDocumentTouch(event) {
@@ -238,7 +244,11 @@ function onDocumentClick(event) {
     // 14. Анимация сцены
     function animate() {
         requestAnimationFrame(animate);
+
+        // Обновляем контроллеры камеры
         controls.update();
+
+        // Рендерим сцену
         renderer.render(scene, camera);
     }
 
@@ -250,7 +260,6 @@ function onDocumentClick(event) {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
 </script>
 
 </body>
