@@ -47,6 +47,7 @@ const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
 // Позиционирование плоскости
 videoPlane.position.set(7, 0, 0); // Справа за сферой
 scene.add(videoPlane);
+camera.lookAt(0, 0, 0);
 
 // Запуск видео при первом тапе
 let videoStarted = false;
