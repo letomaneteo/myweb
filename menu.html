@@ -43,12 +43,14 @@ document.body.appendChild(renderer.domElement);
         });
 
     // 4. Управление камерой (только вращение)
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enablePan = false; // Запрещаем перемещение
-    controls.enableZoom = false; // Отключаем зум
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.rotateSpeed = 1.0;
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enablePan = false; // Запрещаем перемещение
+controls.enableZoom = false; // Отключаем зум
+controls.enableRotate = true; // Включаем только вращение
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.rotateSpeed = 1.0;
+
 
 const videos = [
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
@@ -289,11 +291,11 @@ function onDocumentClick(event) {
 
 
     // 12. Обработка касания для мобильных устройств
-   let lastTouchTime = 0;
+  let lastTouchTime = 0;
 let lastTouchedPlane = null;
 
 function onDocumentTouch(event) {
-    event.preventDefault();
+    event.preventDefault(); // Предотвращаем стандартное поведение
 
     const touch = event.touches[0];
     mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
@@ -316,6 +318,9 @@ function onDocumentTouch(event) {
         }
     }
 }
+
+// Обновляем слушатель
+window.addEventListener('touchstart', onDocumentTouch, false);
 
 
     window.addEventListener('click', onDocumentClick, false);
