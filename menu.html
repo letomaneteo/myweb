@@ -30,34 +30,6 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Загрузка текстуры-видео
-const video = document.createElement('video');
-video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; // Замени на ссылку из pCloud
-video.crossOrigin = 'anonymous';
-video.loop = true;
-video.muted = false;
-video.playsInline = true;
-const texture = new THREE.VideoTexture(video);
-
-// Создание плоскости
-const videoPlaneGeometry = new THREE.PlaneGeometry(10, 5);
-const videoPlaneMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
-
-// Позиционирование плоскости
-videoPlane.position.set(12, 9, -3); // Справа за сферой
-videoPlane.lookAt(new THREE.Vector3(0, 0, 0)); // Поворот в центр сцены
-
-scene.add(videoPlane);
-
-// Запуск видео при первом тапе
-let videoStarted = false;
-renderer.domElement.addEventListener('pointerdown', () => {
-  if (!videoStarted) {
-    video.play();
-    videoStarted = true;
-  }
-});
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
