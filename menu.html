@@ -350,6 +350,8 @@ let lastTouchedPlane = null;
 function onDocumentTouch(event) {
     event.preventDefault();
 
+    if (event.touches.length > 1) return; // Игнорируем жесты двумя пальцами
+
     const touch = event.touches[0];
     mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
@@ -371,6 +373,7 @@ function onDocumentTouch(event) {
         }
     }
 }
+
 
 
     window.addEventListener('click', onDocumentClick, false);
