@@ -30,6 +30,36 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+    // Загрузка текстуры-видео
+const video = document.createElement('video');
+video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4';
+video.crossOrigin = 'anonymous';
+video.loop = true;
+video.muted = true; // mute для корректного запуска на iOS
+video.playsInline = true;
+video.autoplay = true;
+
+const texture = new THREE.VideoTexture(video);
+texture.minFilter = THREE.LinearFilter;
+texture.magFilter = THREE.LinearFilter;
+texture.format = THREE.RGBFormat; // Исправляем формат для мобильных
+
+// Создание плоскости
+const videoPlaneGeometry = new THREE.PlaneGeometry(10, 5);
+const videoPlaneMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
+
+// Позиционирование плоскости
+videoPlane.position.set(12, 9, -3);
+videoPlane.rotation.y = Math.PI; // Уходим от багов с lookAt
+scene.add(videoPlane);
+
+// Включаем звук по клику (если нужно)
+renderer.domElement.addEventListener('click', () => {
+    video.muted = false;
+    video.play().catch(e => console.error('Ошибка запуска видео:', e));
+});
+
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
