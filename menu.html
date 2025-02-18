@@ -321,6 +321,11 @@ function onDocumentTouch(event) {
     window.addEventListener('click', onDocumentClick, false);
     window.addEventListener('touchstart', onDocumentTouch, false);
 
+
+window.addEventListener('touchmove', function(event) {
+    event.preventDefault();
+}, { passive: false });
+    
     // 13. Инвертирование вращения на мобильных устройствах
     if ('ontouchstart' in window) {
         controls.rotateSpeed = -1.0; // Инвертируем вращение
