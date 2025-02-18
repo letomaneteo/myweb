@@ -43,7 +43,7 @@ const video = document.createElement('video');
 video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; 
 video.crossOrigin = 'anonymous';
 video.loop = true;
-video.muted = false;
+video.muted = true;
 video.playsInline = true;
 
 const texture = new THREE.VideoTexture(video);
@@ -68,10 +68,17 @@ videoPlane.lookAt(new THREE.Vector3(0, 0, 0));
 let videoStarted = false;
 renderer.domElement.addEventListener('pointerdown', () => {
   if (!videoStarted) {
-    video.play();
+    video.play().then(() => {
+      console.log('Видео запущено!');
+    }).catch(e => {
+      console.warn('Не удалось запустить видео:', e);
+    });
     videoStarted = true;
   }
 });
+video.muted = false;
+video.volume = 1.0;
+
 
 
 
@@ -95,9 +102,9 @@ renderer.domElement.addEventListener('pointerdown', () => {
     controls.rotateSpeed = 1.0;
 
 const videos = [
-    { url: "https://i.imgur.com/xqYtTQ6.jpeg", link: "https://app.leonardo.ai/" },
-    { url: "https://i.imgur.com/xqYtTQ6.jpeg", link: "https://app.leonardo.ai/" },
-    { url: "https://i.imgur.com/xqYtTQ6.jpeg", link: "https://app.leonardo.ai/" }
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/plane2.mp4" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/plane2.mp4" }
 ];
 
 // Создаём HTML-видео элементы
