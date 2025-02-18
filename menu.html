@@ -22,6 +22,11 @@
 <body>
 
 <script>
+    // Отключаем прокрутку на мобильных устройствах
+window.addEventListener('touchmove', function (event) {
+    event.preventDefault();
+}, { passive: false });
+
     // 1. Создаём сцену
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x222222); // Серый фон
