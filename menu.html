@@ -45,31 +45,12 @@ document.body.appendChild(renderer.domElement);
 
     // 4. Управление камерой (только вращение)
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enablePan = false; // Запрещаем перемещение
-controls.enableZoom = false; // Отключаем зум
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.rotateSpeed = 1.0;
-controls.touches = {
-    ONE: THREE.TOUCH.ROTATE, // Одним пальцем вращение
-    TWO: THREE.TOUCH.NONE     // Отключаем зум через два пальца
-};
+    controls.enablePan = false; // Запрещаем перемещение
+    controls.enableZoom = false; // Отключаем зум
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.rotateSpeed = 1.0;
 
-if (/Mobi|Android/i.test(navigator.userAgent)) {
-    // Перехватываем событие одиночного тапа для приближения
-    renderer.domElement.addEventListener('touchstart', function (event) {
-        if (event.touches.length === 1) {
-            const touch = event.touches[0];
-            // Логика приближения к плоскости, аналогичная клику на ПК
-            raycastAndZoom(touch.clientX, touch.clientY);
-        }
-    }, { passive: false });
-
-    // Отключаем жесты масштабирования
-    renderer.domElement.addEventListener('gesturestart', function (event) {
-        event.preventDefault();
-    }, { passive: false });
-}
 
 // Добавляем видео как текстуру для большой плоскости
 // Создаем видео-элемент
