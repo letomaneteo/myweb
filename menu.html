@@ -53,44 +53,60 @@ document.body.appendChild(renderer.domElement);
 
 
 // Добавляем видео как текстуру для большой плоскости
-// Создаем видео-элемент
 const video = document.createElement('video');
-video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4';
+video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4'; // Путь к вашему видео
 video.loop = true;
-video.muted = true; // Обязательно для автозапуска
-video.playsInline = true;
-video.crossOrigin = "anonymous"; // Для кросс-доменных ресурсов
-document.body.appendChild(video); // Явно добавляем в DOM
+video.muted = true; // ОБЯЗАТЕЛЬНО muted = true, иначе мобильные браузеры блокируют автозапуск
+video.playsInline = true; // Для мобильных устройств
+video.autoplay = true; // Попытка автостарта
 
-// Запускаем видео при взаимодействии
-window.addEventListener('click', () => {
-    if (video.paused) {
-        video.play().then(() => {
-            console.log('🎬 Видео запущено!');
-        }).catch(err => console.error('❌ Ошибка запуска видео:', err));
-    }
-});
-
-// Создаем текстуру для видео
 const videoTexture = new THREE.VideoTexture(video);
 videoTexture.minFilter = THREE.LinearFilter;
 videoTexture.magFilter = THREE.LinearFilter;
 videoTexture.format = THREE.RGBAFormat;
 
-// Создаем плоскость с видео
-const planeGeometry = new THREE.PlaneGeometry(50, 28);
+const planeGeometry = new THREE.PlaneGeometry(50, 28); // Размер плоскости
 const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
 const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-videoPlane.position.set(60, 0, 0);
+videoPlane.position.set(60, 0, 0); // Расположение справа за сферой
 videoPlane.rotation.y = -Math.PI / 2;
 scene.add(videoPlane);
+
+// Флаг для запуска видео
+let videoStarted = false;
+let lastRotation = new THREE.Euler();
+
+// Проверяем, изменился ли угол камеры
+controls.addEventListener('change', () => {
+  const currentRotation = camera.rotation;
+
+  if (!videoStarted) {
+    const rotationChanged = Math.abs(currentRotation.x - lastRotation.x) > 0.01 ||
+                            Math.abs(currentRotation.y - lastRotation.y) > 0.01 ||
+                            Math.abs(currentRotation.z - lastRotation.z) > 0.01;
+    console.log("Попытка запуска видео...");
+video.play().then(() => {
+  console.log("Видео запущено успешно!");
+}).catch(err => console.error("Ошибка воспроизведения видео:", err));
+
+    if (rotationChanged) {
+      video.play().catch(err => console.error("Ошибка воспроизведения видео:", err));
+      videoStarted = true;
+    }
+  }
+
+  // Обновляем данные о предыдущем положении камеры
+  lastRotation.copy(currentRotation);
+});
+
+
 
 
 
 
 const videos = [
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
+    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane2.mp4", link: "https://app.leonardo.ai/" },
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" }
 ];
 
