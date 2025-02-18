@@ -9,8 +9,14 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
 
     <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
+        body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Отключает скролл */
+        touch-action: none; /* Предотвращает жесты скролла */
+        height: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
     </style>
 </head>
 <body>
@@ -73,7 +79,7 @@ const planeGeometry = new THREE.PlaneGeometry(50, 28);
 const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
 const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
 videoPlane.position.set(60, 40, 0);
-videoPlane.lookAt(new THREE.Vector3(0, 0, 0)); // Плоскость смотрит в центр
+videoPlane.rotation.y = -Math.PI / 2;
 scene.add(videoPlane);
 
 // Запускаем видео без звука при вращении камеры
