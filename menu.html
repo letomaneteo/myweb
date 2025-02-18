@@ -43,13 +43,67 @@ document.body.appendChild(renderer.domElement);
         });
 
     // 4. Управление камерой (только вращение)
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enablePan = false; // Запрещаем перемещение
-controls.enableZoom = false; // Отключаем зум
-controls.enableRotate = true; // Включаем только вращение
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.rotateSpeed = 1.0;
+ let isDragging = false;
+let previousMousePosition = {
+    x: 0,
+    y: 0
+};
+
+function onMouseDown(event) {
+    isDragging = true;
+    previousMousePosition = {
+        x: event.clientX,
+        y: event.clientY
+    };
+}
+
+function onMouseMove(event) {
+    if (!isDragging) return;
+
+    const deltaMove = {
+        x: event.clientX - previousMousePosition.x,
+        y: event.clientY - previousMousePosition.y
+    };
+
+    // Вращение камеры по оси X (горизонтально)
+    camera.rotation.y -= deltaMove.x * 0.01;
+
+    // Вращение камеры по оси Y (вертикально)
+    let newRotationX = camera.rotation.x - deltaMove.y * 0.01;
+    camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, newRotationX)); // Ограничиваем вращение по вертикали
+
+    previousMousePosition = {
+        x: event.clientX,
+        y: event.clientY
+    };
+}
+
+function onMouseUp() {
+    isDragging = false;
+}
+
+window.addEventListener('mousedown', onMouseDown, false);
+window.addEventListener('mousemove', onMouseMove, false);
+window.addEventListener('mouseup', onMouseUp, false);
+
+// Для мобильных устройств
+function onTouchStart(event) {
+    event.preventDefault();
+    onMouseDown(event.touches[0]);
+}
+
+function onTouchMove(event) {
+    event.preventDefault();
+    onMouseMove(event.touches[0]);
+}
+
+function onTouchEnd() {
+    onMouseUp();
+}
+
+window.addEventListener('touchstart', onTouchStart, { passive: false });
+window.addEventListener('touchmove', onTouchMove, { passive: false });
+window.addEventListener('touchend', onTouchEnd, false);
 
 
 const videos = [
