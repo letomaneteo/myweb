@@ -49,25 +49,39 @@
   // (Обработка касаний, отвечавшая за свайпы, полностью удалена)
 
   // Добавляем видео как текстуру для большой плоскости
-  const video = document.createElement('video');
-  video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4';
-  video.loop = true;
-  video.muted = true;
-  video.playsInline = true;
-  video.crossOrigin = "anonymous"; 
-  document.body.appendChild(video);
+ // Создаем текстуру для видео
+const video = document.createElement('video');
+video.src = 'https://raw.githubusercontent.com/letomaneteo/21/main/BigPlane.mp4';
+video.loop = true;
+video.muted = true; // Запускаем без звука
+video.playsInline = true;
+video.crossOrigin = "anonymous"; 
+document.body.appendChild(video); 
 
-  const videoTexture = new THREE.VideoTexture(video);
-  videoTexture.minFilter = THREE.LinearFilter;
-  videoTexture.magFilter = THREE.LinearFilter;
-  videoTexture.format = THREE.RGBAFormat;
+const videoTexture = new THREE.VideoTexture(video);
+videoTexture.minFilter = THREE.LinearFilter;
+videoTexture.magFilter = THREE.LinearFilter;
+videoTexture.format = THREE.RGBAFormat;
 
-  const planeGeometry = new THREE.PlaneGeometry(10, 5);
-  const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
-  const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-  videoPlane.position.set(60, 40, 0);
-  videoPlane.rotation.y = -Math.PI / 2;
-  scene.add(videoPlane);
+// Позиционирование и размеры плоскости для мобильных устройств
+const planeWidth = window.innerWidth < 768 ? 10 : 50;
+const planeHeight = window.innerWidth < 768 ? 5 : 28;
+
+const planeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide });
+
+const videoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+// Позиция плоскости в зависимости от устройства
+if (window.innerWidth < 768) {
+    videoPlane.position.set(10, 10, 0); // Для мобильных устройств
+} else {
+    videoPlane.position.set(60, 40, 0); // Для десктопных устройств
+}
+
+videoPlane.rotation.y = -Math.PI / 2;
+scene.add(videoPlane);
+
 
   // Запускаем видео без звука при вращении камеры
   controls.addEventListener('change', () => {
