@@ -346,15 +346,16 @@ function onDocumentClick(event) {
 
 
     // 12. Обработка касания для мобильных устройств
- let lastTapTime = 0;
+let lastTapTime = 0;
 let lastTappedPlane = null;
 
 function onDocumentTouch(event) {
     event.preventDefault();
     
-    let touch = event.touches[0];
+    let touch = event.touches[0]; // Получаем первый палец
     let now = Date.now();
 
+    // Нормализуем координаты касания для raycaster
     mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
@@ -364,15 +365,16 @@ function onDocumentTouch(event) {
     if (intersects.length > 0) {
         const tappedPlane = intersects[0].object;
 
+        // Проверка на двойной тап
         if (lastTappedPlane === tappedPlane && (now - lastTapTime) < 400) {
-            resetCamera(); // Двойной тап отдаляет
-            lastTappedPlane = null;
+            resetCamera(); // Если это тот же объект, и прошло менее 400мс — двойной тап
+            lastTappedPlane = null; // Сбрасываем
         } else {
-            moveToPlane(tappedPlane); // Одиночный тап приближает
-            lastTappedPlane = tappedPlane;
+            moveToPlane(tappedPlane); // Одинарный тап — приближаем
+            lastTappedPlane = tappedPlane; // Сохраняем текущую плоскость
         }
 
-        lastTapTime = now;
+        lastTapTime = now; // Обновляем время последнего касания
     }
 }
 
