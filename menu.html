@@ -98,7 +98,7 @@ renderer.domElement.addEventListener('touchstart', startVideo, { passive: true }
     pmremGenerator.compileEquirectangularShader();
 
     new THREE.EXRLoader()
-        .load('https://raw.githubusercontent.com/letomaneteo/21/main/lonely_road_afternoon_puresky_2k.exr', function (texture) {
+        .load('https://raw.githubusercontent.com/letomaneteo/21/main/belfast_sunset_puresky_2k.exr', function (texture) {
             const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
             scene.environment = hdrTexture; // Добавляем окружение
             scene.background = hdrTexture; // Устанавливаем фон
