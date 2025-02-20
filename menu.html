@@ -125,6 +125,8 @@ const videoElements = videos.map(videoData => {
     video.crossOrigin = "anonymous";
     video.loop = true;
     video.muted = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
     video.play(); // Запускаем воспроизведение
     return { element: video, link: videoData.link };
 });
