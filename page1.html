@@ -254,10 +254,13 @@ border: 2px solid rgba(253, 177, 11, 0.8);/* Толщина, цвет и про�
         z-index: 999;
         transform: translateY(-100%); /* Изначально меню скрыто за пределами экрана */
         transition: transform 0.3s ease; /* Плавное появление */
-   
+    }
+     .header .nav {
+        margin-top: -10px; /* Опускаем серое меню */
+    }
     .header .nav.active {
         display: flex;
-        transform: translateY(calc(100% + 30px)); /* Меню появляется ниже шапки */
+        transform: translateY(calc(100% + 10px)); /* Меню появляется ниже шапки */
     }
 
     .menu-toggle {
