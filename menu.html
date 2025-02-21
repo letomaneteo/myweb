@@ -11,6 +11,23 @@
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
+
+#muteButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+#muteButton:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}
     </style>
 </head>
 <body>
@@ -62,7 +79,7 @@ videoPlane.layers.set(videoLayer);
 scene.add(videoPlane);
 
 // Размещаем плоскость в нужной позиции
-videoPlane.position.set(12, 9, -3);
+videoPlane.position.set(11, 8, -8);
 videoPlane.lookAt(new THREE.Vector3(0, 0, 0));
 
 // Ожидание загрузки видео перед воспроизведением
@@ -91,7 +108,17 @@ renderer.domElement.addEventListener('pointerdown', startVideo);
 // Дополнительный обработчик для мобильных устройств
 renderer.domElement.addEventListener('touchstart', startVideo, { passive: true });
 
+// Создание кнопки выключения звука
+const muteButton = document.createElement('button');
+muteButton.id = 'muteButton';
+muteButton.textContent = video.muted ? 'Вкл звук' : 'Выкл звук';
+document.body.appendChild(muteButton);
 
+// Обработчик клика для переключения звука
+muteButton.addEventListener('click', () => {
+    video.muted = !video.muted;
+    muteButton.textContent = video.muted ? 'Вкл звук' : 'Выкл звук';
+});
 
     // HDRI Фон (EXR)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -115,7 +142,6 @@ renderer.domElement.addEventListener('touchstart', startVideo, { passive: true }
 const videos = [
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/Plane1.mp4", link: "https://app.leonardo.ai/" },
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/plane2.mp4", link: "https://app.leonardo.ai/" },
-    { url: "https://raw.githubusercontent.com/letomaneteo/21/main/oblaka.mp4", link: "https://app.leonardo.ai/" },
     { url: "https://raw.githubusercontent.com/letomaneteo/21/main/plane3.mp4", link: "https://app.leonardo.ai/" }
 ];
 
@@ -189,7 +215,7 @@ function updateLinkPositions() {
 
             // Позиционируем ссылку в 2D-координатах
             link.style.left = `${x}px`;
-            link.style.top = `${y+180}px`;
+            link.style.top = `${y+50}px`;
             link.style.display = "block"; // Показываем ссылку
         } else {
             link.style.display = "none"; // Если камера далеко - скрываем ссылку
