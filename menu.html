@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Равномерные плоскости сферой - Three.js</title>
+    <title>3D Menu</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
@@ -98,7 +98,7 @@ renderer.domElement.addEventListener('touchstart', startVideo, { passive: true }
     pmremGenerator.compileEquirectangularShader();
 
     new THREE.EXRLoader()
-        .load('https://raw.githubusercontent.com/letomaneteo/21/main/belfast_sunset_puresky_2k.exr', function (texture) {
+        .load('kloppenheim_06_puresky_2k.exr', function (texture) {
             const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
             scene.environment = hdrTexture; // Добавляем окружение
             scene.background = hdrTexture; // Устанавливаем фон
