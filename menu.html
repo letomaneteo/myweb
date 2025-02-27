@@ -125,7 +125,7 @@ muteButton.addEventListener('click', () => {
     pmremGenerator.compileEquirectangularShader();
 
     new THREE.EXRLoader()
-        .load('https://raw.githubusercontent.com/letomaneteo/myweb/blob/main/kloppenheim_06_puresky_2k.exr', function (texture) {
+        .load('kloppenheim_06_puresky_2k.exr', function (texture) {
             const hdrTexture = pmremGenerator.fromEquirectangular(texture).texture;
             scene.environment = hdrTexture; // Добавляем окружение
             scene.background = hdrTexture; // Устанавливаем фон
