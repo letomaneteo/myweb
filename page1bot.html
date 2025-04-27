@@ -328,32 +328,46 @@ border: 2px solid rgba(173, 169, 186, 0.8);/* Толщина, цвет и про
         </div>
     </header>
 <div class="main-content">
-<section class="section" id="about" style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; margin-top: 50px;">
-    <!-- Контейнер с текстом и подложкой -->
-     <div style="display: inline-block; padding: 5px 10px; background-color: rgba(255, 255, 255, 0.8); border-radius: 10px;">
-        <h2 class="centered-text" style="color: rgba(50, 100, 227, 0.8); margin-bottom: 5px;">
-            Зимняя сказка
-        </h2>
-        <p class="centered-text" style="color: rgba(50, 100, 227, 0.8); margin-top: 0;">
-            Зима всегда приходит внезапно
-        </p>
-</section>
-    
-    <div class="animation-container">
-        <iframe src="tumba.html" title="3D Object"></iframe>
+  <section class="section" id="about" style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; margin-top: 50px;">
+    <div style="display: inline-block; padding: 5px 10px; background-color: rgba(255, 255, 255, 0.8); border-radius: 10px;">
+      <h2 class="centered-text" style="color: rgba(50, 100, 227, 0.8); margin-bottom: 5px;">
+        Зимняя сказка
+      </h2>
+      <p class="centered-text" style="color: rgba(50, 100, 227, 0.8); margin-top: 0;">
+        Зима всегда приходит внезапно
+      </p>
     </div>
- <!-- Первая кнопка и модальное окно -->
-        <div class="button-container">
-    <button class="modal-button" data-modal="modal1">Подробно о товаре</button>
+  </section>
+
+  <div class="gif-container" style="display: flex; flex-direction: column; align-items: center; gap: 30px; margin-top: 40px;">
+    
+    <!-- Блок 1 -->
+    <div style="text-align: center;">
+      <img src="your_gif_1.gif" alt="GIF 1" style="max-width: 100%; height: auto; border-radius: 10px;">
+      <div style="margin-top: 10px;">
+        <a href="https://ссылка1.com" target="_blank" class="gif-button" style="padding: 10px 20px; background-color: #3264e3; color: white; border-radius: 5px; text-decoration: none;">Подробнее</a>
+      </div>
+    </div>
+
+    <!-- Блок 2 -->
+    <div style="text-align: center;">
+      <img src="your_gif_2.gif" alt="GIF 2" style="max-width: 100%; height: auto; border-radius: 10px;">
+      <div style="margin-top: 10px;">
+        <a href="https://ссылка2.com" target="_blank" class="gif-button" style="padding: 10px 20px; background-color: #3264e3; color: white; border-radius: 5px; text-decoration: none;">Подробнее</a>
+      </div>
+    </div>
+
+    <!-- Блок 3 (если нужно больше) -->
+    <div style="text-align: center;">
+      <img src="your_gif_3.gif" alt="GIF 3" style="max-width: 100%; height: auto; border-radius: 10px;">
+      <div style="margin-top: 10px;">
+        <a href="https://ссылка3.com" target="_blank" class="gif-button" style="padding: 10px 20px; background-color: #3264e3; color: white; border-radius: 5px; text-decoration: none;">Подробнее</a>
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<div id="modal1" class="modal">
-    <div class="modal-overlay"></div>
-    <div class="modal-window">
-        <div class="close-btn">×</div>
-       <iframe id="modal-iframe" src="modal.html"></iframe>
-    </div>
-</div>
 
 <section class="section" id="about" style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; margin-top: 50px;">
     <!-- Контейнер с текстом и подложкой -->
@@ -385,30 +399,10 @@ border: 2px solid rgba(173, 169, 186, 0.8);/* Толщина, цвет и про
     </div>
 </div>
 
-    <section class="video-container">
-        <video autoplay muted loop>
-            <source src="video.mp4" type="video/mp4">
-            Ваш браузер не поддерживает видео.
-        </video>
-    </section>
-
     <section class="section" id="about">
     <p class="fade-in centered-text">ТЕМАТИЧЕСКИЕ ШОУРУМЫ В РАЗНЫХ ЦВЕТАХ</p>
 </section>
-    
-    <section class="section" id="next">
-    <p class="centered-text">
-        <a href="page1.html" class="next-link">В начало</a>
-        <span class="page-links">
-            <a href="page1.html">1</a>, 
-            <a href="page2.html">2</a>,
-            <a href="page3.html">3</a>,
-            <a href="page4.html">4</a>, 
-            <a href="page5.html" class="active">5</a> 
-             <!-- активная ссылка для текущей страницы -->
-        </span>  
-    </p>
-</section>
+
 </div>
 
 <script>
