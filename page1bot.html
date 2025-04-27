@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D interactive5</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('zima3.jpg');
+            background-position: center center;
+            background-size: cover;
+            background-attachment: fixed; /* Фон остаётся на месте */
+        }
+
+        /* Сжатая шапка */
+       .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px; /* Фиксированная высота */
+            background-color: #ADA9BA; /* Цвет шапки */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .header h1 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    margin: 0;
+    font-size: 20px; /* Можно увеличить размер текста */
+    font-weight: bold;
+}
+
+.header .subtitle {
+    position: absolute;
+    bottom: 10px; /* Расстояние от нижнего края шапки */
+    left: 50%;
+    transform: translateX(-50%); /* Центрирует по горизонтали */
+    font-size: 14px;
+    color: #ffffff; /* Цвет текста */
+    margin: 0;
+}
+        
+        .header img {
+            height: 50px; /* Логотип */
+            margin-right: 5px;
+        }
+
+        .header .nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: flex;
+    align-items: center;
+    justify-content: center;
+           }
+
+        .header .nav a:hover {
+            color: #ff6347;
+        }
+
+        /* Мобильное меню */
+        .menu-toggle {
+            display: none;
+            margin-top: 10px;
+        }
+.centered-text {
+    text-align: center;
+    color: #E8EDE7;
+}
+
+.justified-text {
+    text-align: justify;
+    color: #E8EDE7;
+}
+
+#video-section {
+    width: 100%;
+    height: 400px; /* или 500px, если хотите больше высоту */
+    overflow: hidden; /* Скрывает часть контента, выходящего за пределы */
+}
+       .button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.modal-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  color: #fff;
+  background: #ADA9BA;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-button:hover {
+  background: #E9E9E9;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
+.modal {
+  display: none; /* Скрыто по умолчанию */
+  position: fixed; /* Фиксированное положение */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+  z-index: 1;
+}
+
+.modal-window {
+  position: absolute;
+  top: 50%; /* Центрирование по вертикали */
+  left: 50%; /* Центрирование по горизонтали */
+  transform: translate(-50%, -50%); /* Смещение для центрирования */
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+border: 2px solid rgba(173, 169, 186, 0.8);/* Толщина, цвет и прозрачность рамки */
+  width: 70%; /* Ширина окна */
+  max-width: 800px; /* Максимальная ширина */
+  height: 50%; /* Увеличенная высота */
+  overflow: hidden; /* Убрать прокрутку */
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Тень */
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 40px;
+  color: #8a0606;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #000;
+}
+
+.modal-window iframe {
+  width: 100%;
+  height: 100%;
+  border: none; /* Убрать границы iframe */
+}
+      
+ .fade-in {
+  opacity: 0; /* Изначально невидимый */
+  animation: fade-in-out 6s ease-in-out infinite; /* Бесконечная анимация с увеличенным временем */
+  font-size: 24px; /* Размер текста */
+  color: #fff; /* Яркий белый цвет текста */
+  text-align: center; /* Центрирование текста */
+  margin-top: 20px;
+}
+
+@keyframes fade-in-out {
+  0%, 30% {
+    opacity: 0; /* Прозрачность в начале и в конце */
+  }
+  50%, 70% {
+    opacity: 1; /* Полностью видно в середине */
+  }
+  100% {
+    opacity: 0; /* Снова исчезает в конце */
+  }
+} 
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+                cursor: pointer;
+                font-size: 24px;
+                color: white;
+            }
+
+            .header .nav {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background-color: rgba(173, 169, 186, 0.8);
+                position: absolute;
+                left: 0;
+                top: 50px; /* Меню появляется под шапкой */
+                z-index: 999;
+                padding: 10px 0;
+            }
+
+            .header .nav.active {
+                display: flex;
+            }
+        }
+
+        .main-content {
+            padding: 70px 20px; /* Отступ сверху для основного контента */
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .section p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .animation-container {
+            text-align: center;
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            .animation-container {
+                height: 400px;
+            }
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+       .next-link {
+    color: #ffffff; /* Цвет текста по умолчанию */
+    text-decoration: none; /* Убираем подчеркивание */
+}
+
+.next-link:hover {
+    color: #ff6347; /* Цвет текста при наведении */
+}
+
+.next-link:active {
+    color: #F7C815; /* Цвет текста при клике */
+}
+
+         .page-links a {
+    text-decoration: none;
+    color: #ffffff; /* Цвет обычной ссылки */
+}
+
+.page-links a:hover {
+    color: #F7C815; /* Цвет ссылки при наведении */
+}
+
+.page-links a.active {
+    color: #F7C815; /* Цвет активной ссылки (текущей страницы) */
+    font-weight: bold; /* Дополнительное выделение */
+}       
+    </style>
+</head>
+<body>
+
+ <header class="header">
+        <div class="container">
+            <a href="site.html">
+                <img src="2.gif" alt="Логотип">
+            </a>
+            <h1>INTERACTIVE 3D</h1>
+            <p class="subtitle">Зимний шоурум</p>
+            <nav class="nav">
+                <a href="2danimation.html">2D анимация</a>
+               <!-- <a href="about.html">О нас</a> -->
+                <a href="uslugicenu.html">Услуги и цены</a>
+                <a href="pagecontact.html">Контакты</a>
+            </nav>
+            <div class="menu-toggle" id="menuToggle">&#9776;</div>
+        </div>
+    </header>
+<div class="main-content">
+<section class="section" id="about" style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; margin-top: 50px;">
+    <!-- Контейнер с текстом и подложкой -->
+     <div style="display: inline-block; padding: 5px 10px; background-color: rgba(255, 255, 255, 0.8); border-radius: 10px;">
+        <h2 class="centered-text" style="color: rgba(50, 100, 227, 0.8); margin-bottom: 5px;">
+            Зимняя сказка
+        </h2>
+        <p class="centered-text" style="color: rgba(50, 100, 227, 0.8); margin-top: 0;">
+            Зима всегда приходит внезапно
+        </p>
+</section>
+    
+    <div class="animation-container">
+        <iframe src="tumba.html" title="3D Object"></iframe>
+    </div>
+ <!-- Первая кнопка и модальное окно -->
+        <div class="button-container">
+    <button class="modal-button" data-modal="modal1">Подробно о товаре</button>
+</div>
+
+<div id="modal1" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-window">
+        <div class="close-btn">×</div>
+       <iframe id="modal-iframe" src="modal.html"></iframe>
+    </div>
+</div>
+
+<section class="section" id="about" style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; margin-top: 50px;">
+    <!-- Контейнер с текстом и подложкой -->
+    <div style="display: inline-block; padding: 5px 10px; background-color: rgba(255, 255, 255, 0.8); border-radius: 10px;">
+        <h2 class="centered-text" style="color: rgba(50, 100, 227, 0.8); margin-bottom: 5px;">
+            Гамма цветов
+        </h2>
+        <p class="centered-text" style="color: rgba(50, 100, 227, 0.8); margin-top: 0;">
+            Чем больше цветов, тем сложнее выбор
+        </p>
+    </div>
+</section>
+
+    <!-- Контейнер для 3D-объекта -->
+<div class="animation-container">
+    <iframe src="tumba.html" title="3D Object"></iframe>
+</div>
+
+<!-- второе окно -->
+<div class="button-container">
+    <button class="modal-button" data-modal="modal2">Подробно о товаре</button>
+</div>
+
+<div id="modal2" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-window">
+        <div class="close-btn">×</div>
+        <iframe id="modal-iframe" src="modal2/modal2.html"></iframe>
+    </div>
+</div>
+
+    <section class="video-container">
+        <video autoplay muted loop>
+            <source src="video.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </section>
+
+    <section class="section" id="about">
+    <p class="fade-in centered-text">ТЕМАТИЧЕСКИЕ ШОУРУМЫ В РАЗНЫХ ЦВЕТАХ</p>
+</section>
+    
+    <section class="section" id="next">
+    <p class="centered-text">
+        <a href="page1.html" class="next-link">В начало</a>
+        <span class="page-links">
+            <a href="page1.html">1</a>, 
+            <a href="page2.html">2</a>,
+            <a href="page3.html">3</a>,
+            <a href="page4.html">4</a>, 
+            <a href="page5.html" class="active">5</a> 
+             <!-- активная ссылка для текущей страницы -->
+        </span>  
+    </p>
+</section>
+</div>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+const nav = document.querySelector('.header .nav');
+const body = document.querySelector('body');
+
+// Открытие/закрытие меню по кнопке
+menuToggle.addEventListener('click', (event) => {
+    nav.classList.toggle('active');
+    event.stopPropagation(); // Остановка распространения события, чтобы клик не закрывал меню сразу
+});
+
+// Закрытие меню при клике на любое место страницы
+body.addEventListener('click', () => {
+    if (nav.classList.contains('active')) {
+        nav.classList.remove('active');
+    }
+});
+
+// Остановка события при клике внутри меню, чтобы не закрывать его
+nav.addEventListener('click', (event) => {
+    event.stopPropagation();
+});
+    document.querySelectorAll('.modal-button').forEach(button => {
+    button.addEventListener('click', () => {
+        const modalId = button.getAttribute('data-modal'); // Получаем ID модального окна
+        const modal = document.getElementById(modalId);
+        modal.style.display = 'block'; // Показываем модальное окно
+    });
+});
+
+document.querySelectorAll('.modal').forEach(modal => {
+    const overlay = modal.querySelector('.modal-overlay');
+    const closeBtn = modal.querySelector('.close-btn');
+    const iframe = modal.querySelector('iframe'); // Получаем iframe
+
+    function closeModal() {
+        modal.style.display = 'none';
+
+         // Проверяем, существует ли iframe перед сбросом
+        if (iframe) {
+            setTimeout(() => {
+                // Устанавливаем исходный src только для текущего модального окна
+                if (modal.id === "modal1") {
+                    iframe.src = 'modal.html';
+                } else if (modal.id === "modal2") {
+                    iframe.src = 'modal2/modal2.html';
+                }
+            }, 100);
+        }
+    }
+
+    // Закрытие по клику на оверлей
+    overlay?.addEventListener('click', closeModal);
+
+    // Закрытие по кнопке-крестику
+    closeBtn?.addEventListener('click', closeModal);
+});
+
+</script>
+
+</body>
+</html>
