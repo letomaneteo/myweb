@@ -58,8 +58,8 @@
     const mouse = new THREE.Vector2();
 
     const targetObjects = [
-      { name: "Mesh002", animationName: "BrainAction" },
-      { name: "Mesh005", animationName: "Brain.001Action" },
+      { name: "Mesh002", animationName: "Object03Action" },
+      { name: "Mesh005", animationName: "Object01Action" },
     ];
 
     const interactiveObjects = [];
@@ -70,7 +70,7 @@
     });
 
     new GLTFLoader().load(
-      'https://raw.githubusercontent.com/letomaneteo/myweb/main/Brain10.glb',
+      'https://raw.githubusercontent.com/letomaneteo/myweb/main/Brain9.glb',
       (gltf) => {
         model = gltf.scene;
         mixer = new THREE.AnimationMixer(model);
