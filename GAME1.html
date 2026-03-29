@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра</title>
+    <style>
+       body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-image: url('corridor.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center center;
+        font-family: Arial, sans-serif;
+        padding: 3px;
+        line-height: 1;
+        box-sizing: border-box;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 80px);
+        grid-gap: 10px;
+        margin: 20px;
+    }
+    .cell {
+        width: 80px;
+        height: 80px;
+        border: 3px solid #6D8C00;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        transition: background-color 0.3s;
+    }
+
+    #toggleSound {
+        background-color: #F7C815;
+        color: #ffffff;
+        border: none;
+        border-radius: 25px;
+        padding: 5px 5px;
+        font-size: 12px;
+        cursor: pointer;
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #toggleSound:hover {
+        background-color: #e60000;
+        transform: scale(1.05);
+    }
+
+    #toggleSound:active {
+        background-color: #cc0000;
+        transform: scale(0.95);
+    }
+
+    @media (max-width: 600px) {
+        .grid {
+            grid-template-columns: repeat(3, 60px);
+            grid-gap: 8px;
+            margin: 10px 0;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            font-size: 18px;
+        }
+        h1, h2, h3 {
+            font-size: 16px;
+            margin: 2px 0;
+            padding: 0;
+            line-height: 1;
+        }
+        .game-title { font-size: 20px; }
+        .game-rules { font-size: 14px; }
+        .play-button, .restart-button {
+            font-size: 14px;
+            padding: 10px 10px;
+            margin-top: 3px;
+        }
+        .messages .message {
+            font-size: 14px;
+            margin-top: 3px;
+        }
+        body {
+            background-attachment: scroll;
+            background-size: cover;
+        }
+    }
+
+    .scoreboard, .messages {
+        margin-top: 5px;
+        color: black;
+        text-align: center;
+    }
+
+    .highlight-green  { background-color: lightgreen; }
+    .highlight-blue   { background-color: lightblue; }
+    .highlight-yellow { background-color: #EC9704; }
+
+    .play-button, .restart-button {
+        margin-top: 10px;
+        padding: 10px 24px;
+        font-size: 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .play-button:hover, .restart-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+
+    .play-button[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: #ccc;
+    }
+
+    .message {
+        margin-top: 5px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+    .green  { color: green; }
+    .blue   { color: blue; }
+    .yellow { color: #EC9704; }
+    .black  { color: black; }
+
+    .game-title {
+        font-size: 20px;
+        color: #583E26;
+        margin-top: 2px;
+    }
+    .game-rules {
+        font-size: 14px;
+        margin: 1px 0;
+        line-height: 1;
+        padding: 0;
+        max-width: 90%;
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+
+<audio id="backgroundMusic" src="muzeek.mp3" loop muted></audio>
+<button id="toggleSound">Музыка</button>
+<audio id="buttonClickSound" src="click.mp3"></audio>
+<audio id="rowCheckSound" src="ding5.mp3" preload="auto"></audio>
+<audio id="resultSound" src="vic.wav"></audio>
+<audio id="defSound" src="defeat.wav"></audio>
+<audio id="winCheckSound" src="ding2.mp3" preload="auto"></audio>
+
+<h1 style="margin: 0; padding: 0; line-height: 1;">Очки: <span id="userScore">0</span></h1>
+<h2 style="margin: 0; padding: 0; line-height: 1;">Уровень: <span id="userLevel">1</span></h2>
+<div class="game-title">22 КЛИКА</div>
+<div class="game-rules">
+    <p>Наберите 200 очков за 22 клика, чтобы победить</p>
+    <p>-8 очков за все разные. +1 уровень за 3 победы.</p>
+</div>
+<h1 style="margin: 0; padding: 0; line-height: 1;">Счет: <span id="score">30</span></h1>
+<h2 style="margin: 0; padding: 0; line-height: 1;">Счетчик кликов: <span id="clickCount">0</span></h2>
+<h3>Победы: <span id="winCount">0</span> Поражения: <span id="lossCount">0</span></h3>
+
+<div class="grid">
+    <div class="cell" id="cell-0"></div>
+    <div class="cell" id="cell-1"></div>
+    <div class="cell" id="cell-2"></div>
+    <div class="cell" id="cell-3"></div>
+    <div class="cell" id="cell-4"></div>
+    <div class="cell" id="cell-5"></div>
+    <div class="cell" id="cell-6"></div>
+    <div class="cell" id="cell-7"></div>
+    <div class="cell" id="cell-8"></div>
+</div>
+
+<button class="play-button" id="playButton">Играть</button>
+
+<div class="messages">
+    <div class="message green" id="horizontalMessage">
+        По горизонтали: <span id="horizontalResult"></span>
+    </div>
+    <div class="message blue" id="verticalMessage">
+        По вертикали: <span id="verticalResult"></span>
+    </div>
+    <div class="message yellow" id="diagonalMessage">
+        По диагонали: <span id="diagonalResult"></span>
+    </div>
+    <div class="message black" id="totalPointsMessage">
+        Сумма всех рядов: <span id="totalResult"></span>
+    </div>
+    <div class="message" id="endMessage"></div>
+</div>
+
+<button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
+
+<script>
+    const STORAGE_KEY = 'game22_stats';
+
+    // ─── localStorage ─────────────────────────────────────
+    function loadStats() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) return JSON.parse(saved);
+        } catch(e) {}
+        return { userScore: 50, userLevel: 1, totalWins: 0 };
+    }
+
+    function saveStats() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            userScore,
+            userLevel,
+            totalWins
+        }));
+    }
+
+    // ─── Загружаем сохранённые данные ─────────────────────
+    const saved = loadStats();
+    let userScore = saved.userScore;
+    let userLevel = saved.userLevel;
+    let totalWins = saved.totalWins; // общее кол-во побед для подсчёта уровня
+
+    document.getElementById('userScore').textContent = userScore;
+    document.getElementById('userLevel').textContent = userLevel;
+
+    // ─── Остальные переменные ─────────────────────────────
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    const toggleButton    = document.getElementById('toggleSound');
+    const cells           = Array.from(document.querySelectorAll('.cell'));
+    const scoreElement    = document.getElementById('score');
+    const clickCountElement = document.getElementById('clickCount');
+    const winCountElement   = document.getElementById('winCount');
+    const lossCountElement  = document.getElementById('lossCount');
+    const playButton      = document.getElementById('playButton');
+    const restartButton   = document.getElementById('restartButton');
+    const rowCheckSound   = document.getElementById('rowCheckSound');
+    const winCheckSound   = document.getElementById('winCheckSound');
+
+    const messages = {
+        horizontal: document.getElementById('horizontalMessage'),
+        vertical:   document.getElementById('verticalMessage'),
+        diagonal:   document.getElementById('diagonalMessage'),
+        total:      document.getElementById('totalPointsMessage'),
+        end:        document.getElementById('endMessage')
+    };
+
+    let score      = 30;
+    let clickCount = 0;
+    let winCount   = 0;
+    let lossCount  = 0;
+
+    // ─── Музыка ───────────────────────────────────────────
+    toggleButton.addEventListener('click', () => {
+        if (backgroundMusic.muted || backgroundMusic.paused) {
+            backgroundMusic.muted = false;
+            backgroundMusic.play()
+                .then(() => { toggleButton.textContent = 'Выкл.музыку'; })
+                .catch(err => console.error('Ошибка воспроизведения:', err));
+        } else {
+            backgroundMusic.muted = true;
+            backgroundMusic.pause();
+            toggleButton.textContent = 'Музыка';
+        }
+    });
+
+    // ─── Обновление статистики ────────────────────────────
+    function updateUserStats() {
+        if (messages.end.textContent.includes("выиграли")) {
+            userScore += 10;
+            totalWins += 1;
+        } else if (messages.end.textContent.includes("проиграли")) {
+            userScore -= 10;
+        }
+
+        // +1 уровень каждые 3 победы
+        userLevel = 1 + Math.floor(totalWins / 3);
+
+        document.getElementById('userScore').textContent = userScore;
+        document.getElementById('userLevel').textContent = userLevel;
+
+        saveStats(); // сохраняем в localStorage
+    }
+
+    // ─── Игровая логика (без изменений) ──────────────────
+    function updateScore(points) {
+        score += points;
+        scoreElement.textContent = score;
+    }
+
+    function resetMessages() {
+        document.getElementById('horizontalResult').textContent = '';
+        document.getElementById('verticalResult').textContent = '';
+        document.getElementById('diagonalResult').textContent = '';
+        document.getElementById('totalResult').textContent = '';
+        messages.end.textContent = '';
+    }
+
+    function flashCells(cellsToFlash, colorClass, delay = 0) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                cellsToFlash.forEach(cell => cell.classList.add(colorClass));
+            }, delay);
+            setTimeout(() => {
+                cellsToFlash.forEach(cell => cell.classList.remove(colorClass));
+                resolve();
+            }, delay + 300);
+        });
+    }
+
+    async function checkHorizontal() {
+        let points = 0;
+        let matchInfo = [];
+        for (let i = 0; i < 9; i += 3) {
+            const row = [cells[i], cells[i + 1], cells[i + 2]];
+            const values = row.map(cell => cell.textContent);
+            const counts = {};
+            values.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+
+            if (Object.values(counts).includes(3)) {
+                points += 5;
+                rowCheckSound.pause(); rowCheckSound.currentTime = 0;
+                await winCheckSound.play();
+                await flashCells(row, 'highlight-green');
+                matchInfo.push("+5");
+            } else if (Object.values(counts).includes(2)) {
+                points += 3;
+                rowCheckSound.pause(); rowCheckSound.currentTime = 0;
+                await rowCheckSound.play();
+                await flashCells(row.filter(cell => counts[cell.textContent] === 2), 'highlight-green');
+                matchInfo.push("+3");
+            } else {
+                matchInfo.push("0");
+            }
+        }
+        document.getElementById('horizontalResult').textContent = matchInfo.join(", ");
+        return points;
+    }
+
+    async function checkVertical() {
+        let points = 0;
+        let matchInfo = [];
+        for (let i = 0; i < 3; i++) {
+            const column = [cells[i], cells[i + 3], cells[i + 6]];
+            const values = column.map(cell => cell.textContent);
+            const counts = {};
+            values.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+
+            if (Object.values(counts).includes(3)) {
+                points += 5;
+                rowCheckSound.pause(); rowCheckSound.currentTime = 0;
+                await winCheckSound.play();
+                await flashCells(column, 'highlight-blue', 300);
+                matchInfo.push("+5");
+            } else if (Object.values(counts).includes(2)) {
+                points += 3;
+                rowCheckSound.pause(); rowCheckSound.currentTime = 0;
+                await rowCheckSound.play();
+                await flashCells(column.filter(cell => counts[cell.textContent] === 2), 'highlight-blue');
+                matchInfo.push("+3");
+            } else {
+                matchInfo.push("0");
+            }
+        }
+        document.getElementById('verticalResult').textContent = matchInfo.join(", ");
+        return points;
+    }
+
+    async function checkDiagonal() {
+        let points = 0;
+        const mainDiagonal = [cells[0], cells[4], cells[8]];
+        const antiDiagonal = [cells[2], cells[4], cells[6]];
+        const diagonals = [mainDiagonal, antiDiagonal];
+        let matchInfo = [];
+
+        for (const diagonal of diagonals) {
+            const values = diagonal.map(cell => cell.textContent);
+            const counts = {};
+            values.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+
+            if (Object.values(counts).includes(3)) {
+                points += 6;
+                rowCheckSound.pause(); rowCheckSound.currentTime = 0;
+                await winCheckSound.play();
+                await flashCells(diagonal, 'highlight-yellow', 300);
+                matchInfo.push("+6");
+            } else if (Object.values(counts).includes(2)) {
+                points += 4;
+                rowCheckSound.pause(); rowCheckSound.currentTime = 0;
+                await rowCheckSound.play();
+                await flashCells(diagonal.filter(cell => counts[cell.textContent] === 2), 'highlight-yellow');
+                matchInfo.push("+4");
+            } else {
+                matchInfo.push("0");
+            }
+        }
+        document.getElementById('diagonalResult').textContent = matchInfo.join(", ");
+        return points;
+    }
+
+    async function playGame() {
+        playButton.disabled = true;
+        resetMessages();
+
+        cells.forEach(cell => cell.textContent = Math.floor(Math.random() * 10));
+        clickCount++;
+        clickCountElement.textContent = clickCount;
+
+        const horizontalPoints = await checkHorizontal();
+        const verticalPoints   = await checkVertical();
+        const diagonalPoints   = await checkDiagonal();
+        const totalPoints      = horizontalPoints + verticalPoints + diagonalPoints;
+
+        if (totalPoints > 0) {
+            document.getElementById('totalResult').textContent = totalPoints;
+            updateScore(totalPoints);
+        } else {
+            document.getElementById('totalResult').textContent = "-8 (нет совпадений)";
+            updateScore(-8);
+        }
+
+        const resultSound = document.getElementById('resultSound');
+        const defSound    = document.getElementById('defSound');
+
+        if (score >= 200) {
+            winCount++;
+            winCountElement.textContent = winCount;
+            messages.end.textContent = "Вы выиграли!";
+            resultSound.play();
+            playButton.disabled = true;
+            restartButton.style.display = 'block';
+            updateUserStats();
+        } else if (clickCount >= 22) {
+            if (score < 200) {
+                lossCount++;
+                lossCountElement.textContent = lossCount;
+                messages.end.textContent = "Вы проиграли! Не хватило очков.";
+                defSound.play();
+            } else {
+                winCount++;
+                winCountElement.textContent = winCount;
+                messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+                resultSound.play();
+            }
+            playButton.disabled = true;
+            restartButton.style.display = 'block';
+            updateUserStats();
+        } else {
+            playButton.disabled = false;
+            updateUserStats();
+        }
+    }
+
+    restartButton.addEventListener('click', () => {
+        score = 30;
+        clickCount = 0;
+        scoreElement.textContent = score;
+        clickCountElement.textContent = clickCount;
+        playButton.disabled = false;
+        restartButton.style.display = 'none';
+        resetMessages();
+    });
+
+    playButton.addEventListener('click', () => {
+        const buttonClickSound = document.getElementById('buttonClickSound');
+        buttonClickSound.pause();
+        buttonClickSound.currentTime = 0;
+        buttonClickSound.play();
+        playGame();
+    });
+</script>
+</body>
+</html>
