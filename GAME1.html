@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Игра</title>
+    <title>GAME</title>
     <style>
        body {
         display: flex;
@@ -164,14 +164,14 @@
 
 <h1 style="margin: 0; padding: 0; line-height: 1;">Очки: <span id="userScore">0</span></h1>
 <h2 style="margin: 0; padding: 0; line-height: 1;">Уровень: <span id="userLevel">1</span></h2>
-<div class="game-title">22 КЛИКА</div>
+<div class="game-title">ДВАДЦЯТЬ ДВА</div>
 <div class="game-rules">
-    <p>Наберите 200 очков за 22 клика, чтобы победить</p>
-    <p>-8 очков за все разные. +1 уровень за 3 победы.</p>
+    <p>Наберіть 200 оочок за 22 кліки, щоб перемогти</p>
+    <p>-8 очок за всі різні. +1 рівень за 3 перемоги.</p>
 </div>
-<h1 style="margin: 0; padding: 0; line-height: 1;">Счет: <span id="score">30</span></h1>
-<h2 style="margin: 0; padding: 0; line-height: 1;">Счетчик кликов: <span id="clickCount">0</span></h2>
-<h3>Победы: <span id="winCount">0</span> Поражения: <span id="lossCount">0</span></h3>
+<h1 style="margin: 0; padding: 0; line-height: 1;">Рахунок: <span id="score">30</span></h1>
+<h2 style="margin: 0; padding: 0; line-height: 1;">Лічильник кліків: <span id="clickCount">0</span></h2>
+<h3>Перемоги: <span id="winCount">0</span> Поразки: <span id="lossCount">0</span></h3>
 
 <div class="grid">
     <div class="cell" id="cell-0"></div>
@@ -185,25 +185,25 @@
     <div class="cell" id="cell-8"></div>
 </div>
 
-<button class="play-button" id="playButton">Играть</button>
+<button class="play-button" id="playButton">Крутити</button>
 
 <div class="messages">
     <div class="message green" id="horizontalMessage">
-        По горизонтали: <span id="horizontalResult"></span>
+        По горизонталі: <span id="horizontalResult"></span>
     </div>
     <div class="message blue" id="verticalMessage">
-        По вертикали: <span id="verticalResult"></span>
+        По вертикалі: <span id="verticalResult"></span>
     </div>
     <div class="message yellow" id="diagonalMessage">
-        По диагонали: <span id="diagonalResult"></span>
+        По діагоналі: <span id="diagonalResult"></span>
     </div>
     <div class="message black" id="totalPointsMessage">
-        Сумма всех рядов: <span id="totalResult"></span>
+        Сума всіх рядів: <span id="totalResult"></span>
     </div>
     <div class="message" id="endMessage"></div>
 </div>
 
-<button class="restart-button" id="restartButton" style="display: none;">Начать заново</button>
+<button class="restart-button" id="restartButton" style="display: none;">Почати знову</button>
 
 <script>
     const STORAGE_KEY = 'game22_stats';
