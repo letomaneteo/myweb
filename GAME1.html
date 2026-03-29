@@ -265,21 +265,21 @@
         if (backgroundMusic.muted || backgroundMusic.paused) {
             backgroundMusic.muted = false;
             backgroundMusic.play()
-                .then(() => { toggleButton.textContent = 'Выкл.музыку'; })
+                .then(() => { toggleButton.textContent = 'Вимк.музику'; })
                 .catch(err => console.error('Ошибка воспроизведения:', err));
         } else {
             backgroundMusic.muted = true;
             backgroundMusic.pause();
-            toggleButton.textContent = 'Музыка';
+            toggleButton.textContent = 'Музика';
         }
     });
 
     // ─── Обновление статистики ────────────────────────────
     function updateUserStats() {
-        if (messages.end.textContent.includes("выиграли")) {
+        if (messages.end.textContent.includes("виграли")) {
             userScore += 10;
             totalWins += 1;
-        } else if (messages.end.textContent.includes("проиграли")) {
+        } else if (messages.end.textContent.includes("програли")) {
             userScore -= 10;
         }
 
@@ -425,7 +425,7 @@
             document.getElementById('totalResult').textContent = totalPoints;
             updateScore(totalPoints);
         } else {
-            document.getElementById('totalResult').textContent = "-8 (нет совпадений)";
+            document.getElementById('totalResult').textContent = "-8 (нема співпадінь)";
             updateScore(-8);
         }
 
@@ -435,7 +435,7 @@
         if (score >= 200) {
             winCount++;
             winCountElement.textContent = winCount;
-            messages.end.textContent = "Вы выиграли!";
+            messages.end.textContent = "Ви виграли!";
             resultSound.play();
             playButton.disabled = true;
             restartButton.style.display = 'block';
@@ -444,12 +444,12 @@
             if (score < 200) {
                 lossCount++;
                 lossCountElement.textContent = lossCount;
-                messages.end.textContent = "Вы проиграли! Не хватило очков.";
+                messages.end.textContent = "Ви програли! Не вистачило очок.";
                 defSound.play();
             } else {
                 winCount++;
                 winCountElement.textContent = winCount;
-                messages.end.textContent = "Вы выиграли! Набрано 200 очков.";
+                messages.end.textContent = "Ви выиграли! Набрано 200 очок.";
                 resultSound.play();
             }
             playButton.disabled = true;
