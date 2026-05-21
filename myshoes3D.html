@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Objects</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #ffffff; font-family: Georgia, serif; }
+        .section { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        canvas { display: block; width: 100% !important; }
+        .caption { text-align: center; padding: 20px 24px 48px; }
+        .caption h2 { font-size: 22px; font-weight: 400; color: #111; margin-bottom: 8px; letter-spacing: 0.04em; }
+        .caption p { font-size: 14px; color: #888; letter-spacing: 0.02em; }
+        .divider { width: 50%; height: 1px; background: #e0e0e0; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<div class="section">
+    <canvas id="canvas1"></canvas>
+    <div class="caption">
+        <h2>Boot</h2>
+        <p>Drag to rotate</p>
+    </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+    <canvas id="canvas2"></canvas>
+    <div class="caption">
+        <h2>Shaker</h2>
+        <p>Click to change texture · drag to rotate</p>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
+
+<script>
+// ---- SCENE 1: Boot ----
+(function() {
+    const canvas = document.getElementById('canvas1');
+    const W = window.innerWidth;
+    const H = Math.round(W * 0.7);
+    renderer1 = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer1.setSize(W, H);
+    renderer1.setClearColor(0xffffff, 1);
+    renderer1.setPixelRatio(window.devicePixelRatio);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, W / H, 0.1, 1000);
+    camera.position.set(0, 0, 3);
+    camera.lookAt(0, 0, 0);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const pt = new THREE.PointLight(0xffffff, 1, 100);
+    pt.position.set(0, 5, 5);
+    scene.add(pt);
+
+    let model = null;
+    new THREE.GLTFLoader().load(
+        'https://raw.githubusercontent.com/letomaneteo/21/2d19672c3716df103244ffd774476bf291d710a2/boot.glb',
+        gltf => { model = gltf.scene; scene.add(model); },
+        undefined,
+        err => console.error('Boot error:', err)
+    );
+
+    let mouseDown = false, prev = { x: 0, y: 0 };
+    let isTouching = false, touchPos = { x: 0, y: 0 };
+
+    canvas.addEventListener('mousedown', e => { mouseDown = true; prev = { x: e.clientX, y: e.clientY }; });
+    window.addEventListener('mouseup', () => mouseDown = false);
+    window.addEventListener('mousemove', e => {
+        if (mouseDown && model) {
+            model.rotation.y += (e.clientX - prev.x) * 0.01;
+            model.rotation.x += (e.clientY - prev.y) * 0.01;
+        }
+        prev = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.addEventListener('touchstart', e => { isTouching = true; touchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY }; });
+    canvas.addEventListener('touchend', () => isTouching = false);
+    canvas.addEventListener('touchmove', e => {
+        if (isTouching && model) {
+            e.preventDefault();
+            model.rotation.y += (e.touches[0].clientX - touchPos.x) * 0.01;
+            model.rotation.x += (e.touches[0].clientY - touchPos.y) * 0.01;
+            touchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+    }, { passive: false });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (model && !mouseDown && !isTouching) model.rotation.y -= 0.01;
+        renderer1.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        const nW = window.innerWidth, nH = Math.round(nW * 0.7);
+        renderer1.setSize(nW, nH);
+        camera.aspect = nW / nH;
+        camera.updateProjectionMatrix();
+    });
+})();
+
+// ---- SCENE 2: Shaker ----
+(function() {
+    const canvas = document.getElementById('canvas2');
+    const W = window.innerWidth;
+    const H = Math.round(W * 0.7);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(W, H);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, W / H, 0.1, 1000);
+    camera.position.set(0, 0, 2);
+
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    pmrem.compileEquirectangularShader();
+    new THREE.EXRLoader().load(
+        'https://raw.githubusercontent.com/letomaneteo/21/main/meadow_2_4k.exr',
+        tex => {
+            scene.environment = pmrem.fromEquirectangular(tex).texture;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 0.8;
+            pmrem.dispose();
+        }
+    );
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.2));
+
+    const textures = [
+        'https://i.imgur.com/sDzTyrQ.jpeg',
+        'https://i.imgur.com/HyLZycn.jpeg',
+        'https://i.imgur.com/luiie6f.jpeg',
+        'https://i.imgur.com/V6KJV6L.jpeg'
+    ];
+    let texIdx = 0;
+    const tl = new THREE.TextureLoader();
+    let bertaMesh = null;
+    const sound = new Audio('https://raw.githubusercontent.com/letomaneteo/21/main/dvoynoy-schelchok-s-piskom.mp3');
+
+    new THREE.GLTFLoader().load(
+        'https://raw.githubusercontent.com/letomaneteo/21/main/shakers1.glb',
+        gltf => {
+            const model = gltf.scene;
+            model.traverse(child => {
+                if (child.isMesh && child.material.name === 'berta') {
+                    bertaMesh = child;
+                    child.material.transparent = true;
+                    child.material.opacity = 1.0;
+                    child.material.roughness = 0.9;
+                    child.material.metalness = 0.05;
+                    child.material.envMapIntensity = 0.5;
+                    child.material.map = tl.load(textures[0]);
+                    child.material.needsUpdate = true;
+                }
+            });
+            scene.add(model);
+        },
+        undefined,
+        err => console.error('Shaker error:', err)
+    );
+
+    function switchTex() {
+        if (!bertaMesh) return;
+        texIdx = (texIdx + 1) % textures.length;
+        bertaMesh.material.map = tl.load(textures[texIdx]);
+        bertaMesh.material.needsUpdate = true;
+        sound.currentTime = 0;
+        sound.play();
+    }
+
+    let isDragging = false, prev = { x: 0, y: 0 };
+
+    canvas.addEventListener('mousedown', e => { isDragging = true; prev = { x: e.clientX, y: e.clientY }; });
+    canvas.addEventListener('mouseup', () => isDragging = false);
+    canvas.addEventListener('mousemove', e => {
+        if (isDragging) {
+            scene.rotation.y += (e.clientX - prev.x) * 0.005;
+            scene.rotation.x += (e.clientY - prev.y) * 0.005;
+            prev = { x: e.clientX, y: e.clientY };
+        }
+    });
+
+    canvas.addEventListener('touchstart', e => { isDragging = true; prev = { x: e.touches[0].clientX, y: e.touches[0].clientY }; });
+    canvas.addEventListener('touchend', () => isDragging = false);
+    canvas.addEventListener('touchmove', e => {
+        if (isDragging) {
+            scene.rotation.y += (e.touches[0].clientX - prev.x) * 0.005;
+            scene.rotation.x += (e.touches[0].clientY - prev.y) * 0.005;
+            prev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+    });
+
+    canvas.addEventListener('click', e => {
+        const rect = canvas.getBoundingClientRect();
+        const mouse = new THREE.Vector2(
+            ((e.clientX - rect.left) / rect.width) * 2 - 1,
+            -((e.clientY - rect.top) / rect.height) * 2 + 1
+        );
+        const rc = new THREE.Raycaster();
+        rc.setFromCamera(mouse, camera);
+        const hits = rc.intersectObjects(scene.children, true);
+        if (hits.length > 0 && hits[0].object.material && hits[0].object.material.name === 'berta') {
+            switchTex();
+        }
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (!isDragging) scene.rotation.y += 0.002;
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        const nW = window.innerWidth, nH = Math.round(nW * 0.7);
+        renderer.setSize(nW, nH);
+        camera.aspect = nW / nH;
+        camera.updateProjectionMatrix();
+    });
+})();
+</script>
+</body>
+</html>
