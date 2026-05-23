@@ -265,27 +265,24 @@
     let model = null;
     new THREE.GLTFLoader().load(
         'https://raw.githubusercontent.com/letomaneteo/myweb/bc91895f5359ceed51b939fd8f9786565f1a6c80/Slipper55.glb',
-        gltf => {
-            model = gltf.scene;
+       gltf => {
+    model = gltf.scene;
 
-            // Центрируем и масштабируем модель
-           const box = new THREE.Box3().setFromObject(model);
-const center = box.getCenter(new THREE.Vector3());
-const size = box.getSize(new THREE.Vector3());
-const maxDim = Math.max(size.x, size.y, size.z);
-const scale = 2.0 / maxDim;
+    const box = new THREE.Box3().setFromObject(model);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scale = 2.0 / maxDim;
 
-model.scale.setScalar(scale);
-model.position.set(
-    -center.x * scale,
-    -center.y * scale,
-    -center.z * scale
-);
-            model.scale.setScalar(scale);
-            model.position.sub(center.multiplyScalar(scale));
+    model.scale.setScalar(scale);
+    model.position.set(
+        -center.x * scale,
+        -center.y * scale,
+        -center.z * scale
+    );
 
-            scene.add(model);
-        },
+    scene.add(model);
+},
         undefined,
         err => console.error('Slipper error:', err)
     );
