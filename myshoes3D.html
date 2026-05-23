@@ -35,6 +35,16 @@
     </div>
 </div>
 
+<div class="divider"></div>
+
+<div class="section">
+    <canvas id="canvas3"></canvas>
+    <div class="caption">
+        <h2>Slipper</h2>
+        <p>Drag to rotate</p>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
@@ -217,6 +227,89 @@
     function animate() {
         requestAnimationFrame(animate);
         if (!isDragging) scene.rotation.y += 0.002;
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        const nW = window.innerWidth, nH = Math.round(nW * 0.7);
+        renderer.setSize(nW, nH);
+        camera.aspect = nW / nH;
+        camera.updateProjectionMatrix();
+    });
+})();
+
+// ---- SCENE 3: Slipper ----
+(function() {
+    const canvas = document.getElementById('canvas3');
+    const W = window.innerWidth;
+    const H = Math.round(W * 0.7);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(W, H);
+    renderer.setClearColor(0xffffff, 1);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, W / H, 0.1, 1000);
+    camera.position.set(0, 0, 3);
+    camera.lookAt(0, 0, 0);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const pt = new THREE.PointLight(0xffffff, 1, 100);
+    pt.position.set(0, 5, 5);
+    scene.add(pt);
+    const pt2 = new THREE.PointLight(0xffffff, 0.5, 100);
+    pt2.position.set(-5, -3, -5);
+    scene.add(pt2);
+
+    let model = null;
+    new THREE.GLTFLoader().load(
+        'https://raw.githubusercontent.com/letomaneteo/myweb/main/Slipper3.glb',
+        gltf => {
+            model = gltf.scene;
+
+            // Центрируем и масштабируем модель
+            const box = new THREE.Box3().setFromObject(model);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 2.0 / maxDim;
+            model.scale.setScalar(scale);
+            model.position.sub(center.multiplyScalar(scale));
+
+            scene.add(model);
+        },
+        undefined,
+        err => console.error('Slipper error:', err)
+    );
+
+    let mouseDown = false, prev = { x: 0, y: 0 };
+    let isTouching = false, touchPos = { x: 0, y: 0 };
+
+    canvas.addEventListener('mousedown', e => { mouseDown = true; prev = { x: e.clientX, y: e.clientY }; });
+    window.addEventListener('mouseup', () => mouseDown = false);
+    window.addEventListener('mousemove', e => {
+        if (mouseDown && model) {
+            model.rotation.y += (e.clientX - prev.x) * 0.01;
+            model.rotation.x += (e.clientY - prev.y) * 0.01;
+        }
+        prev = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.addEventListener('touchstart', e => { isTouching = true; touchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY }; });
+    canvas.addEventListener('touchend', () => isTouching = false);
+    canvas.addEventListener('touchmove', e => {
+        if (isTouching && model) {
+            e.preventDefault();
+            model.rotation.y += (e.touches[0].clientX - touchPos.x) * 0.01;
+            model.rotation.x += (e.touches[0].clientY - touchPos.y) * 0.01;
+            touchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+    }, { passive: false });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (model && !mouseDown && !isTouching) model.rotation.y -= 0.01;
         renderer.render(scene, camera);
     }
     animate();
