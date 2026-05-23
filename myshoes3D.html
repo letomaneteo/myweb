@@ -240,6 +240,7 @@
 })();
 
 // ---- SCENE 3: Slipper ----
+// ---- SCENE 3: Slipper ----
 (function() {
     const canvas = document.getElementById('canvas3');
     const W = window.innerWidth;
@@ -286,27 +287,17 @@
     let model = null;
     new THREE.GLTFLoader().load(
         'https://raw.githubusercontent.com/letomaneteo/myweb/main/Slipper15.glb',
-       gltf => {
-    model = gltf.scene;
-    
-    // відключаємо освітлення, показуємо текстуру як є
-    model.traverse(child => {
-        if (child.isMesh) {
-            child.material = new THREE.MeshBasicMaterial({
-                map: child.material.map
-            });
-        }
-    });
-
-    const box = new THREE.Box3().setFromObject(model);
-    const center = box.getCenter(new THREE.Vector3());
-    const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const scale = 2.0 / maxDim;
-    model.scale.setScalar(scale);
-    model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
-    scene.add(model);
-},
+        gltf => {
+            model = gltf.scene;
+            const box = new THREE.Box3().setFromObject(model);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 2.0 / maxDim;
+            model.scale.setScalar(scale);
+            model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+            scene.add(model);
+        },
         undefined,
         err => console.error('Slipper error:', err)
     );
