@@ -269,11 +269,18 @@
             model = gltf.scene;
 
             // Центрируем и масштабируем модель
-            const box = new THREE.Box3().setFromObject(model);
-            const center = box.getCenter(new THREE.Vector3());
-            const size = box.getSize(new THREE.Vector3());
-            const maxDim = Math.max(size.x, size.y, size.z);
-            const scale = 2.0 / maxDim;
+           const box = new THREE.Box3().setFromObject(model);
+const center = box.getCenter(new THREE.Vector3());
+const size = box.getSize(new THREE.Vector3());
+const maxDim = Math.max(size.x, size.y, size.z);
+const scale = 2.0 / maxDim;
+
+model.scale.setScalar(scale);
+model.position.set(
+    -center.x * scale,
+    -center.y * scale,
+    -center.z * scale
+);
             model.scale.setScalar(scale);
             model.position.sub(center.multiplyScalar(scale));
 
